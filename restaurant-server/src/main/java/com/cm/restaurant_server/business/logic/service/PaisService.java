@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PaisService extends BaseService<Pais, String> {
+public class PaisService extends BaseService<Pais> {
     @Autowired
     public PaisService(PaisRepository repository) {
         super(repository);

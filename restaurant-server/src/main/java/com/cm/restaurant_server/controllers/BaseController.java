@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class BaseController<Entity extends Base, Dto extends BaseDto, CreateDto, UpdateDto, ID extends Serializable> {
+public abstract class BaseController<Entity extends Base, Dto extends BaseDto, CreateDto, UpdateDto> {
 
-    protected final BaseService<Entity, ID> service;
+    protected final BaseService<Entity> service;
     protected final BaseMapper<Entity, Dto, CreateDto, UpdateDto> mapper;
 
-    public BaseController(BaseService<Entity, ID> service, BaseMapper<Entity, Dto, CreateDto, UpdateDto> mapper) {
+    public BaseController(BaseService<Entity> service, BaseMapper<Entity, Dto, CreateDto, UpdateDto> mapper) {
         this.service = service;
         this.mapper = mapper;
     }

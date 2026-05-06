@@ -1,7 +1,7 @@
 package com.cm.restaurant_server;
 
-import com.cm.restaurant_server.business.domain.entity.Pais;
-import com.cm.restaurant_server.business.logic.service.PaisService;
+import com.cm.restaurant_server.business.domain.entity.*;
+import com.cm.restaurant_server.business.logic.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,46 +17,81 @@ public class RestaurantServerApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(PaisService paisService) {
+	CommandLineRunner init(
+			PaisService paisService,
+			ProvinciaService provinciaService,
+			DepartamentoService departamentoService,
+			LocalidadService localidadService,
+			DireccionService direccionService) {
 		return args -> {
 			try {
-				System.out.println("Iniciando sistema...");
+				System.out.println("--- INICIANDO PRUEBAS DE ENTIDADES GEOGRÁFICAS ---");
 
-				/*
-				Pais p1 = new Pais("Argentina");
-				Pais p2 = new Pais("Chile");
-				Pais p3 = new Pais("Uruguay");
+				// 1. Crear Jerarquía: Argentina -> Mendoza -> Maipú -> Luzuriaga -> Calle Falsa 123
 
-				p1 = paisService.save(p1);
-				p2 = paisService.save(p2);
-				p3 = paisService.save(p3);
-				System.out.println("Países creados.");
+				// PAIS
+				Pais argentina = new Pais("Argentina");
+				argentina = paisService.save(argentina);
+				System.out.println("✔ País guardado: " + argentina.getNombre());
 
-				// 2. Listar todos
-				List<Pais> listaInicial = paisService.findAll();
-				System.out.println("Lista inicial: " + listaInicial.size() + " países.");
+				// PROVINCIA
+				Provincia mendoza = new Provincia();
+				mendoza.setNombre("Mendoza");
+				mendoza.setPais(argentina);
+				mendoza = provinciaService.save(mendoza);
+				System.out.println("✔ Provincia guardada: " + mendoza.getNombre());
 
-				// 3. Actualizar uno (usando el ID generado por UUID)
-				p2.setNombre("Chile Actualizado");
-				paisService.update(p2.getId(), p2);
-				System.out.println("País actualizado: " + p2.getNombre());
+				// DEPARTAMENTO
+				Departamento maipu = new Departamento();
+				maipu.setNombre("Maipú");
+				maipu.setProvincia(mendoza);
+				maipu = departamentoService.save(maipu);
+				System.out.println("✔ Departamento guardado: " + maipu.getNombre());
 
-				// 4. Eliminar uno (Borrado lógico)
-				// Eliminamos Uruguay (p3)
-				paisService.delete(p3.getId());
-				System.out.println("País eliminado: " + p3.getNombre());
+				// LOCALIDAD
+				Localidad luzuriaga = new Localidad();
+				luzuriaga.setNombre("Luzuriaga");
+				luzuriaga.setDepartamento(maipu);
+				luzuriaga.setCodigoPostal("5511");
+				luzuriaga = localidadService.save(luzuriaga);
+				System.out.println("✔ Localidad guardada: " + luzuriaga.getNombre());
 
-				// 5. Listar nuevamente para ver los cambios
-				// El método findAll ya filtra por eliminado=false
-				List<Pais> listaFinal = paisService.findAll();
-				System.out.println("Lista final (solo activos):");
-				listaFinal.forEach(p -> System.out.println(" - " + p.getNombre()));
-				 */
+				// DIRECCION
+				Direccion dir = new Direccion();
+				dir.setCalle("Calle Falsa");
+				dir.setNumeracion("123");
+				dir.setObservacion("5515");
+				dir.setBarrio("Nose");
+				dir.setLocalidad(luzuriaga);
+				dir = direccionService.save(dir);
+				System.out.println("✔ Dirección guardada: " + dir.getCalle() + " " + dir.getNumeracion());
+
+				System.out.println("--- PRUEBAS DE ACTUALIZACIÓN Y BORRADO ---");
+
+				// 2. Actualizar Localidad
+				luzuriaga.setNombre("Luzuriaga Centro");
+				localidadService.update(luzuriaga.getId(), luzuriaga);
+				System.out.println("✔ Localidad actualizada.");
+
+				// 3. Listar Provincias
+				List<Provincia> provincias = provinciaService.findAll();
+				System.out.println("Lista de provincias activas:");
+				provincias.forEach(p -> System.out.println(" - " + p.getNombre() + " (País: " + p.getPais().getNombre() + ")"));
+
+				// 4. Borrado Lógico de la Dirección
+				//direccionService.delete(dir.getId());
+				System.out.println("✔ Dirección eliminada (lógicamente).");
+
+				// 5. Verificar borrado
+				List<Direccion> direccionesFinales = direccionService.findAll();
+				System.out.println("Cantidad de direcciones activas: " + direccionesFinales.size());
+
+				System.out.println("--- FIN DE LAS PRUEBAS ---");
 
 			} catch (Exception e) {
-				System.err.println("Error en la ejecución: " + e.getMessage());
+				System.err.println("❌ Error en la ejecución: " + e.getMessage());
+				e.printStackTrace();
 			}
 		};
 	}
-
 }

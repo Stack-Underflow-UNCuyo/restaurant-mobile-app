@@ -1,0 +1,21 @@
+package com.cm.restaurant_server.business.domain.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Provincia extends Base {
+    @NotBlank(message = "Debe indicar el nombre")
+    private String nombre;
+    @ManyToOne
+    private Pais pais;
+}

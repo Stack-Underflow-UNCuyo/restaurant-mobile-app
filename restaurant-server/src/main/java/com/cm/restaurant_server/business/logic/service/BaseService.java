@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 
-public abstract class BaseService<Entity extends Base, ID extends Serializable> {
+public abstract class BaseService<Entity extends Base> {
     protected BaseRepository<Entity> baseRepository;
 
     public BaseService(BaseRepository<Entity> baseRepository) {
         this.baseRepository = baseRepository;
     }
 
-    @Transactional
+    @Transactional //Todo lo que pase dentro de este método forma una única transacción
     public List<Entity> findAll() throws Exception {
         try {
             // Filtrar para devolver solo los registros que no están eliminados

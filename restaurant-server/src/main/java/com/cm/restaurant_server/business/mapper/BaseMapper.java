@@ -19,8 +19,7 @@ public interface BaseMapper<Entity extends Base, Dto extends BaseDto, CreateDto,
 
   // toUpdate(@MappingTarget E entity, DE source): Actualiza una entidad con datos
   // de un DTO.
-  // @MappingTarget se utiliza para reemplazar los atributos del dto sobre la
-  // entidad
+  // @MappingTarget hace que no se cree un objeto nuevo, solo modifica el existente
   public Entity toUpdate(@MappingTarget Entity entity, UpdateDto source);
 
   // toDTOsList(List<E> source): Convierte una lista de entidades en una lista de
