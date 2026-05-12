@@ -16,7 +16,7 @@ public class Imagen extends Base {
     @NotBlank(message = "Debe indicar el mime")
     private String mime;
     @Lob
-    @Column(columnDefinition = "LONGBLOB")
+    @Column(columnDefinition = "bytea")
     private byte[] contenido;
     @Enumerated(EnumType.STRING)
     private TipoImagen tipoImagen;

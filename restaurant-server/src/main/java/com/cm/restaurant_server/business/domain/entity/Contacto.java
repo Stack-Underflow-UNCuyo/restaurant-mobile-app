@@ -6,7 +6,7 @@ import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "tipo_contacto")
+@DiscriminatorColumn(name = "dtype")
 @Getter
 @Setter
 @NoArgsConstructor
