@@ -1,10 +1,7 @@
 package com.cm.restaurant_server.business.domain.entity;
 
 import com.cm.restaurant_server.business.domain.enumeration.Rol;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -25,4 +22,6 @@ public class Usuario extends Base {
     private String clave;
     @Enumerated(EnumType.STRING)
     private Rol rol;
+    @ManyToOne
+    private Imagen imagen;
 }

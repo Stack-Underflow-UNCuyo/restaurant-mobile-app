@@ -1,0 +1,29 @@
+package com.cm.restaurant_server.business.mapper;
+
+import com.cm.restaurant_server.business.domain.dto.comanda.ComandaRestaurantCreateDto;
+import com.cm.restaurant_server.business.domain.dto.comanda.ComandaRestaurantDto;
+import com.cm.restaurant_server.business.domain.entity.ComandaRestaurant;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "spring")
+public interface ComandaRestaurantMapper extends BaseMapper<ComandaRestaurant, ComandaRestaurantDto, ComandaRestaurantCreateDto, ComandaRestaurantCreateDto> {
+
+    @Override
+    @Mapping(target = "cliente", ignore = true)
+    @Mapping(target = "reservaMensa", ignore = true)
+    @Mapping(target = "empleado", ignore = true)
+    ComandaRestaurant toEntityCreate(ComandaRestaurantCreateDto dto);
+
+    @Override
+    @Mapping(target = "cliente", ignore = true)
+    @Mapping(target = "reservaMensa", ignore = true)
+    @Mapping(target = "empleado", ignore = true)
+    ComandaRestaurant toUpdate(@MappingTarget ComandaRestaurant entity, ComandaRestaurantCreateDto dto);
+
+    @Override
+    @Mapping(target = "clienteId", ignore = true)
+    @Mapping(target = "reservaMensaId", ignore = true)
+    ComandaRestaurantDto toDTO(ComandaRestaurant entity);
+}

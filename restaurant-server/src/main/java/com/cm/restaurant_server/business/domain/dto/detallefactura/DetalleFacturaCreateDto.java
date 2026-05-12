@@ -1,0 +1,14 @@
+package com.cm.restaurant_server.business.domain.dto.detallefactura;
+
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class DetalleFacturaCreateDto {
+    private int cantidad;
+    private double subtotal;
+    private String facturaId;
+    private String detalleComandaId;
+}
