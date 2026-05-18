@@ -14,7 +14,7 @@ public class ContactoService extends BaseService<Contacto> {
     }
 
     @Override
-    protected void validar(Contacto contacto, String caso) throws Exception {
+    protected void validar(Contacto contacto, CasoValidar caso) throws Exception {
 
     }
 }

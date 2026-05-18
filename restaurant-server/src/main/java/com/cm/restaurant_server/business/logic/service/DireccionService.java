@@ -13,6 +13,7 @@ import java.util.Optional;
 @Service
 public class DireccionService extends BaseService<Direccion> {
     private DireccionRepository direccionRepository;
+
     @Autowired
     public DireccionService(DireccionRepository repository) {
         super(repository);
@@ -22,7 +23,8 @@ public class DireccionService extends BaseService<Direccion> {
     @Transactional
     public Direccion findByCalleAndNumeracion(String calle, String numeracion) throws Exception {
         try {
-            Optional<Direccion> entityOptional = direccionRepository.findByCalleAndNumeracionAndEliminadoFalse(calle, numeracion);
+            Optional<Direccion> entityOptional = direccionRepository.findByCalleAndNumeracionAndEliminadoFalse(calle,
+                    numeracion);
             return entityOptional.orElseThrow(() -> new Exception("Entity not found or marked as deleted"));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -30,7 +32,7 @@ public class DireccionService extends BaseService<Direccion> {
     }
 
     @Override
-    protected void validar(Direccion entity, String caso) throws ErrorServiceException {
+    protected void validar(Direccion entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getCalle() == null || entity.getCalle().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar la calle.");
@@ -49,16 +51,19 @@ public class DireccionService extends BaseService<Direccion> {
             }
 
             switch (caso) {
-                case "SAVE": {
-                    if (direccionRepository.existsByCalleAndNumeracionAndBarrioAndLocalidad_IdAndEliminadoFalse(entity.getCalle(),
+                case SAVE: {
+                    if (direccionRepository.existsByCalleAndNumeracionAndBarrioAndLocalidad_IdAndEliminadoFalse(
+                            entity.getCalle(),
                             entity.getNumeracion(), entity.getBarrio(), entity.getLocalidad().getId())) {
                         throw new ErrorServiceException("La dirección ingresada ya existe en el sistema");
                     }
                 }
-                break;
-                case "UPDATE": {
-                    Optional<Direccion> direccionOptional = direccionRepository.findByCalleAndNumeracionAndBarrioAndLocalidad_IdAndEliminadoFalse(
-                            entity.getCalle(), entity.getNumeracion(), entity.getBarrio(), entity.getLocalidad().getId());
+                    break;
+                case UPDATE: {
+                    Optional<Direccion> direccionOptional = direccionRepository
+                            .findByCalleAndNumeracionAndBarrioAndLocalidad_IdAndEliminadoFalse(
+                                    entity.getCalle(), entity.getNumeracion(), entity.getBarrio(),
+                                    entity.getLocalidad().getId());
                     if (direccionOptional.isPresent()) {
                         Direccion direccion = direccionOptional.get();
                         if (!direccion.getId().equals(entity.getId())) {
@@ -66,7 +71,7 @@ public class DireccionService extends BaseService<Direccion> {
                         }
                     }
                 }
-                break;
+                    break;
             }
         } catch (ErrorServiceException ex) {
             throw ex;
@@ -76,4 +81,3 @@ public class DireccionService extends BaseService<Direccion> {
         }
     }
 }
-

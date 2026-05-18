@@ -31,24 +31,27 @@ public class ProvinciaService extends BaseService<Provincia> {
     }
 
     @Override
-    protected void validar(Provincia entity, String caso) throws ErrorServiceException {
+    protected void validar(Provincia entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getNombre() == null || entity.getNombre().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre");
             }
             switch (caso) {
-                case "SAVE": {
+                case SAVE: {
                     if (provinciaRepository.existsByNombreAndEliminadoFalse(entity.getNombre())) {
-                        throw new ErrorServiceException("La provincia " + entity.getNombre() + " ya existe en el sistema");
+                        throw new ErrorServiceException(
+                                "La provincia " + entity.getNombre() + " ya existe en el sistema");
                     }
                     break;
                 }
-                case "UPDATE": {
-                    Optional<Provincia> provinciaOptional = provinciaRepository.findByNombreAndEliminadoFalse(entity.getNombre());
+                case UPDATE: {
+                    Optional<Provincia> provinciaOptional = provinciaRepository
+                            .findByNombreAndEliminadoFalse(entity.getNombre());
                     if (provinciaOptional.isPresent()) {
                         Provincia provincia = provinciaOptional.get();
                         if (!provincia.getId().equals(entity.getId())) {
-                            throw new ErrorServiceException("La provincia " + entity.getNombre() + " ya existe en el sistema");
+                            throw new ErrorServiceException(
+                                    "La provincia " + entity.getNombre() + " ya existe en el sistema");
                         }
                     }
                     break;

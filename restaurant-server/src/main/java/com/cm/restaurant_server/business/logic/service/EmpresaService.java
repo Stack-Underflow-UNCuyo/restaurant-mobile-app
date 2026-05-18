@@ -24,7 +24,7 @@ public class EmpresaService extends BaseService<Empresa> {
     }
 
     @Override
-    protected void validar(Empresa entity, String caso) throws ErrorServiceException {
+    protected void validar(Empresa entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getNombre() == null || entity.getNombre().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre de la empresa.");
@@ -61,18 +61,21 @@ public class EmpresaService extends BaseService<Empresa> {
             }
 
             switch (caso) {
-                case "SAVE": {
+                case SAVE: {
                     if (empresaRepository.existsByNombreAndEliminadoFalse(entity.getNombre().trim())) {
-                        throw new ErrorServiceException("La empresa '" + entity.getNombre() + "' ya se encuentra registrada en el sistema.");
+                        throw new ErrorServiceException(
+                                "La empresa '" + entity.getNombre() + "' ya se encuentra registrada en el sistema.");
                     }
                     break;
                 }
-                case "UPDATE": {
-                    Optional<Empresa> empresaOptional = empresaRepository.findByNombreAndEliminadoFalse(entity.getNombre().trim());
+                case UPDATE: {
+                    Optional<Empresa> empresaOptional = empresaRepository
+                            .findByNombreAndEliminadoFalse(entity.getNombre().trim());
                     if (empresaOptional.isPresent()) {
                         Empresa empresaExistente = empresaOptional.get();
                         if (!empresaExistente.getId().equals(entity.getId())) {
-                            throw new ErrorServiceException("Ya existe otra empresa registrada con el nombre '" + entity.getNombre() + "'.");
+                            throw new ErrorServiceException(
+                                    "Ya existe otra empresa registrada con el nombre '" + entity.getNombre() + "'.");
                         }
                     }
                     break;

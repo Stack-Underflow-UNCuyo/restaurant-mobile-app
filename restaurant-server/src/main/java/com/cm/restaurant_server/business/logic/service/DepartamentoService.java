@@ -31,24 +31,27 @@ public class DepartamentoService extends BaseService<Departamento> {
     }
 
     @Override
-    protected void validar(Departamento entity, String caso) throws ErrorServiceException {
+    protected void validar(Departamento entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getNombre() == null || entity.getNombre().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre");
             }
             switch (caso) {
-                case "SAVE": {
+                case SAVE: {
                     if (departamentoRepository.existsByNombreAndEliminadoFalse(entity.getNombre())) {
-                        throw new ErrorServiceException("El departamento " + entity.getNombre() + " ya existe en el sistema");
+                        throw new ErrorServiceException(
+                                "El departamento " + entity.getNombre() + " ya existe en el sistema");
                     }
                     break;
                 }
-                case "UPDATE": {
-                    Optional<Departamento> departamentoOptional = departamentoRepository.findByNombreAndEliminadoFalse(entity.getNombre());
+                case UPDATE: {
+                    Optional<Departamento> departamentoOptional = departamentoRepository
+                            .findByNombreAndEliminadoFalse(entity.getNombre());
                     if (departamentoOptional.isPresent()) {
                         Departamento departamento = departamentoOptional.get();
                         if (!departamento.getId().equals(entity.getId())) {
-                            throw new ErrorServiceException("El departamento " + entity.getNombre() + " ya existe en el sistema");
+                            throw new ErrorServiceException(
+                                    "El departamento " + entity.getNombre() + " ya existe en el sistema");
                         }
                     }
                     break;

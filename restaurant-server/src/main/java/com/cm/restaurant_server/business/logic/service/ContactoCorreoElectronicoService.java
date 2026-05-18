@@ -15,8 +15,7 @@ public class ContactoCorreoElectronicoService extends BaseService<ContactoCorreo
     private ContactoCorreoElectronicoRepository contactoRepository;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$"
-    );
+            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     @Autowired
     public ContactoCorreoElectronicoService(ContactoCorreoElectronicoRepository repository) {
@@ -24,9 +23,8 @@ public class ContactoCorreoElectronicoService extends BaseService<ContactoCorreo
         this.contactoRepository = repository;
     }
 
-
     @Override
-    protected void validar(ContactoCorreoElectronico contacto, String caso) throws Exception {
+    protected void validar(ContactoCorreoElectronico contacto, CasoValidar caso) throws Exception {
         try {
             if (contacto.getTipoContacto() == null) {
                 throw new ErrorServiceException("Debe indicar qué tipo de contacto es");
@@ -42,21 +40,25 @@ public class ContactoCorreoElectronicoService extends BaseService<ContactoCorreo
             }
 
             switch (caso) {
-                case "SAVE": {
-                    if (contactoRepository.existsByEmailAndPersona_IdAndEliminadoFalse(contacto.getEmail().trim(), contacto.getPersona().getId())) {
-                        throw new ErrorServiceException(contacto.getPersona().getNombre() + " ya cuenta con el correo electrónico " + contacto.getEmail() + " registrado en el sistema");
+                case SAVE: {
+                    if (contactoRepository.existsByEmailAndPersona_IdAndEliminadoFalse(contacto.getEmail().trim(),
+                            contacto.getPersona().getId())) {
+                        throw new ErrorServiceException(
+                                contacto.getPersona().getNombre() + " ya cuenta con el correo electrónico "
+                                        + contacto.getEmail() + " registrado en el sistema");
                     }
                     break;
                 }
-                case "UPDATE": {
-                    Optional<ContactoCorreoElectronico> existenteOptional =
-                            contactoRepository.findByEmailAndPersona_IdAndTipoContactoAndEliminadoFalse(contacto.getEmail().trim(),
+                case UPDATE: {
+                    Optional<ContactoCorreoElectronico> existenteOptional = contactoRepository
+                            .findByEmailAndPersona_IdAndTipoContactoAndEliminadoFalse(contacto.getEmail().trim(),
                                     contacto.getPersona().getId(), contacto.getTipoContacto());
 
                     if (existenteOptional.isPresent()) {
                         ContactoCorreoElectronico contactoExistente = existenteOptional.get();
                         if (!contactoExistente.getId().equals(contacto.getId())) {
-                            throw new ErrorServiceException("Ya existe otro contacto con el mismo email y tipo de contacto para esta persona");
+                            throw new ErrorServiceException(
+                                    "Ya existe otro contacto con el mismo email y tipo de contacto para esta persona");
                         }
                     }
                     break;

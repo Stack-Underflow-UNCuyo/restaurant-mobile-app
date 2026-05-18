@@ -26,29 +26,30 @@ public class PaisService extends BaseService<Pais> {
             Optional<Pais> entityOptional = paisRepository.findByNombreAndEliminadoFalse(name);
             return entityOptional.orElseThrow(() -> new Exception("Entity not found or marked as deleted"));
         } catch (Exception e) {
-                throw new Exception(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    protected void validar(Pais entity, String caso) throws ErrorServiceException {
+    protected void validar(Pais entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getNombre() == null || entity.getNombre().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre");
             }
             switch (caso) {
-                case "SAVE": {
+                case SAVE: {
                     if (paisRepository.existsByNombreAndEliminadoFalse(entity.getNombre())) {
                         throw new ErrorServiceException("El pais " + entity.getNombre() + " ya existe en el sistema");
                     }
                     break;
                 }
-                case "UPDATE": {
+                case UPDATE: {
                     Optional<Pais> paisOptional = paisRepository.findByNombreAndEliminadoFalse(entity.getNombre());
                     if (paisOptional.isPresent()) {
                         Pais pais = paisOptional.get();
                         if (!pais.getId().equals(entity.getId())) {
-                            throw new ErrorServiceException("El pais " + entity.getNombre() + " ya existe en el sistema");
+                            throw new ErrorServiceException(
+                                    "El pais " + entity.getNombre() + " ya existe en el sistema");
                         }
                     }
                     break;

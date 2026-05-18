@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-
 public abstract class BaseService<Entity extends Base> {
     protected BaseRepository<Entity> baseRepository;
 
@@ -16,9 +15,9 @@ public abstract class BaseService<Entity extends Base> {
         this.baseRepository = baseRepository;
     }
 
-    protected abstract void validar(Entity entity, String caso) throws Exception;
+    protected abstract void validar(Entity entity, CasoValidar caso) throws Exception;
 
-    @Transactional //Todo lo que pase dentro de este método forma una única transacción
+    @Transactional // Todo lo que pase dentro de este método forma una única transacción
     public List<Entity> findAll() throws Exception {
         try {
             // Filtrar para devolver solo los registros que no están eliminados
@@ -43,7 +42,7 @@ public abstract class BaseService<Entity extends Base> {
     @Transactional
     public Entity save(Entity entity) throws Exception {
         try {
-            validar(entity, "SAVE");
+            validar(entity, CasoValidar.SAVE);
             entity = baseRepository.save(entity);
             return entity;
         } catch (Exception e) {
@@ -56,7 +55,7 @@ public abstract class BaseService<Entity extends Base> {
         try {
             if (baseRepository.existsByIdAndEliminadoFalse(id)) {
                 entity.setId((String) id); // Aseguramos que el ID sea el correcto
-                validar(entity, "UPDATE");
+                validar(entity, CasoValidar.UPDATE);
                 return baseRepository.save(entity);
             } else {
                 throw new Exception("Entity not found or marked as deleted");

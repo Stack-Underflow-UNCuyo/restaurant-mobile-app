@@ -41,7 +41,7 @@ public class LocalidadService extends BaseService<Localidad> {
     }
 
     @Override
-    protected void validar(Localidad entity, String caso) throws ErrorServiceException {
+    protected void validar(Localidad entity, CasoValidar caso) throws ErrorServiceException {
         try {
             if (entity.getNombre() == null || entity.getNombre().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre");
@@ -53,20 +53,24 @@ public class LocalidadService extends BaseService<Localidad> {
                 throw new ErrorServiceException("Debe indicar el departamento");
             }
             switch (caso) {
-                case "SAVE": {
+                case SAVE: {
                     if (localidadRepository.existsByNombreAndEliminadoFalse(entity.getNombre())) {
-                        throw new ErrorServiceException("La localidad " + entity.getNombre() + " ya existe en el sistema");
+                        throw new ErrorServiceException(
+                                "La localidad " + entity.getNombre() + " ya existe en el sistema");
                     } else if (localidadRepository.existsByCodigoPostalAndEliminadoFalse(entity.getCodigoPostal())) {
-                        throw new ErrorServiceException("Ya hay una localidad con el código postal " + entity.getCodigoPostal() + " en el sistema");
+                        throw new ErrorServiceException("Ya hay una localidad con el código postal "
+                                + entity.getCodigoPostal() + " en el sistema");
                     }
                     break;
                 }
-                case "UPDATE": {
-                    Optional<Localidad> localidadOptional = localidadRepository.findByNombreAndEliminadoFalse(entity.getNombre());
+                case UPDATE: {
+                    Optional<Localidad> localidadOptional = localidadRepository
+                            .findByNombreAndEliminadoFalse(entity.getNombre());
                     if (localidadOptional.isPresent()) {
                         Localidad localidad = localidadOptional.get();
                         if (!localidad.getId().equals(entity.getId())) {
-                            throw new ErrorServiceException("La localidad " + entity.getNombre() + " ya existe en el sistema");
+                            throw new ErrorServiceException(
+                                    "La localidad " + entity.getNombre() + " ya existe en el sistema");
                         }
                     }
                     break;

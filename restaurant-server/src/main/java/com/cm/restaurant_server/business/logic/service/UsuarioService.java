@@ -29,23 +29,22 @@ public class UsuarioService extends BaseService<Usuario> {
         try {
             Usuario usuario = repository.findByEmailAndEliminadoFalse(cuenta);
             return usuario;
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    /*
-    public Usuario searchByIdPersona(String idPersona) throws Exception {
-        try {
-            Usuario usuario = repository.findByPersonaId(idPersona);
-            return usuario;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
+    /*
+     * public Usuario searchByIdPersona(String idPersona) throws Exception {
+     * try {
+     * Usuario usuario = repository.findByPersonaId(idPersona);
+     * return usuario;
+     * } catch (Exception e) {
+     * throw new Exception(e.getMessage());
+     * }
+     * }
+     * 
      */
-
 
     public Usuario searchByCuentaAndClave(String cuenta, String clave) throws Exception {
         try {
@@ -56,7 +55,8 @@ public class UsuarioService extends BaseService<Usuario> {
         }
     }
 
-    public boolean validar(Usuario entity, String caso) throws Exception {
+    @Override
+    protected void validar(Usuario entity, CasoValidar caso) throws Exception {
         try {
             if (entity.getEmail() == null || entity.getEmail().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el mail");
@@ -70,7 +70,7 @@ public class UsuarioService extends BaseService<Usuario> {
                 throw new ErrorServiceException("Debe indicar el rol");
             }
 
-            if (caso.equals("SAVE")) {
+            if (caso == CasoValidar.SAVE) {
                 if (repository.findByIdAndEliminadoFalse(entity.getId()).isPresent()) {
                     throw new ErrorServiceException("El usuario ya existe en el sistema");
                 }
@@ -86,7 +86,6 @@ public class UsuarioService extends BaseService<Usuario> {
                     }
                 }
             }
-            return true;
         } catch (ErrorServiceException ex) {
             throw ex;
         } catch (Exception ex) {
