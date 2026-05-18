@@ -5,6 +5,7 @@ import com.cm.restaurant_server.business.domain.dto.persona.PersonaDto;
 import com.cm.restaurant_server.business.domain.entity.Persona;
 import com.cm.restaurant_server.business.logic.service.PersonaService;
 import com.cm.restaurant_server.business.mapper.PersonaMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/personas")
 public class PersonaController extends BaseController<Persona, PersonaDto, PersonaCreateDto, PersonaCreateDto> {
 
-    public PersonaController(PersonaService service, PersonaMapper mapper) {
+    public PersonaController(@Qualifier("personaService") PersonaService<Persona> service, PersonaMapper mapper) {
         super(service, mapper);
     }
 

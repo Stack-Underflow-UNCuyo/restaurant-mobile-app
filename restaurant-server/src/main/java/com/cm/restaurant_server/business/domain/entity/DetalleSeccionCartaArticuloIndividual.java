@@ -5,7 +5,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
@@ -17,6 +18,11 @@ import lombok.*;
 @AllArgsConstructor
 public class DetalleSeccionCartaArticuloIndividual extends DetalleSeccionCarta {
     private double precio;
-    @OneToMany(mappedBy = "detalleSeccionCartaArticuloIndividual", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "detalle_seccion_carta_articulo",
+        joinColumns = @JoinColumn(name = "detalle_id"),
+        inverseJoinColumns = @JoinColumn(name = "articulo_id")
+    )
     private List<Articulo> articulos;
 }
