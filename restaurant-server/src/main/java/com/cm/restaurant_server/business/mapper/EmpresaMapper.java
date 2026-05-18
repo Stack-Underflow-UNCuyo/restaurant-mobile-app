@@ -12,11 +12,11 @@ public interface EmpresaMapper extends BaseMapper<Empresa, EmpresaDto, EmpresaCr
 
     @Override
     @Mapping(target = "direccion", ignore = true)
-    @Mapping(target = "contacto", ignore = true)
+    @Mapping(target = "contactos", ignore = true)
     Empresa toEntityCreate(EmpresaCreateDto dto);
 
     @Override
     @Mapping(target = "direccion", ignore = true)
-    @Mapping(target = "contacto", ignore = true)
+    @Mapping(target = "contactos", ignore = true)
     Empresa toUpdate(@MappingTarget Empresa entity, EmpresaCreateDto dto);
 }
