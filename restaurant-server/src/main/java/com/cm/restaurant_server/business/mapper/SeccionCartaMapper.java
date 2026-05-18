@@ -11,12 +11,18 @@ import org.mapstruct.MappingTarget;
 public interface SeccionCartaMapper extends BaseMapper<SeccionCarta, SeccionCartaDto, SeccionCartaCreateDto, SeccionCartaCreateDto> {
 
     @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "categoria", ignore = true)
     @Mapping(target = "carta", ignore = true)
+    @Mapping(target = "detallesSeccionCarta", ignore = true)
     SeccionCarta toEntityCreate(SeccionCartaCreateDto dto);
 
     @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "categoria", ignore = true)
     @Mapping(target = "carta", ignore = true)
+    @Mapping(target = "detallesSeccionCarta", ignore = true)
     SeccionCarta toUpdate(@MappingTarget SeccionCarta entity, SeccionCartaCreateDto dto);
 }

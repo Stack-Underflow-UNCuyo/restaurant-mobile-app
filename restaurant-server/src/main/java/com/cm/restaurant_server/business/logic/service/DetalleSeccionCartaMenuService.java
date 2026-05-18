@@ -14,7 +14,11 @@ public class DetalleSeccionCartaMenuService extends BaseService<DetalleSeccionCa
 
     @Override
     protected void validar(DetalleSeccionCartaMenu entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+        if (entity.getSeccionCarta() == null) {
+            throw new Exception("El detalle debe pertenecer a una sección de la carta");
+        }
+        if (entity.getMenu() == null) {
+            throw new Exception("El detalle debe tener un menú asociado");
+        }
     }
 }

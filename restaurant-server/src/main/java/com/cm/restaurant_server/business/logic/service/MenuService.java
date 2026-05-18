@@ -14,7 +14,14 @@ public class MenuService extends BaseService<Menu> {
 
     @Override
     protected void validar(Menu entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+        if (entity.getPrecio() <= 0) {
+            throw new Exception("El precio del menú debe ser mayor a cero");
+        }
+        if (entity.getImagen() == null) {
+            throw new Exception("El menú debe tener una imagen");
+        }
+        if (caso == CasoValidar.UPDATE && (entity.getDetallesMenu() == null || entity.getDetallesMenu().isEmpty())) {
+            throw new Exception("El menú debe tener al menos un detalle");
+        }
     }
 }

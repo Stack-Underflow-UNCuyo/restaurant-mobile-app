@@ -11,11 +11,15 @@ import org.mapstruct.MappingTarget;
 public interface DetalleMenuMapper extends BaseMapper<DetalleMenu, DetalleMenuDto, DetalleMenuCreateDto, DetalleMenuCreateDto> {
 
     @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "menu", ignore = true)
     @Mapping(target = "articulo", ignore = true)
     DetalleMenu toEntityCreate(DetalleMenuCreateDto dto);
 
     @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "menu", ignore = true)
     @Mapping(target = "articulo", ignore = true)
     DetalleMenu toUpdate(@MappingTarget DetalleMenu entity, DetalleMenuCreateDto dto);
