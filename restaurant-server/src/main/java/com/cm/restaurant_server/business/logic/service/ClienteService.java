@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClienteService extends BaseService<Cliente> {
+public class ClienteService extends PersonaService<Cliente> {
     @Autowired
     public ClienteService(ClienteRepository repository) {
         super(repository);
@@ -14,7 +14,6 @@ public class ClienteService extends BaseService<Cliente> {
 
     @Override
     protected void validar(Cliente entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+        super.validar(entity, caso);
     }
 }

@@ -14,7 +14,20 @@ public class ImagenService extends BaseService<Imagen> {
 
     @Override
     protected void validar(Imagen entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+        if (entity.getNombre() == null || entity.getNombre().isBlank()) {
+            throw new Exception("El nombre de la imagen es obligatorio");
+        }
+
+        if (entity.getMime() == null || entity.getMime().isBlank()) {
+            throw new Exception("El tipo MIME de la imagen es obligatorio");
+        }
+
+        if (entity.getContenido() == null || entity.getContenido().length == 0) {
+            throw new Exception("El contenido de la imagen es obligatorio");
+        }
+
+        if (entity.getTipoImagen() == null) {
+            throw new Exception("El tipo de imagen es obligatorio");
+        }
     }
 }

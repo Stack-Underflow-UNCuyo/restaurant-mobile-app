@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -24,4 +26,6 @@ public class Persona extends Base {
     private Direccion direccion;
     @ManyToOne
     private Usuario usuario;
+    @OneToMany(mappedBy = "persona")
+    private List<Contacto> contactos = new ArrayList<>();
 }
