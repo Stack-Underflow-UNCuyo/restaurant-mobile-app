@@ -5,8 +5,8 @@ import com.cm.restaurant_server.business.domain.dto.cliente.ClienteDto;
 import com.cm.restaurant_server.business.domain.entity.Cliente;
 import com.cm.restaurant_server.business.logic.service.ClienteService;
 import com.cm.restaurant_server.business.mapper.ClienteMapper;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/clientes")
@@ -14,5 +14,12 @@ public class ClienteController extends BaseController<Cliente, ClienteDto, Clien
 
     public ClienteController(ClienteService service, ClienteMapper mapper) {
         super(service, mapper);
+    }
+
+    @PutMapping("/{id}/usuario/{usuarioId}")
+    public ResponseEntity<ClienteDto> vincularUsuario(
+            @PathVariable String id, @PathVariable String usuarioId) throws Exception {
+        Cliente cliente = ((ClienteService) service).vincularUsuario(id, usuarioId);
+        return ResponseEntity.ok(mapper.toDTO(cliente));
     }
 }

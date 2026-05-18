@@ -5,8 +5,10 @@ import com.cm.restaurant_server.business.domain.dto.movimientostock.MovimientoSt
 import com.cm.restaurant_server.business.domain.entity.MovimientoStock;
 import com.cm.restaurant_server.business.logic.service.MovimientoStockService;
 import com.cm.restaurant_server.business.mapper.MovimientoStockMapper;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/movimientos-stock")
@@ -14,5 +16,11 @@ public class MovimientoStockController extends BaseController<MovimientoStock, M
 
     public MovimientoStockController(MovimientoStockService service, MovimientoStockMapper mapper) {
         super(service, mapper);
+    }
+
+    @GetMapping("/articulo/{articuloId}")
+    public ResponseEntity<List<MovimientoStockDto>> getAllByArticulo(@PathVariable String articuloId) throws Exception {
+        List<MovimientoStock> movimientos = ((MovimientoStockService) service).findAllByArticulo(articuloId);
+        return ResponseEntity.ok(mapper.toDTOsList(movimientos));
     }
 }
