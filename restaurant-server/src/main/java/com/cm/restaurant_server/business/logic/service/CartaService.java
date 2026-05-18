@@ -53,7 +53,7 @@ public class CartaService extends BaseService<Carta> {
     }
 
     @Transactional
-    public void crearCarta(String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
+    public Carta crearCarta(String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         validar(idSeccionCarta, fechaDesde, fechaHasta);
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(idSeccionCarta)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + idSeccionCarta));
@@ -61,7 +61,7 @@ public class CartaService extends BaseService<Carta> {
         carta.setSeccionCarta(seccionCarta);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
-        save(carta);
+        return save(carta);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class CartaService extends BaseService<Carta> {
     }
 
     @Transactional
-    public void modificarCarta(String id, String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
+    public Carta modificarCarta(String id, String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         validar(idSeccionCarta, fechaDesde, fechaHasta);
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(idSeccionCarta)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + idSeccionCarta));
@@ -78,7 +78,7 @@ public class CartaService extends BaseService<Carta> {
         carta.setSeccionCarta(seccionCarta);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
-        update(id, carta);
+        return update(id, carta);
     }
 
     @Transactional
