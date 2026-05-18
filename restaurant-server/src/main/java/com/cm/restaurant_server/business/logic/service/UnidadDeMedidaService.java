@@ -7,14 +7,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UnidadDeMedidaService extends BaseService<UnidadDeMedida> {
+
+    private final UnidadDeMedidaRepository repository;
+
     @Autowired
     public UnidadDeMedidaService(UnidadDeMedidaRepository repository) {
         super(repository);
+        this.repository = repository;
+    }
+
+    public UnidadDeMedida findByNombre(String nombre) throws Exception {
+        return repository.findByNombreAndEliminadoFalse(nombre)
+                .orElseThrow(() -> new Exception("Unidad de medida no encontrada: " + nombre));
     }
 
     @Override
     protected void validar(UnidadDeMedida entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+        if (entity.getNombre() == null || entity.getNombre().isBlank()) {
+            throw new Exception("El nombre de la unidad de medida es obligatorio");
+        }
     }
 }
