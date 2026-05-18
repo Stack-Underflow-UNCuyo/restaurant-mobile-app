@@ -13,10 +13,18 @@ public interface ClienteMapper extends BaseMapper<Cliente, ClienteDto, ClienteCr
     @Override
     @Mapping(target = "direccion", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "contactos", ignore = true)
+    Cliente toEntity(ClienteDto dto);
+
+    @Override
+    @Mapping(target = "direccion", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "contactos", ignore = true)
     Cliente toEntityCreate(ClienteCreateDto dto);
 
     @Override
     @Mapping(target = "direccion", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "contactos", ignore = true)
     Cliente toUpdate(@MappingTarget Cliente entity, ClienteCreateDto dto);
 }

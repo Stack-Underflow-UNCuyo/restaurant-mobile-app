@@ -7,8 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
-public interface ComandaRestaurantMapper extends BaseMapper<ComandaRestaurant, ComandaRestaurantDto, ComandaRestaurantCreateDto, ComandaRestaurantCreateDto> {
+@Mapper(componentModel = "spring", uses = { EmpleadoMapper.class, ContactoMapper.class })
+public interface ComandaRestaurantMapper extends
+        BaseMapper<ComandaRestaurant, ComandaRestaurantDto, ComandaRestaurantCreateDto, ComandaRestaurantCreateDto> {
+
+    @Override
+    @Mapping(target = "cliente", ignore = true)
+    @Mapping(target = "reservaMensa", ignore = true)
+    @Mapping(target = "empleado", ignore = true)
+    ComandaRestaurant toEntity(ComandaRestaurantDto dto);
 
     @Override
     @Mapping(target = "cliente", ignore = true)
@@ -23,7 +30,7 @@ public interface ComandaRestaurantMapper extends BaseMapper<ComandaRestaurant, C
     ComandaRestaurant toUpdate(@MappingTarget ComandaRestaurant entity, ComandaRestaurantCreateDto dto);
 
     @Override
-    @Mapping(target = "clienteId", ignore = true)
-    @Mapping(target = "reservaMensaId", ignore = true)
+    @Mapping(target = "clienteId", source = "cliente.id")
+    @Mapping(target = "reservaMensaId", source = "reservaMensa.id")
     ComandaRestaurantDto toDTO(ComandaRestaurant entity);
 }
