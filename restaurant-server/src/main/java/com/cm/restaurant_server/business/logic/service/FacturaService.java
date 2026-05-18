@@ -11,4 +11,10 @@ public class FacturaService extends BaseService<Factura> {
     public FacturaService(FacturaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Factura entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

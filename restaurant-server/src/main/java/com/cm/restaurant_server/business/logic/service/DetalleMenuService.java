@@ -11,4 +11,10 @@ public class DetalleMenuService extends BaseService<DetalleMenu> {
     public DetalleMenuService(DetalleMenuRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(DetalleMenu entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

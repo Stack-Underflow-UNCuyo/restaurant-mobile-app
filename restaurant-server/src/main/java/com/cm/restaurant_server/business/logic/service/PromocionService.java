@@ -11,4 +11,10 @@ public class PromocionService extends BaseService<Promocion> {
     public PromocionService(PromocionRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Promocion entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

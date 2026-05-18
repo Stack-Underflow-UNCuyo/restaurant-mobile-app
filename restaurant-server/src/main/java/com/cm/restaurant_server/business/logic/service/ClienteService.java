@@ -11,4 +11,10 @@ public class ClienteService extends BaseService<Cliente> {
     public ClienteService(ClienteRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Cliente entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

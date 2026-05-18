@@ -11,4 +11,10 @@ public class MovimientoStockService extends BaseService<MovimientoStock> {
     public MovimientoStockService(MovimientoStockRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(MovimientoStock entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

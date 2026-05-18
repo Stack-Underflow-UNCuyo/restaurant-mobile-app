@@ -11,4 +11,10 @@ public class ReservaMensaService extends BaseService<ReservaMensa> {
     public ReservaMensaService(ReservaMensaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(ReservaMensa entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

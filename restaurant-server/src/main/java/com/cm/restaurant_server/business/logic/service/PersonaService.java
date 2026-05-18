@@ -11,4 +11,10 @@ public class PersonaService extends BaseService<Persona> {
     public PersonaService(PersonaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Persona entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

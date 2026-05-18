@@ -11,4 +11,10 @@ public class CategoriaService extends BaseService<Categoria> {
     public CategoriaService(CategoriaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Categoria entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

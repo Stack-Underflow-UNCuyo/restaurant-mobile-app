@@ -11,4 +11,10 @@ public class MesaRestauranteService extends BaseService<MesaRestaurante> {
     public MesaRestauranteService(MesaRestauranteRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(MesaRestaurante entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

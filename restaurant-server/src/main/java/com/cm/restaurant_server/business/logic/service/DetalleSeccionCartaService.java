@@ -11,4 +11,10 @@ public class DetalleSeccionCartaService extends BaseService<DetalleSeccionCarta>
     public DetalleSeccionCartaService(DetalleSeccionCartaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(DetalleSeccionCarta entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

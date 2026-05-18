@@ -11,4 +11,10 @@ public class ComandaRestaurantService extends BaseService<ComandaRestaurant> {
     public ComandaRestaurantService(ComandaRestaurantRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(ComandaRestaurant entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

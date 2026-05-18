@@ -11,4 +11,10 @@ public class ArticuloService extends BaseService<Articulo> {
     public ArticuloService(ArticuloRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Articulo entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

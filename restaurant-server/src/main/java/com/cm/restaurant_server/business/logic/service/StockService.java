@@ -11,4 +11,10 @@ public class StockService extends BaseService<Stock> {
     public StockService(StockRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Stock entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

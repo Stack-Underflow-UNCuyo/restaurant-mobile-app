@@ -11,4 +11,10 @@ public class ImagenService extends BaseService<Imagen> {
     public ImagenService(ImagenRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Imagen entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

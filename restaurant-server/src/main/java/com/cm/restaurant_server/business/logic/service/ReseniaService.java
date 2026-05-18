@@ -11,4 +11,10 @@ public class ReseniaService extends BaseService<Resenia> {
     public ReseniaService(ReseniaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(Resenia entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }

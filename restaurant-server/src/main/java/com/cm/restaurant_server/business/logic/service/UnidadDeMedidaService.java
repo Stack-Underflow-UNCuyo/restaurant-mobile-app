@@ -11,4 +11,10 @@ public class UnidadDeMedidaService extends BaseService<UnidadDeMedida> {
     public UnidadDeMedidaService(UnidadDeMedidaRepository repository) {
         super(repository);
     }
+
+    @Override
+    protected void validar(UnidadDeMedida entity, CasoValidar caso) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
 }
