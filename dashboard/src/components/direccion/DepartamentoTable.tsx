@@ -75,8 +75,8 @@ export default function DepartamentoTable() {
     try {
       await departamentoService.remove(pendingDeleteId);
       setItems((prev) => prev.filter((d) => d.id !== pendingDeleteId));
-      toast.success("Departamento eliminado");
       closeConfirm();
+      toast.success("Departamento eliminado");
     } catch {
       toast.error("Error al eliminar el departamento");
     } finally {
@@ -103,8 +103,8 @@ export default function DepartamentoTable() {
       }
       const refreshed = await departamentoService.getAll();
       setItems(refreshed);
-      toast.success("Departamento guardado");
       closeModal();
+      toast.success("Departamento guardado");
     } catch {
       toast.error("Error al guardar el departamento");
     } finally {

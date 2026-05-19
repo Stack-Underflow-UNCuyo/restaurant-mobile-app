@@ -79,8 +79,8 @@ export default function LocalidadTable() {
     try {
       await localidadService.remove(pendingDeleteId);
       setItems((prev) => prev.filter((l) => l.id !== pendingDeleteId));
-      toast.success("Localidad eliminada");
       closeConfirm();
+      toast.success("Localidad eliminada");
     } catch {
       toast.error("Error al eliminar la localidad");
     } finally {
@@ -112,8 +112,8 @@ export default function LocalidadTable() {
       }
       const refreshed = await localidadService.getAll();
       setItems(refreshed);
-      toast.success("Localidad guardada");
       closeModal();
+      toast.success("Localidad guardada");
     } catch {
       toast.error("Error al guardar la localidad");
     } finally {

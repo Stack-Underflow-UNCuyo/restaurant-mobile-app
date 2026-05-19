@@ -75,8 +75,8 @@ export default function ProvinciaTable() {
     try {
       await provinciaService.remove(pendingDeleteId);
       setItems((prev) => prev.filter((p) => p.id !== pendingDeleteId));
-      toast.success("Provincia eliminada");
       closeConfirm();
+      toast.success("Provincia eliminada");
     } catch {
       toast.error("Error al eliminar la provincia");
     } finally {
@@ -103,8 +103,8 @@ export default function ProvinciaTable() {
       }
       const refreshed = await provinciaService.getAll();
       setItems(refreshed);
-      toast.success("Provincia guardada");
       closeModal();
+      toast.success("Provincia guardada");
     } catch {
       toast.error("Error al guardar la provincia");
     } finally {

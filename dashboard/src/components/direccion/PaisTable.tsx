@@ -64,8 +64,8 @@ export default function PaisTable() {
     try {
       await paisService.remove(pendingDeleteId);
       setItems((prev) => prev.filter((p) => p.id !== pendingDeleteId));
-      toast.success("País eliminado");
       closeConfirm();
+      toast.success("País eliminado");
     } catch {
       toast.error("Error al eliminar el país");
     } finally {
@@ -88,8 +88,8 @@ export default function PaisTable() {
         const created = await paisService.create(formData);
         setItems((prev) => [...prev, created]);
       }
-      toast.success("País guardado");
       closeModal();
+      toast.success("País guardado");
     } catch {
       toast.error("Error al guardar el país");
     } finally {
