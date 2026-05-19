@@ -4,9 +4,10 @@ import com.cm.restaurant_server.business.domain.entity.Base;
 import com.cm.restaurant_server.business.repository.BaseRepository;
 import jakarta.transaction.Transactional;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.lang.NonNull;
 
 public abstract class BaseService<Entity extends Base> {
     protected BaseRepository<Entity> baseRepository;
@@ -40,7 +41,7 @@ public abstract class BaseService<Entity extends Base> {
     }
 
     @Transactional
-    public Entity save(Entity entity) throws Exception {
+    public Entity save(@NonNull Entity entity) throws Exception {
         try {
             validar(entity, CasoValidar.SAVE);
             entity = baseRepository.save(entity);
@@ -81,5 +82,9 @@ public abstract class BaseService<Entity extends Base> {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    public List<Entity> findAllIncludingDeleted() {
+        return this.baseRepository.findAll();
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ReservaMensaDto extends BaseDto {
+public class ReservaMesaDto extends BaseDto {
     private LocalDate fechaReserva;
     private int cantidadAdultos;
     private int cantidadNinos;

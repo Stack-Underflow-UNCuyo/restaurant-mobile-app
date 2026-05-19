@@ -2,12 +2,13 @@ package com.cm.restaurant_server.business.logic.service;
 
 import com.cm.restaurant_server.business.domain.entity.Promocion;
 import com.cm.restaurant_server.business.repository.PromocionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class PromocionService extends BaseService<Promocion> {
-    @Autowired
     public PromocionService(PromocionRepository repository) {
         super(repository);
     }
@@ -16,5 +17,13 @@ public class PromocionService extends BaseService<Promocion> {
     protected void validar(Promocion entity, CasoValidar caso) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'validar'");
+    }
+
+    public List<Promocion> buscarPromocionPorDescripcion(String descripcion) {
+        return this.getRepository().findByDescripcionContainingIgnoreCase(descripcion.trim());
+    }
+
+    protected PromocionRepository getRepository() {
+        return (PromocionRepository) this.baseRepository;
     }
 }

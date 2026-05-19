@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -18,8 +22,9 @@ public class Comanda extends Base {
     private LocalDateTime fechaEntregaComanda;
     @Enumerated(EnumType.STRING)
     private EstadoComanda estadoComanda;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Cliente cliente;
-    @ManyToOne
-    private ReservaMensa reservaMensa;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comanda", orphanRemoval = true)
+    @SQLRestriction("eliminado = false")
+    private List<DetalleComanda> detalleComandas = new ArrayList<>();
 }

@@ -12,16 +12,14 @@ public interface ComandaMapper extends BaseMapper<Comanda, ComandaDto, ComandaCr
 
     @Override
     @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "reservaMensa", ignore = true)
     Comanda toEntityCreate(ComandaCreateDto dto);
 
     @Override
     @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "reservaMensa", ignore = true)
     Comanda toUpdate(@MappingTarget Comanda entity, ComandaCreateDto dto);
 
     @Override
     @Mapping(target = "clienteId", ignore = true)
-    @Mapping(target = "reservaMensaId", ignore = true)
+    @Mapping(target = "reservaMesaId", ignore = true)
     ComandaDto toDTO(Comanda entity);
 }

@@ -8,7 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface DetalleFacturaMapper extends BaseMapper<DetalleFactura, DetalleFacturaDto, DetalleFacturaCreateDto, DetalleFacturaCreateDto> {
+public interface DetalleFacturaMapper
+        extends BaseMapper<DetalleFactura, DetalleFacturaDto, DetalleFacturaCreateDto, DetalleFacturaCreateDto> {
 
     @Override
     @Mapping(target = "factura", ignore = true)

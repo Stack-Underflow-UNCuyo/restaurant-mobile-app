@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -21,6 +25,7 @@ public class Factura extends Base {
     private FormaDePago formaDePago;
     @ManyToOne
     private Promocion promocion;
-    @ManyToOne
-    private Empresa empresa;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "factura", orphanRemoval = true)
+    @SQLRestriction("eliminado = false")
+    List<DetalleFactura> detalleFacturas = new ArrayList<>();
 }
