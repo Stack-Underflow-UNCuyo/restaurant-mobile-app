@@ -24,4 +24,6 @@ public class Usuario extends Base {
     private Rol rol;
     @ManyToOne
     private Imagen imagen;
+    @ManyToOne
+    private Persona persona;
 }

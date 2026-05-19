@@ -8,8 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseController<Entity extends Base, Dto extends BaseDto, CreateDto, UpdateDto> {
 
@@ -22,9 +22,9 @@ public abstract class BaseController<Entity extends Base, Dto extends BaseDto, C
     }
 
     @GetMapping
-    public ResponseEntity<List<Dto>> getAll() throws Exception {
+    public ResponseEntity<List<Dto>> getAll(@RequestParam Map<String, String> params) throws Exception {
         List<Entity> entities = service.findAll();
-        return ResponseEntity.ok(mapper.toDTOsList(entities)); //entity a dto
+        return ResponseEntity.ok(mapper.toDTOsList(entities)); // entity a dto
     }
 
     @GetMapping("/{id}")
@@ -35,13 +35,14 @@ public abstract class BaseController<Entity extends Base, Dto extends BaseDto, C
 
     @PostMapping
     public ResponseEntity<Dto> save(@Valid @RequestBody CreateDto createDto) throws Exception {
-        Entity entity = mapper.toEntityCreate(createDto); //dto a entity
+        Entity entity = mapper.toEntityCreate(createDto); // dto a entity
         Entity savedEntity = service.save(entity);
         return ResponseEntity.ok(mapper.toDTO(savedEntity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Dto> update(@PathVariable String id, @Valid @RequestBody UpdateDto updateDto) throws Exception {
+    public ResponseEntity<Dto> update(@PathVariable String id, @Valid @RequestBody UpdateDto updateDto)
+            throws Exception {
         Entity existingEntity = service.findById(id);
         Entity updatedEntity = mapper.toUpdate(existingEntity, updateDto);
         return ResponseEntity.ok(mapper.toDTO(service.update(id, updatedEntity)));

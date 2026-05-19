@@ -14,5 +14,5 @@ public class ComandaCreateDto {
     private LocalDateTime fechaEntregaComanda;
     private EstadoComanda estadoComanda;
     private String clienteId;
-    private String reservaMensaId;
+    private String reservaMesaId;
 }

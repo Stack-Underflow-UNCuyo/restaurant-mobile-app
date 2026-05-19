@@ -13,24 +13,20 @@ public interface ComandaRestaurantMapper extends
 
     @Override
     @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "reservaMensa", ignore = true)
     @Mapping(target = "empleado", ignore = true)
     ComandaRestaurant toEntity(ComandaRestaurantDto dto);
 
     @Override
     @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "reservaMensa", ignore = true)
     @Mapping(target = "empleado", ignore = true)
     ComandaRestaurant toEntityCreate(ComandaRestaurantCreateDto dto);
 
     @Override
     @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "reservaMensa", ignore = true)
     @Mapping(target = "empleado", ignore = true)
     ComandaRestaurant toUpdate(@MappingTarget ComandaRestaurant entity, ComandaRestaurantCreateDto dto);
 
     @Override
     @Mapping(target = "clienteId", source = "cliente.id")
-    @Mapping(target = "reservaMensaId", source = "reservaMensa.id")
     ComandaRestaurantDto toDTO(ComandaRestaurant entity);
 }

@@ -12,4 +12,6 @@ import lombok.*;
 public class ComandaRestaurant extends Comanda {
     @ManyToOne
     private Empleado empleado;
+    @ManyToOne
+    private MesaRestaurante mesaRestaurante;
 }

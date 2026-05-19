@@ -13,12 +13,10 @@ public interface FacturaMapper extends BaseMapper<Factura, FacturaDto, FacturaCr
     @Override
     @Mapping(target = "formaDePago", ignore = true)
     @Mapping(target = "promocion", ignore = true)
-    @Mapping(target = "empresa", ignore = true)
     Factura toEntityCreate(FacturaCreateDto dto);
 
     @Override
     @Mapping(target = "formaDePago", ignore = true)
     @Mapping(target = "promocion", ignore = true)
-    @Mapping(target = "empresa", ignore = true)
     Factura toUpdate(@MappingTarget Factura entity, FacturaCreateDto dto);
 }

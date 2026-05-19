@@ -15,5 +15,5 @@ public class ComandaDto extends BaseDto {
     private LocalDateTime fechaEntregaComanda;
     private EstadoComanda estadoComanda;
     private String clienteId;
-    private String reservaMensaId;
+    private String reservaMesaId;
 }
