@@ -1,7 +1,6 @@
 package com.cm.restaurant_server.business.domain.dto.provincia;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

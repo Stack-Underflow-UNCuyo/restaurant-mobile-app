@@ -7,11 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {DepartamentoMapper.class})
 public interface LocalidadMapper extends BaseMapper<Localidad, LocalidadDto, LocalidadCreateDto, LocalidadCreateDto> {
 
     @Override
-    @Mapping(target = "departamento", ignore = true)
+    @Mapping(target = "departamento.id", source = "departamentoId")
+    Localidad toEntityCreate(LocalidadCreateDto dto);
+
+    @Override
+    @Mapping(target = "departamento.id", source = "departamentoId")
     Localidad toUpdate(@MappingTarget Localidad entity, LocalidadCreateDto dto);
 
     @Override

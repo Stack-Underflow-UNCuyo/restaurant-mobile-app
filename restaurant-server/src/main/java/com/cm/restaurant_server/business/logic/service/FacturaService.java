@@ -24,7 +24,7 @@ public class FacturaService extends BaseService<Factura> {
     }
 
     public List<Factura> listarFacturaPorEstado(EstadoFactura estado) {
-        return this.getRepository().findByEstadoFactura(estado);
+        return this.getRepository().findByEstado(estado);
     }
 
     @Transactional

@@ -7,11 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {PaisMapper.class})
 public interface ProvinciaMapper extends BaseMapper<Provincia, ProvinciaDto, ProvinciaCreateDto, ProvinciaCreateDto> {
 
     @Override
-    @Mapping(target = "pais", ignore = true)
+    @Mapping(target = "pais.id", source = "paisId")
+    Provincia toEntityCreate(ProvinciaCreateDto dto);
+
+    @Override
+    @Mapping(target = "pais.id", source = "paisId")
     Provincia toUpdate(@MappingTarget Provincia entity, ProvinciaCreateDto dto);
 
     @Override

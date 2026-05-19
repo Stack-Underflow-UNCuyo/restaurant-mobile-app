@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FacturaRepository extends BaseRepository<Factura> {
-    List<Factura> findByEstadoFactura(EstadoFactura estadoFactura);
+    List<Factura> findByEstado(EstadoFactura estado);
 }
