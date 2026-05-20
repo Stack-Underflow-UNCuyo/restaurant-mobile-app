@@ -1,3 +1,4 @@
+//corre en el servidor de Next antes de que cualquier pagina se renderice
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

@@ -1,3 +1,4 @@
+//automatiza las peticiones a Spring
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8081";
 
 function getToken(): string | null {
@@ -20,7 +21,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  if (!res.ok) {
+    const body = await res.text();
+    console.error("API error:", res.status, body);
+    throw new Error(`${res.status} ${res.statusText}`);
+  }
   // 204 No Content has no body
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;

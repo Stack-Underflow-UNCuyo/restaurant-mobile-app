@@ -43,9 +43,9 @@ public abstract class BaseController<Entity extends Base, Dto extends BaseDto, C
     @PutMapping("/{id}")
     public ResponseEntity<Dto> update(@PathVariable String id, @Valid @RequestBody UpdateDto updateDto)
             throws Exception {
-        Entity existingEntity = service.findById(id);
-        Entity updatedEntity = mapper.toUpdate(existingEntity, updateDto);
-        return ResponseEntity.ok(mapper.toDTO(service.update(id, updatedEntity)));
+        Entity entityFromDto = mapper.toEntityCreate((CreateDto) updateDto);
+        return ResponseEntity.ok(mapper.toDTO(service.update(id, entityFromDto)));
+        
     }
 
     @DeleteMapping("/{id}")

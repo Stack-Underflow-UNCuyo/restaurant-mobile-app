@@ -1,8 +1,12 @@
 package com.cm.restaurant_server.business.logic.service;
 
 import com.cm.restaurant_server.business.domain.entity.Departamento;
+import com.cm.restaurant_server.business.domain.entity.Localidad;
+import com.cm.restaurant_server.business.domain.entity.Provincia;
 import com.cm.restaurant_server.business.logic.error.ErrorServiceException;
 import com.cm.restaurant_server.business.repository.DepartamentoRepository;
+import com.cm.restaurant_server.business.repository.ProvinciaRepository;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +17,13 @@ import java.util.Optional;
 public class DepartamentoService extends BaseService<Departamento> {
 
     private final DepartamentoRepository departamentoRepository;
+    private final ProvinciaRepository provinciaRepository;
 
     @Autowired
-    public DepartamentoService(DepartamentoRepository repository) {
+    public DepartamentoService(DepartamentoRepository repository, ProvinciaRepository provinciaRepository) {
         super(repository);
         this.departamentoRepository = repository;
+        this.provinciaRepository = provinciaRepository;
     }
 
     @Transactional
@@ -25,6 +31,31 @@ public class DepartamentoService extends BaseService<Departamento> {
         try {
             Optional<Departamento> entityOptional = departamentoRepository.findByNombreAndEliminadoFalse(name);
             return entityOptional.orElseThrow(() -> new Exception("Entity not found or marked as deleted"));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Departamento update(String id, Departamento departamentoUpdated) throws Exception {
+        try {
+            // service busca la entidad existente 
+            Departamento existing = departamentoRepository.findByIdAndEliminadoFalse(id)
+                .orElseThrow(() -> new Exception("Entidad no encontrada o marcada como eliminada"));
+
+            // busca la provincia indicada en el dto
+            Provincia provincia = provinciaRepository
+                .findById(departamentoUpdated.getProvincia().getId())
+                .orElseThrow(() -> new ErrorServiceException("Debe indicar la provincia."));
+
+            // actualizar campos 
+            existing.setNombre(departamentoUpdated.getNombre());
+            existing.setProvincia(provincia);
+
+            validar(existing, CasoValidar.UPDATE);
+
+            return departamentoRepository.save(existing);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
