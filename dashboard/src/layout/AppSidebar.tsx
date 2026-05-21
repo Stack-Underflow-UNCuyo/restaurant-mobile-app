@@ -70,6 +70,7 @@ const navItems: NavItem[] = [
       { name: "Provincias", path: "/direccion/provincias", pro: false },
       { name: "Departamentos", path: "/direccion/departamentos", pro: false },
       { name: "Localidades", path: "/direccion/localidades", pro: false },
+      { name: "Direcciones", path: "/direccion/direcciones", pro: false },
     ],
   },
 ];

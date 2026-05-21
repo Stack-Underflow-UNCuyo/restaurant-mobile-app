@@ -12,11 +12,11 @@ import org.mapstruct.MappingTarget;
 public interface DireccionMapper extends BaseMapper<Direccion, DireccionDto, DireccionCreateDto, DireccionCreateDto> {
 
     @Override
-    @Mapping(target = "localidad", ignore = true)
+    @Mapping(target = "localidad.id", source = "localidadId")
     Direccion toUpdate(@MappingTarget Direccion entity, DireccionCreateDto dto);
 
     @Override
-    @Mapping(target = "localidad", ignore = true)
+    @Mapping(target = "localidad.id", source = "localidadId")
     Direccion toEntityCreate(DireccionCreateDto dto);
 
     @Override

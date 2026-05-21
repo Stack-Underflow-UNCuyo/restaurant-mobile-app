@@ -1,7 +1,10 @@
 package com.cm.restaurant_server.business.logic.service;
 
+import com.cm.restaurant_server.business.domain.entity.Departamento;
+import com.cm.restaurant_server.business.domain.entity.Direccion;
 import com.cm.restaurant_server.business.domain.entity.Localidad;
 import com.cm.restaurant_server.business.logic.error.ErrorServiceException;
+import com.cm.restaurant_server.business.repository.DepartamentoRepository;
 import com.cm.restaurant_server.business.repository.LocalidadRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +15,14 @@ import java.util.Optional;
 @Service
 public class LocalidadService extends BaseService<Localidad> {
 
+    private final DepartamentoRepository departamentoRepository;
     private final LocalidadRepository localidadRepository;
 
     @Autowired
-    public LocalidadService(LocalidadRepository repository) {
+    public LocalidadService(LocalidadRepository repository, DepartamentoRepository departamentoRepository) {
         super(repository);
         this.localidadRepository = repository;
+        this.departamentoRepository = departamentoRepository;
     }
 
     @Transactional
@@ -35,6 +40,32 @@ public class LocalidadService extends BaseService<Localidad> {
         try {
             Optional<Localidad> entityOptional = localidadRepository.findByCodigoPostalAndEliminadoFalse(codigoPostal);
             return entityOptional.orElseThrow(() -> new Exception("Entity not found or marked as deleted"));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Localidad update(String id, Localidad localidadUpdated) throws Exception {
+        try {
+            // service busca la entidad existente 
+            Localidad existing = localidadRepository.findByIdAndEliminadoFalse(id)
+                .orElseThrow(() -> new Exception("Entidad no encontrada o marcada como eliminada"));
+
+            // busca la localidad indicada en el dto
+            Departamento departamento = departamentoRepository
+                .findById(localidadUpdated.getDepartamento().getId())
+                .orElseThrow(() -> new ErrorServiceException("Debe indicar la localidad."));
+
+            // actualizar campos 
+            existing.setNombre(localidadUpdated.getNombre());
+            existing.setCodigoPostal(localidadUpdated.getCodigoPostal());
+            existing.setDepartamento(departamento);
+
+            validar(existing, CasoValidar.UPDATE);
+
+            return localidadRepository.save(existing);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

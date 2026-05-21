@@ -38,7 +38,7 @@ export default function DepartamentoTable() {
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
 
   useEffect(() => {
-    Promise.all([
+    Promise.all([ //le pega al backend a dos endpoints en paralelo (departamentos y provincias)
       departamentoService.getAll(),
       provinciaService.getAll(),
     ])

@@ -21,3 +21,12 @@ export interface Localidad {
   codigoPostal: string;
   departamento: Departamento;
 }
+
+export interface Direccion {
+  id: number;
+  calle: string;
+  numeracion: string;
+  barrio: string;
+  observacion?: string;
+  localidad: Localidad;
+}

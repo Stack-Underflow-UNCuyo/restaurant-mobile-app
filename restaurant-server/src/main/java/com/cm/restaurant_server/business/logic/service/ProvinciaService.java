@@ -1,7 +1,11 @@
 package com.cm.restaurant_server.business.logic.service;
 
+import com.cm.restaurant_server.business.domain.entity.Departamento;
+import com.cm.restaurant_server.business.domain.entity.Localidad;
+import com.cm.restaurant_server.business.domain.entity.Pais;
 import com.cm.restaurant_server.business.domain.entity.Provincia;
 import com.cm.restaurant_server.business.logic.error.ErrorServiceException;
+import com.cm.restaurant_server.business.repository.PaisRepository;
 import com.cm.restaurant_server.business.repository.ProvinciaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +17,13 @@ import java.util.Optional;
 public class ProvinciaService extends BaseService<Provincia> {
 
     private final ProvinciaRepository provinciaRepository;
+    private final PaisRepository paisRepository;
 
     @Autowired
-    public ProvinciaService(ProvinciaRepository repository) {
+    public ProvinciaService(ProvinciaRepository repository, PaisRepository paisRepository) {
         super(repository);
         this.provinciaRepository = repository;
+        this.paisRepository = paisRepository;
     }
 
     @Transactional
@@ -25,6 +31,31 @@ public class ProvinciaService extends BaseService<Provincia> {
         try {
             Optional<Provincia> entityOptional = provinciaRepository.findByNombreAndEliminadoFalse(name);
             return entityOptional.orElseThrow(() -> new Exception("Entity not found or marked as deleted"));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Provincia update(String id, Provincia provinciaUpdated) throws Exception {
+        try {
+            // service busca la entidad existente 
+            Provincia existing = provinciaRepository.findByIdAndEliminadoFalse(id)
+                .orElseThrow(() -> new Exception("Entidad no encontrada o marcada como eliminada"));
+
+            // busca la localidad indicada en el dto
+            Pais pais = paisRepository
+                .findById(provinciaUpdated.getPais().getId())
+                .orElseThrow(() -> new ErrorServiceException("Debe indicar el país."));
+
+            // actualizar campos 
+            existing.setNombre(provinciaUpdated.getNombre());
+            existing.setPais(pais);
+
+            validar(existing, CasoValidar.UPDATE);
+
+            return provinciaRepository.save(existing);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
