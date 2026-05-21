@@ -15,8 +15,7 @@ public class PromocionService extends BaseService<Promocion> {
 
     @Override
     protected void validar(Promocion entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+
     }
 
     public List<Promocion> buscarPromocionPorDescripcion(String descripcion) {

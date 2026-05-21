@@ -12,7 +12,6 @@ public class DetalleComandaService extends BaseService<DetalleComanda> {
 
     @Override
     protected void validar(DetalleComanda entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+
     }
 }
