@@ -11,10 +11,10 @@ import org.mapstruct.MappingTarget;
 public interface StockMapper extends BaseMapper<Stock, StockDto, StockCreateDto, StockCreateDto> {
 
     @Override
-    @Mapping(target = "articulo", ignore = true)
+    @Mapping(target = "articulo.id", source = "articuloId")
     Stock toEntityCreate(StockCreateDto dto);
 
     @Override
-    @Mapping(target = "articulo", ignore = true)
+    @Mapping(target = "articulo.id", source = "articuloId")
     Stock toUpdate(@MappingTarget Stock entity, StockCreateDto dto);
 }

@@ -48,7 +48,7 @@ export interface Articulo {
 export interface Stock {
   id: number;
   articulo: Articulo;
-  cantidad: number;
+  cantidadActual: number;
   minimo: number;
 }
 
