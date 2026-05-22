@@ -59,8 +59,8 @@ export enum TipoMovimientoStock {
 
 export interface MovimientoStock {
   id: number;
-  fecha: string;
+  fechaMovimiento: string;
   cantidad: number;
-  tipo: TipoMovimientoStock;
+  tipoMovimientoStock: TipoMovimientoStock;
   stock: Stock;
 }

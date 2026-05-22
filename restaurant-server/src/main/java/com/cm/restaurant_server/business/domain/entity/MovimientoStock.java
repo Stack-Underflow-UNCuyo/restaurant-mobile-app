@@ -4,7 +4,7 @@ import com.cm.restaurant_server.business.domain.enumeration.TipoMovimientoStock;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimientoStock extends Base {
-    private LocalDate fechaMovimiento;
+    private LocalDateTime fechaMovimiento;
     private double cantidad;
     @Enumerated(EnumType.STRING)
     private TipoMovimientoStock tipoMovimientoStock;

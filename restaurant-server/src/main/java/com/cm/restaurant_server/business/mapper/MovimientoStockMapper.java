@@ -8,13 +8,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface MovimientoStockMapper extends BaseMapper<MovimientoStock, MovimientoStockDto, MovimientoStockCreateDto, MovimientoStockCreateDto> {
+public interface MovimientoStockMapper
+        extends BaseMapper<MovimientoStock, MovimientoStockDto, MovimientoStockCreateDto, MovimientoStockCreateDto> {
 
     @Override
-    @Mapping(target = "stock", ignore = true)
+    @Mapping(target = "stock.id", source = "stockId")
     MovimientoStock toEntityCreate(MovimientoStockCreateDto dto);
 
     @Override
-    @Mapping(target = "stock", ignore = true)
+    @Mapping(target = "stock.id", source = "stockId")
     MovimientoStock toUpdate(@MappingTarget MovimientoStock entity, MovimientoStockCreateDto dto);
 }

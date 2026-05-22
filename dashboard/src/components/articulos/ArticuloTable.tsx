@@ -173,7 +173,7 @@ export default function ArticuloTable() {
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="py-10 text-center">
+                  <TableCell className="py-10 text-center">
                     <div className="flex justify-center">
                       <Spinner />
                     </div>

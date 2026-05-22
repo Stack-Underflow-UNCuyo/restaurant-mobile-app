@@ -1,17 +1,17 @@
-import UnidadDeMedidaTable from "@/components/articulos/UnidadDeMedidaTable";
+import MovimientoStockTable from "@/components/articulos/MovimientoStockTable";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Unidad de Medida | Restaurant Dashboard",
+  title: "Movimientos de Stock | Restaurant Dashboard",
 };
 
-export default function UnidadDeMedidaPage() {
+export default function MovimientosStockPage() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Unidad de Medida" />
-      <UnidadDeMedidaTable />
+      <PageBreadcrumb pageTitle="Movimientos de Stock" />
+      <MovimientoStockTable />
     </div>
   );
 }
