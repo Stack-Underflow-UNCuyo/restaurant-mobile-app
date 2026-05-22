@@ -30,3 +30,37 @@ export interface Direccion {
   observacion?: string;
   localidad: Localidad;
 }
+
+export interface UnidadDeMedida {
+  id: number;
+  nombre: string;
+}
+
+export interface Articulo {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  sinTAC: boolean;
+  esIngrediente: boolean;
+  unidadDeMedida: UnidadDeMedida;
+}
+
+export interface Stock {
+  id: number;
+  articulo: Articulo;
+  cantidad: number;
+  minimo: number;
+}
+
+export enum TipoMovimientoStock {
+  ENTRADA = "ENTRADA",
+  SALIDA = "SALIDA",
+}
+
+export interface MovimientoStock {
+  id: number;
+  fecha: string;
+  cantidad: number;
+  tipo: TipoMovimientoStock;
+  stock: Stock;
+}
