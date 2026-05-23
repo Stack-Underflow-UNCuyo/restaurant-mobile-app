@@ -14,7 +14,6 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
@@ -82,6 +81,17 @@ const navItems: NavItem[] = [
       { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
+
+  {
+    icon: <FolderIcon />,
+    name: "Artículos",
+    subItems: [
+      { name: "Artículo", path: "/articulos/articulos", pro: false },
+      { name: "Unidad de Medida", path: "/articulos/unidades-de-medida", pro: false },
+      { name: "Stock", path: "/articulos/stocks", pro: false },
+      { name: "Movimiento de Stock", path: "/articulos/movimientos-stock", pro: false },
+    ],
+  },
   
 ];
 
@@ -104,14 +114,6 @@ const othersItems: NavItem[] = [
       { name: "Buttons", path: "/buttons", pro: false },
       { name: "Images", path: "/images", pro: false },
       { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
     ],
   },
 ];

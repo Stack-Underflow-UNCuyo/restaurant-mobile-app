@@ -15,8 +15,7 @@ public class ReservaMesaService extends BaseService<ReservaMesa> {
 
     @Override
     protected void validar(ReservaMesa entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+
     }
 
     public List<ReservaMesa> buscarReservaMesaPorCliente(String nombreApellidoCliente) {

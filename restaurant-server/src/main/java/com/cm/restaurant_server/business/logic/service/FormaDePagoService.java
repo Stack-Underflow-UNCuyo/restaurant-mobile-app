@@ -13,7 +13,6 @@ public class FormaDePagoService extends BaseService<FormaDePago> {
 
     @Override
     protected void validar(FormaDePago entity, CasoValidar caso) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validar'");
+
     }
 }
