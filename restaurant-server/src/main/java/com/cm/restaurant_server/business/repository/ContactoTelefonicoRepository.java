@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ContactoTelefonicoRepository extends BaseRepository<ContactoTelefonico> {
 
-    boolean existsByTelefonoAndPersona_IdAndEliminadoFalse(String telefono, String idPersona);
+    boolean existsByTelefonoAndEliminadoFalse(String telefono);
 
-    Optional<ContactoTelefonico> findByTelefonoAndPersona_IdAndTipoContactoAndTipoTelefonoAndEliminadoFalse(
-            String telefono, String idPersona, TipoContacto tipoContacto, TipoTelefono tipoTelefono);
+    Optional<ContactoTelefonico> findByTelefonoAndTipoContactoAndTipoTelefonoAndEliminadoFalse(
+            String telefono, TipoContacto tipoContacto, TipoTelefono tipoTelefono);
 }

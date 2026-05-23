@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "api/usuario")
+@RequestMapping(path = "/api/v1/usuarios")
 public class UsuarioController extends BaseController<Usuario, UsuarioDto, UsuarioCreateDto, UsuarioCreateDto> {
 
     @Autowired
@@ -25,7 +25,8 @@ public class UsuarioController extends BaseController<Usuario, UsuarioDto, Usuar
     @PostMapping("/crear")
     public ResponseEntity<?> crearUsuario(@RequestBody UsuarioCreateDto usuarioDto) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(usuarioService.save(mapper.toEntityCreate(usuarioDto)));
+            Usuario usuarioEntity = mapper.toEntityCreate(usuarioDto);
+            return ResponseEntity.status(HttpStatus.OK).body(mapper.toDTO(usuarioService.crear(usuarioEntity)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"" + e.getMessage() + "\"}");
         }

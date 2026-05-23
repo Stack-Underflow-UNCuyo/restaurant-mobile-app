@@ -11,14 +11,11 @@ import org.mapstruct.MappingTarget;
 public interface ContactoCorreoElectronicoMapper extends BaseMapper<ContactoCorreoElectronico, ContactoCorreoElectronicoDto, ContactoCorreoElectronicoCreateDto, ContactoCorreoElectronicoCreateDto> {
 
     @Override
-    @Mapping(target = "persona", ignore = true)
     ContactoCorreoElectronico toEntityCreate(ContactoCorreoElectronicoCreateDto dto);
 
     @Override
-    @Mapping(target = "persona", ignore = true)
     ContactoCorreoElectronico toUpdate(@MappingTarget ContactoCorreoElectronico entity, ContactoCorreoElectronicoCreateDto dto);
 
     @Override
-    @Mapping(target = "personaId", ignore = true)
     ContactoCorreoElectronicoDto toDTO(ContactoCorreoElectronico entity);
 }

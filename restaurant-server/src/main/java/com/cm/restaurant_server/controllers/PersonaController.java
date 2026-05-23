@@ -16,11 +16,4 @@ public class PersonaController extends BaseController<Persona, PersonaDto, Perso
     public PersonaController(@Qualifier("personaService") PersonaService<Persona> service, PersonaMapper mapper) {
         super(service, mapper);
     }
-
-    @PutMapping("/{id}/usuario/{usuarioId}")
-    public ResponseEntity<PersonaDto> vincularUsuario(
-            @PathVariable String id, @PathVariable String usuarioId) throws Exception {
-        Persona persona = ((PersonaService<Persona>) service).vincularUsuario(id, usuarioId);
-        return ResponseEntity.ok(mapper.toDTO(persona));
-    }
 }

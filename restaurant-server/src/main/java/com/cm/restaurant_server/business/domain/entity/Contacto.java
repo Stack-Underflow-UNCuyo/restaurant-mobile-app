@@ -17,6 +17,4 @@ public abstract class Contacto extends Base {
     @Enumerated(EnumType.STRING)
     private TipoContacto tipoContacto;
     private String observacion;
-    @ManyToOne
-    private Persona persona;
 }

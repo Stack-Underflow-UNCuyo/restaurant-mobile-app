@@ -18,4 +18,6 @@ public class UsuarioCreateDto {
     @NotBlank(message = "El campo no puede ser vacio.")
     private String clave;
     private Rol rol;
+    private String personaId;
+    private String imagenId;
 }

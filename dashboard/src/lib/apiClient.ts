@@ -11,6 +11,19 @@ function getToken(): string | null {
   );
 }
 
+export class ApiError extends Error {
+  public status: number;
+  //Solo presente en errores de validación: campo - mensaje
+  public fieldErrors?: Record<string, string>;
+
+  constructor(message: string, status: number, fieldErrors?: Record<string, string>) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.fieldErrors = fieldErrors;
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -22,12 +35,33 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     },
   });
   if (!res.ok) {
-    const body = await res.text();
-    console.error("API error:", res.status, body);
-    throw new Error(`${res.status} ${res.statusText}`);
+    // parsear el ErrorMessage que devuelve GlobalExceptionHandler
+    let message = `${res.status} ${res.statusText}`;
+    let fieldErrors: Record<string, string> | undefined;
+
+    try {
+      const body = await res.json();
+      // body.message :descripción general
+      // body.details: string (excepción genérica) o Record<string,string> (validación)
+      if (typeof body.details === "string" && body.details.trim()) {
+        message = body.details;
+      } else if (typeof body.message === "string" && body.message.trim()) {
+        message = body.message;
+      }
+      if (typeof body.details === "object" && body.details !== null) {
+        fieldErrors = body.details as Record<string, string>;
+      }
+    } catch {
+      // dejamos el mensaje genérico de arriba
+    }
+
+    console.error("API error:", res.status, message, fieldErrors);
+    throw new ApiError(message, res.status, fieldErrors);
+  
   }
   // 204 No Content has no body
   if (res.status === 204) return undefined as T;
+  
   return res.json() as Promise<T>;
 }
 

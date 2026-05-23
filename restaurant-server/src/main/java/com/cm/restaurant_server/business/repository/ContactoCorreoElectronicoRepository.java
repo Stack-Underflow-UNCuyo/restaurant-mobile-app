@@ -9,8 +9,8 @@ import java.util.Optional;
 @Repository
 public interface ContactoCorreoElectronicoRepository extends BaseRepository<ContactoCorreoElectronico> {
 
-    boolean existsByEmailAndPersona_IdAndEliminadoFalse(String email, String idPersona);
+    boolean existsByEmailAndEliminadoFalse(String email);
 
-    Optional<ContactoCorreoElectronico> findByEmailAndPersona_IdAndTipoContactoAndEliminadoFalse(
-            String email, String idPersona, TipoContacto tipoContacto);
+    Optional<ContactoCorreoElectronico> findByEmailAndTipoContactoAndEliminadoFalse(
+            String email, TipoContacto tipoContacto);
 }
