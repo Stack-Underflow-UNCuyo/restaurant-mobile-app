@@ -29,9 +29,6 @@ public class ContactoCorreoElectronicoService extends BaseService<ContactoCorreo
             if (contacto.getTipoContacto() == null) {
                 throw new ErrorServiceException("Debe indicar qué tipo de contacto es");
             }
-            if (contacto.getPersona() == null) {
-                throw new ErrorServiceException("Debe indicar la persona asociada al contacto");
-            }
             if (contacto.getEmail() == null || contacto.getEmail().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el email");
             }
@@ -41,18 +38,15 @@ public class ContactoCorreoElectronicoService extends BaseService<ContactoCorreo
 
             switch (caso) {
                 case SAVE: {
-                    if (contactoRepository.existsByEmailAndPersona_IdAndEliminadoFalse(contacto.getEmail().trim(),
-                            contacto.getPersona().getId())) {
-                        throw new ErrorServiceException(
-                                contacto.getPersona().getNombre() + " ya cuenta con el correo electrónico "
+                    if (contactoRepository.existsByEmailAndEliminadoFalse(contacto.getEmail().trim())) {
+                        throw new ErrorServiceException("El sistema ya cuenta con el correo electrónico "
                                         + contacto.getEmail() + " registrado en el sistema");
                     }
                     break;
                 }
                 case UPDATE: {
                     Optional<ContactoCorreoElectronico> existenteOptional = contactoRepository
-                            .findByEmailAndPersona_IdAndTipoContactoAndEliminadoFalse(contacto.getEmail().trim(),
-                                    contacto.getPersona().getId(), contacto.getTipoContacto());
+                            .findByEmailAndTipoContactoAndEliminadoFalse(contacto.getEmail().trim(),contacto.getTipoContacto());
 
                     if (existenteOptional.isPresent()) {
                         ContactoCorreoElectronico contactoExistente = existenteOptional.get();

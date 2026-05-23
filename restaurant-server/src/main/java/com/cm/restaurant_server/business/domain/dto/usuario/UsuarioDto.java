@@ -15,5 +15,7 @@ public class UsuarioDto extends BaseDto {
     private String email;
     private String clave;
     private Rol rol;
+    private String personaId;
+    private String imagenId;
 
 }

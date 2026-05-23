@@ -16,10 +16,4 @@ public class ClienteController extends BaseController<Cliente, ClienteDto, Clien
         super(service, mapper);
     }
 
-    @PutMapping("/{id}/usuario/{usuarioId}")
-    public ResponseEntity<ClienteDto> vincularUsuario(
-            @PathVariable String id, @PathVariable String usuarioId) throws Exception {
-        Cliente cliente = ((ClienteService) service).vincularUsuario(id, usuarioId);
-        return ResponseEntity.ok(mapper.toDTO(cliente));
-    }
 }

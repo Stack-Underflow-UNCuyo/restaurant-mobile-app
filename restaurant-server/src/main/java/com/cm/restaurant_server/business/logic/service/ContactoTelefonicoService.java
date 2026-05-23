@@ -34,9 +34,7 @@ public class ContactoTelefonicoService extends BaseService<ContactoTelefonico> {
             if (contacto.getTipoTelefono() == null) {
                 throw new ErrorServiceException("Debe indicar qué tipo de teléfono es (Fijo o Celular)");
             }
-            if (contacto.getPersona() == null || contacto.getPersona().getId() == null) {
-                throw new ErrorServiceException("Debe indicar la persona asociada al contacto");
-            }
+
             if (contacto.getTelefono() == null || contacto.getTelefono().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el teléfono");
             }
@@ -46,18 +44,16 @@ public class ContactoTelefonicoService extends BaseService<ContactoTelefonico> {
 
             switch (caso) {
                 case SAVE: {
-                    if (contactoRepository.existsByTelefonoAndPersona_IdAndEliminadoFalse(
-                            contacto.getTelefono().trim(), contacto.getPersona().getId())) {
-                        throw new ErrorServiceException(contacto.getPersona().getNombre() +
-                                " ya cuenta con el teléfono " + contacto.getTelefono() + " registrado en el sistema");
+                    if (contactoRepository.existsByTelefonoAndEliminadoFalse(
+                            contacto.getTelefono().trim())) {
+                        throw new ErrorServiceException("El sistema ya cuenta con el teléfono " + contacto.getTelefono() + " registrado");
                     }
                     break;
                 }
                 case UPDATE: {
                     Optional<ContactoTelefonico> existenteOptional = contactoRepository
-                            .findByTelefonoAndPersona_IdAndTipoContactoAndTipoTelefonoAndEliminadoFalse(
+                            .findByTelefonoAndTipoContactoAndTipoTelefonoAndEliminadoFalse(
                                     contacto.getTelefono().trim(),
-                                    contacto.getPersona().getId(),
                                     contacto.getTipoContacto(),
                                     contacto.getTipoTelefono());
 

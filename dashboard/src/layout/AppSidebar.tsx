@@ -29,6 +29,26 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
+    icon: <FolderIcon />,
+    name: "Dirección",
+    subItems: [
+      { name: "Países", path: "/direccion/paises", pro: false },
+      { name: "Provincias", path: "/direccion/provincias", pro: false },
+      { name: "Departamentos", path: "/direccion/departamentos", pro: false },
+      { name: "Localidades", path: "/direccion/localidades", pro: false },
+      { name: "Direcciones", path: "/direccion/direcciones", pro: false },
+    ],
+  },
+  {
+    icon: <FolderIcon />,
+    name: "Usuarios",
+    subItems: [
+      { name: "Crear usuario", path: "/usuario/crear", pro: false },
+      { name: "Listar usuarios", path: "/usuario/listar", pro: false },
+      { name: "Listar empleados", path: "/usuario/listarEmpleados", pro: false },
+    ],
+  },
+  {
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],
@@ -62,17 +82,7 @@ const navItems: NavItem[] = [
       { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
-  {
-    icon: <FolderIcon />,
-    name: "Dirección",
-    subItems: [
-      { name: "Países", path: "/direccion/paises", pro: false },
-      { name: "Provincias", path: "/direccion/provincias", pro: false },
-      { name: "Departamentos", path: "/direccion/departamentos", pro: false },
-      { name: "Localidades", path: "/direccion/localidades", pro: false },
-      { name: "Direcciones", path: "/direccion/direcciones", pro: false },
-    ],
-  },
+  
 ];
 
 const othersItems: NavItem[] = [

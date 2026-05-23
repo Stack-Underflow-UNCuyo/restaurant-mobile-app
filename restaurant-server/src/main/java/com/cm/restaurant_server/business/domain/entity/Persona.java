@@ -24,8 +24,10 @@ public class Persona extends Base {
     private String numeroDocumento;
     @ManyToOne
     private Direccion direccion;
-    @ManyToOne
-    private Usuario usuario;
-    @OneToMany(mappedBy = "persona")
-    private List<Contacto> contactos = new ArrayList<>();
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "persona_id")
+    private List<ContactoCorreoElectronico> contactosCorreosElectronicos = new ArrayList<>();
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "persona_id")
+    private List<ContactoTelefonico> contactosTelefonicos = new ArrayList<>();
 }

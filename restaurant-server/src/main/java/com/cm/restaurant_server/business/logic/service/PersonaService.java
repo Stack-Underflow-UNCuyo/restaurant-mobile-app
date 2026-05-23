@@ -1,10 +1,8 @@
 package com.cm.restaurant_server.business.logic.service;
 
 import com.cm.restaurant_server.business.domain.entity.Persona;
-import com.cm.restaurant_server.business.domain.entity.Usuario;
 import com.cm.restaurant_server.business.repository.BaseRepository;
 import com.cm.restaurant_server.business.repository.PersonaRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +24,11 @@ public class PersonaService<T extends Persona> extends BaseService<T> {
         super(repository);
     }
 
-    @Transactional
-    public T vincularUsuario(String personaId, String usuarioId) throws Exception {
-        T persona = findById(personaId);
-        Usuario usuario = usuarioService.findById(usuarioId);
-        persona.setUsuario(usuario);
-        return baseRepository.save(persona);
-    }
-
     @Override
     protected void validar(T entity, CasoValidar caso) throws Exception {
+        System.out.println(entity.getNombre());
+        System.out.println("Direccion id: " +entity.getDireccion().getId());
+
         if (entity.getNombre() == null || entity.getNombre().isEmpty()) {
             throw new Exception("El nombre es obligatorio");
         }
@@ -52,7 +45,7 @@ public class PersonaService<T extends Persona> extends BaseService<T> {
             throw new Exception("El tipo de documento es obligatorio");
         }
 
-        if (entity.getDireccion() == null) {
+        if (entity.getDireccion().getId() == null) {
             throw new Exception("La dirección es obligatoria");
         }
 

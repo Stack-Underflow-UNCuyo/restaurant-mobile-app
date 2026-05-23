@@ -20,7 +20,8 @@ public class UsuarioService extends BaseService<Usuario> {
         this.repository = repository;
     }
 
-    public Usuario crear(Usuario usuario) {
+    public Usuario crear(Usuario usuario) throws Exception {
+        validar(usuario, CasoValidar.SAVE);
         usuario.setClave(new BCryptPasswordEncoder().encode(usuario.getClave()));
         return repository.save(usuario);
     }
