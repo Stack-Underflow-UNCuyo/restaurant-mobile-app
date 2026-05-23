@@ -21,6 +21,8 @@ export class ApiError extends Error {
     this.name = "ApiError";
     this.status = status;
     this.fieldErrors = fieldErrors;
+
+    Object.setPrototypeOf(this, ApiError.prototype);
   }
 }
 

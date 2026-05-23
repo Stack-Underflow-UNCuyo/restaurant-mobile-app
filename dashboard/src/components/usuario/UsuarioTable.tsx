@@ -19,6 +19,7 @@ import Spinner from "@/components/ui/Spinner";
 import { usuarioService } from "@/services/usuarioService";
 import toast from "react-hot-toast";
 import { Usuario, Rol } from "@/types/usuario";
+import { ApiError } from "@/lib/apiClient";
 
 type UsuarioFormData = {
     email: string; clave: string; rol: string; personaId: number;
@@ -44,7 +45,7 @@ export default function UsuarioTable() {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
     const [formData, setFormData] = useState<UsuarioFormData>(emptyForm);
-    const [errors, setErrors] = useState({ email: false, clave: false, rol: false });
+    const [errors, setErrors] = useState<{ email?: string; clave?: string; rol?: string; }>({});
 
     const { isOpen, openModal, closeModal } = useModal();
     const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
@@ -60,7 +61,7 @@ export default function UsuarioTable() {
     const openEdit = (item: Usuario) => {
         setEditingId(item.id);
         setFormData({ email: item.email, clave: "", rol: item.rol, personaId: item.persona.id});
-        setErrors({ email: false, clave: false, rol: false });
+        setErrors({ email: "", clave: "", rol: "" });
         openModal();
     };
 
@@ -86,10 +87,12 @@ export default function UsuarioTable() {
 
     const handleSubmit = async () => {
         const newErrors = {
-            email: !formData.email.trim(),
-            // en edición la clave es opcional (si no se toca, no se actualiza)
-            clave: editingId === null ? !formData.clave.trim() : false,
-            rol: !formData.rol,
+            email: !formData.email.trim() ? "El email es obligatorio" : undefined,
+            clave:
+                editingId === null && !formData.clave.trim()
+                    ? "La contraseña es obligatoria"
+                    : undefined,
+            rol: !formData.rol ? "Debe seleccionar un rol" : undefined,
         };
         if (Object.values(newErrors).some(Boolean)) {
             setErrors(newErrors);
@@ -112,8 +115,16 @@ export default function UsuarioTable() {
             setItems(refreshed);
             closeModal();
             toast.success("Usuario guardado");
-        } catch {
-            toast.error("Error al guardar el usuario");
+        } catch (error) {
+            if (error instanceof ApiError) {
+                toast.error(error.message);
+                // opcional: mostrar errores por campo
+                if (error.fieldErrors) {
+                    setErrors(error.fieldErrors);
+                }
+            } else {
+                toast.error("Error inesperado al guardar el usuario");
+            }
         } finally {
             setSaving(false);
         }
@@ -210,11 +221,11 @@ export default function UsuarioTable() {
                             id="edit-email"
                             placeholder="usuario@ejemplo.com"
                             defaultValue={formData.email}
-                            error={errors.email}
+                            error={!!errors.email}
                             hint={errors.email ? "El email es obligatorio" : ""}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setFormData((p) => ({ ...p, email: e.target.value }));
-                                if (errors.email) setErrors((p) => ({ ...p, email: false }));
+                                if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                             }}
                         />
                     </div>
@@ -225,11 +236,11 @@ export default function UsuarioTable() {
                             type="password"
                             placeholder="Dejar vacío para no cambiar"
                             defaultValue={formData.clave}
-                            error={errors.clave}
+                            error={!!errors.clave}
                             hint={errors.clave ? "La contraseña es obligatoria" : ""}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setFormData((p) => ({ ...p, clave: e.target.value }));
-                                if (errors.clave) setErrors((p) => ({ ...p, clave: false }));
+                                if (errors.clave) setErrors((p) => ({ ...p, clave: undefined }));
                             }}
                         />
                     </div>
@@ -241,7 +252,7 @@ export default function UsuarioTable() {
                             defaultValue={formData.rol}
                             onChange={(v) => {
                                 setFormData((p) => ({ ...p, rol: v }));
-                                if (errors.rol) setErrors((p) => ({ ...p, rol: false }));
+                                if (errors.rol) setErrors((p) => ({ ...p, rol: undefined }));
                             }}
                         />
                         {errors.rol && (
