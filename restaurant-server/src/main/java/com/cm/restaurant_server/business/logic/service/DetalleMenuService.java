@@ -14,6 +14,15 @@ public class DetalleMenuService extends BaseService<DetalleMenu> {
 
     @Override
     protected void validar(DetalleMenu entity, CasoValidar caso) throws Exception {
-
+        if (entity.getNombre() == null) {
+            throw new Exception("El nombre es obligatoria");
+        }
+        if (entity.getCantidad() <= 0) {
+            throw new Exception("La cantidad debe ser mayor a cero");
+        }
+        if (entity.getArticulo() == null) {
+            throw new Exception("Debe tener un articulo relacionado");
+        }
     }
+
 }

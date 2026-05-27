@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class CartaDto extends BaseDto {
+    private String seccionCartaId;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
 }

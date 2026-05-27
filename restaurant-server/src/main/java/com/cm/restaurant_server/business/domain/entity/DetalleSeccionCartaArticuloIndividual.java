@@ -19,10 +19,6 @@ import lombok.*;
 public class DetalleSeccionCartaArticuloIndividual extends DetalleSeccionCarta {
     private double precio;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(
-        name = "detalle_seccion_carta_articulo",
-        joinColumns = @JoinColumn(name = "detalle_id"),
-        inverseJoinColumns = @JoinColumn(name = "articulo_id")
-    )
+    @JoinTable(name = "detalle_seccion_carta_articulo", joinColumns = @JoinColumn(name = "detalle_id"), inverseJoinColumns = @JoinColumn(name = "articulo_id"))
     private List<Articulo> articulos;
 }

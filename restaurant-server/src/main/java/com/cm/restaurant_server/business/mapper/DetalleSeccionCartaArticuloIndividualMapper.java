@@ -14,13 +14,11 @@ public interface DetalleSeccionCartaArticuloIndividualMapper extends BaseMapper<
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
-    @Mapping(target = "articulos", ignore = true)
     DetalleSeccionCartaArticuloIndividual toEntityCreate(DetalleSeccionCartaArticuloIndividualCreateDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
-    @Mapping(target = "articulos", ignore = true)
     DetalleSeccionCartaArticuloIndividual toUpdate(@MappingTarget DetalleSeccionCartaArticuloIndividual entity, DetalleSeccionCartaArticuloIndividualCreateDto dto);
 }

@@ -64,3 +64,54 @@ export interface MovimientoStock {
   tipoMovimientoStock: TipoMovimientoStock;
   stock: Stock;
 }
+
+export interface DetalleMenu {
+  id: number;
+  nombre: string;
+  cantidad: number;
+  articulo: Articulo;
+}
+
+export interface Menu {
+  id: number;
+  nombre: string;
+  precio: number;
+  detallesMenu: DetalleMenu[];
+}
+
+export interface Carta {
+  id: number;
+  seccionCartaId: string;
+  fechaDesde: string;
+  fechaHasta: string;
+}
+
+export interface SeccionCarta {
+  id: number;
+  nombre: string;
+  categoria: Categoria;
+  detallesSeccionCarta: DetalleSeccionCarta[];
+}
+
+export interface DetalleSeccionCarta {
+  id: number;
+  seccionCarta: SeccionCarta;
+}
+
+export interface DetalleSeccionCartaMenu {
+  id: number;
+  seccionCarta: SeccionCarta;
+  menu: Menu;
+}
+
+export interface DetalleSeccionCartaArticuloIndividual {
+  id: number;
+  seccionCarta: SeccionCarta;
+  precio: number;
+  articulos: Articulo[];
+}
+
+export interface Categoria {
+  id: number;
+  nombre: string;
+}

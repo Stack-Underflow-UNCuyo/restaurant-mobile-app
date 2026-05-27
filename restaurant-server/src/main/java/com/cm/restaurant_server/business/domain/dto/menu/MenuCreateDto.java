@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MenuCreateDto {
+    private String nombre;
     private double precio;
     private List<DetalleMenuDto> detallesMenu;
 }

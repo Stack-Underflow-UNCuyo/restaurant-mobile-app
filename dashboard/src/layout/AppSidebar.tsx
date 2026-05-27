@@ -48,6 +48,19 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    icon: <FolderIcon />,
+    name: "Menus",
+    subItems: [
+      { name: "Detalle Menu", path: "/menus/detalle-menu", pro: false },
+      { name: "Detalle Seccion Carta Menu", path: "/menus/detalle-seccion-carta-menu", pro: false },
+      { name: "Detalle Seccion Carta Articulo Individual", path: "/menus/detalle-seccion-carta-articulo-individual", pro: false },
+      { name: "Carta", path: "/menus/carta", pro: false },
+      { name: "Categoria", path: "/menus/categoria", pro: false },
+      { name: "Menu", path: "/menus/menu", pro: false },
+      { name: "Seccion Carta", path: "/menus/seccion-carta", pro: false },
+    ],
+  },
+  {
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],

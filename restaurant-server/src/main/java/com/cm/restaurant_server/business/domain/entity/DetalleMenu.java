@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DetalleMenu extends Base {
+    private String nombre;
     private int cantidad;
     @ManyToOne
     private Menu menu;
