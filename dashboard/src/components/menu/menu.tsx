@@ -15,14 +15,14 @@ import { useModal } from "@/hooks/useModal";
 import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
 import DeletionConfirmationPopUp from "@/components/ui/DeletionConfirmationPopUp";
 import Spinner from "@/components/ui/Spinner";
-import type { Articulo, Menu } from "@/types/entities";
+import type { DetalleMenu, Menu } from "@/types/entities";
 import { menuService } from "@/services/menuService";
-import { articuloService } from "@/services/articuloService";
 import toast from "react-hot-toast";
 import Select from "../form/Select";
+import { detalleMenuService } from "@/services/detalleMenuService";
 
 type DetalleFormItem = {
-  articuloId: string;
+  detalleMenuId: string;
   cantidad: number;
 };
 
@@ -38,14 +38,14 @@ const emptyForm: FormData = {
   detallesMenu: [],
 };
 
-const emptyDetalle: DetalleFormItem = { articuloId: "", cantidad: 1 };
+const emptyDetalle: DetalleFormItem = { detalleMenuId: "", cantidad: 1 };
 
 const noErrors = { nombre: false, precio: false, detalles: false };
 
 export default function MenuTable() {
   const [items, setItems] = useState<Menu[]>([]);
-  const [articulos, setArticulos] = useState<Articulo[]>([]);
-  const [articuloOptions, setArticuloOptions] = useState<{ value: string; label: string }[]>([]);
+  const [detallesMenu, setDetallesMenu] = useState<DetalleMenu[]>([]);
+  const [detalleMenuOptions, setDetalleMenuOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -58,11 +58,11 @@ export default function MenuTable() {
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
 
   useEffect(() => {
-    Promise.all([menuService.getAll(), articuloService.getAll()])
+    Promise.all([menuService.getAll(), detalleMenuService.getAll()])
       .then(([menus, arts]) => {
         setItems(menus);
-        setArticulos(arts);
-        setArticuloOptions(arts.map((a) => ({ value: String(a.id), label: a.nombre })));
+        setDetallesMenu(arts);
+        setDetalleMenuOptions(arts.map((a) => ({ value: String(a.id), label: a.nombre })));
       })
       .catch(() => toast.error("Error al cargar los datos"))
       .finally(() => setLoading(false));
@@ -82,7 +82,7 @@ export default function MenuTable() {
       nombre: item.nombre ?? "",
       precio: item.precio,
       detallesMenu: (item.detallesMenu ?? []).map((d) => ({
-        articuloId: String(d.articulo?.id ?? ""),
+        detalleMenuId: String(d.articulo?.id ?? ""),
         cantidad: d.cantidad,
       })),
     });
@@ -92,7 +92,7 @@ export default function MenuTable() {
   };
 
   const addDetalle = () => {
-    if (!pendingDetalle.articuloId || pendingDetalle.cantidad <= 0) return;
+    if (!pendingDetalle.detalleMenuId || pendingDetalle.cantidad <= 0) return;
     setFormData((prev) => ({
       ...prev,
       detallesMenu: [...prev.detallesMenu, pendingDetalle],
@@ -145,7 +145,7 @@ export default function MenuTable() {
       precio: formData.precio,
       detallesMenu: formData.detallesMenu.map((d) => ({
         cantidad: d.cantidad,
-        articulo: articulos.find((a) => String(a.id) === d.articuloId)!,
+        detalleMenu: detallesMenu.find((a) => String(a.id) === d.detalleMenuId)!,
       })),
     };
 
@@ -295,7 +295,7 @@ export default function MenuTable() {
             {formData.detallesMenu.length > 0 && (
               <ul className="mb-3 divide-y divide-gray-100 rounded-lg border border-gray-200 dark:border-white/[0.08] dark:divide-white/[0.05]">
                 {formData.detallesMenu.map((d, i) => {
-                  const label = articuloOptions.find((o) => o.value === d.articuloId)?.label ?? d.articuloId;
+                  const label = detalleMenuOptions.find((o) => o.value === d.detalleMenuId)?.label ?? d.detalleMenuId;
                   return (
                     <li key={i} className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-white/80">
                       <span>{label} <span className="text-gray-400">×{d.cantidad}</span></span>
@@ -315,10 +315,10 @@ export default function MenuTable() {
             <div className="flex gap-2 items-end">
               <div className="flex-1">
                 <Select
-                  options={articuloOptions}
-                  placeholder="Seleccionar artículo"
-                  defaultValue={pendingDetalle.articuloId}
-                  onChange={(value) => setPendingDetalle((prev) => ({ ...prev, articuloId: value }))}
+                  options={detalleMenuOptions}
+                  placeholder="Seleccionar Detalles del Menu"
+                  defaultValue={pendingDetalle.detalleMenuId}
+                  onChange={(value) => setPendingDetalle((prev) => ({ ...prev, detalleMenuId: value }))}
                 />
               </div>
               <div className="w-24">
@@ -334,7 +334,7 @@ export default function MenuTable() {
                 size="sm"
                 variant="outline"
                 onClick={addDetalle}
-                disabled={!pendingDetalle.articuloId || pendingDetalle.cantidad <= 0}
+                disabled={!pendingDetalle.detalleMenuId || pendingDetalle.cantidad <= 0}
               >
                 Agregar
               </Button>

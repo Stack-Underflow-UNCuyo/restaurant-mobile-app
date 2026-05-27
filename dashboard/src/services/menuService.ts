@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
-import type { Articulo, Menu } from "@/types/entities";
+import type {  DetalleMenu, Menu } from "@/types/entities";
 
-export type MenuDetallePayload = { cantidad: number; articulo: Articulo };
+export type MenuDetallePayload = { cantidad: number; detalleMenu: DetalleMenu };
 export type MenuPayload = { nombre: string; precio: number; detallesMenu: MenuDetallePayload[] };
 
 export const menuService = {
