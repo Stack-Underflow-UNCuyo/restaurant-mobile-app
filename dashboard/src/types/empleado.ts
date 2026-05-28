@@ -1,4 +1,4 @@
-import { Contacto, ContactoCorreoElectronico } from "./contactos";
+import { ContactoCorreoElectronico, ContactoTelefonico } from "./contactos";
 import { Direccion } from "./entities";
 
 export interface Persona {
@@ -8,8 +8,9 @@ export interface Persona {
     fechaNacimiento: string;
     tipoDocumento: string;
     numeroDocumento: string;
-    contacto: Contacto
-    direccion: Direccion;
+    direccion?: Direccion;
+    contactoCorreoElectronicoDtos?: ContactoCorreoElectronico[];
+    contactoTelefonicoDtos?: ContactoTelefonico[];
     //Imagen: string;
 }
 

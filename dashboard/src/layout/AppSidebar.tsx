@@ -44,7 +44,14 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Crear usuario", path: "/usuario/crear", pro: false },
       { name: "Listar usuarios", path: "/usuario/listar", pro: false },
-      { name: "Listar empleados", path: "/usuario/listarEmpleados", pro: false },
+    ],
+  },
+  {
+    icon: <FolderIcon />,
+    name: "Facturas",
+    subItems: [
+      { name: "Formas de pago", path: "/factura/formaDePago", pro: false },
+      { name: "Promociones", path: "/factura/promocion", pro: false },
     ],
   },
   {

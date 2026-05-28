@@ -19,6 +19,6 @@ public interface UsuarioMapper extends BaseMapper<Usuario, UsuarioDto, UsuarioCr
     Usuario toEntityCreate(UsuarioCreateDto dto);
 
     @Override
-    @Mapping(target = "personaId", ignore = true)
+    @Mapping(target = "personaId", source = "persona.id")
     UsuarioDto toDTO(Usuario entity);
 }
