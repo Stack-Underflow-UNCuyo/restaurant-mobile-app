@@ -1,3 +1,4 @@
+
 export interface Pais {
   id: number;
   nombre: string;
@@ -64,3 +65,12 @@ export interface MovimientoStock {
   tipoMovimientoStock: TipoMovimientoStock;
   stock: Stock;
 }
+
+import type { ContactoTelefonico, ContactoCorreoElectronico } from "./contactos";
+
+export interface Empresa {
+    id: string;
+    nombre: string;
+    direccion: Direccion | null;
+    contactos: (ContactoTelefonico | ContactoCorreoElectronico)[];
+};

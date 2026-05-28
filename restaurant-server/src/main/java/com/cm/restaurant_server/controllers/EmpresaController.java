@@ -5,14 +5,31 @@ import com.cm.restaurant_server.business.domain.dto.empresa.EmpresaDto;
 import com.cm.restaurant_server.business.domain.entity.Empresa;
 import com.cm.restaurant_server.business.logic.service.EmpresaService;
 import com.cm.restaurant_server.business.mapper.EmpresaMapper;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/empresas")
-public class EmpresaController extends BaseController<Empresa, EmpresaDto, EmpresaCreateDto, EmpresaCreateDto> {
+@RequestMapping("/api/v1/empresa")
+public class EmpresaController {
+
+    private final EmpresaService service;
+    private final EmpresaMapper mapper;
 
     public EmpresaController(EmpresaService service, EmpresaMapper mapper) {
-        super(service, mapper);
+        this.service = service;
+        this.mapper = mapper;
+    }
+
+    @GetMapping
+    public ResponseEntity<EmpresaDto> getActive() throws Exception {
+        Empresa empresa = service.findActive();
+        return ResponseEntity.ok(mapper.toDTO(empresa));
+    }
+
+    @PutMapping
+    public ResponseEntity<EmpresaDto> update(@Valid @RequestBody EmpresaCreateDto dto) throws Exception {
+        Empresa empresa = service.findActive();
+        return ResponseEntity.ok(mapper.toDTO(service.updateFromDto(empresa.getId(), dto)));
     }
 }

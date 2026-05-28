@@ -92,7 +92,11 @@ const navItems: NavItem[] = [
       { name: "Movimiento de Stock", path: "/articulos/movimientos-stock", pro: false },
     ],
   },
-  
+  {
+    icon: <FolderIcon />,
+    name: "Empresa",
+    path: "/empresa",
+  },
 ];
 
 const othersItems: NavItem[] = [

@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface EmpresaRepository extends BaseRepository<Empresa> {
     Optional<Empresa> findByNombreAndEliminadoFalse(String nombre);
     boolean existsByNombreAndEliminadoFalse(String nombre);
+    Optional<Empresa> findFirstByEliminadoFalse();
 }

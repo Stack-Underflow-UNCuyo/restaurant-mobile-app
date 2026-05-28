@@ -14,5 +14,5 @@ public class EmpresaDto extends BaseDto {
     private String telefono;
     private String correoElectronico;
     private DireccionDto direccion;
-    private ContactoDto contacto;
+    private ContactoDto[] contactos;
 }
