@@ -7,17 +7,37 @@ import { APP_NAME } from "@/lib/constants";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
-  FolderIcon,
-  GridIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,
   PieChartIcon,
   TableIcon,
-  UserCircleIcon,
 } from "../icons/index";
+
+const MapPinIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"
+      fill="currentColor" />
+  </svg>
+);
+
+const UsersIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4zm6.5-1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm3.5 3c1.38 0 3 .85 3 2.5V19h-5v-1c0-1.04-.47-1.96-1.2-2.6.55-.24 1.15-.4 1.8-.47.46-.04.92-.05 1.4.07z"
+      fill="currentColor" />
+  </svg>
+);
+
+const BuildingIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M4 3h16a1 1 0 0 1 1 1v17H3V4a1 1 0 0 1 1-1zm9 16v-5h-2v5h2zm-5 0v-5H7v5H5V5h14v14h-2v-5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v5H8zM8 7h2v2H8V7zm0 4h2v2H8v-2zm4-4h2v2h-2V7zm0 4h2v2h-2v-2z"
+      fill="currentColor" />
+  </svg>
+);
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -29,7 +49,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <FolderIcon />,
+    icon: <MapPinIcon />,
     name: "Dirección",
     subItems: [
       { name: "Países", path: "/direccion/paises", pro: false },
@@ -40,7 +60,7 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <FolderIcon />,
+    icon: <UsersIcon />,
     name: "Usuarios",
     subItems: [
       { name: "Crear usuario", path: "/usuario/crear", pro: false },
@@ -49,7 +69,7 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <FolderIcon />,
+    icon: <BoxCubeIcon />,
     name: "Artículos",
     subItems: [
       { name: "Artículo", path: "/articulos/articulos", pro: false },
@@ -59,7 +79,7 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <FolderIcon />,
+    icon: <BuildingIcon />,
     name: "Empresa",
     path: "/empresa",
   },
@@ -322,10 +342,10 @@ const AppSidebar: React.FC = () => {
       >
         <Link href="/" className="flex items-center gap-2.5">
           <Image
-            src="/images/logo/logo-icon.svg"
+            src="/images/logo/logo.png"
             alt="Logo"
-            width={32}
-            height={32}
+            width={48}
+            height={48}
           />
           {(isExpanded || isHovered || isMobileOpen) && (
             <span className="text-base font-semibold tracking-tight text-gray-900 dark:text-white/90">
