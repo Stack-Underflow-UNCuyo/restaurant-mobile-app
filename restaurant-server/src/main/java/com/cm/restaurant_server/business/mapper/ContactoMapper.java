@@ -21,4 +21,14 @@ public interface ContactoMapper {
     ContactoDto toDTO(Contacto entity);
 
     List<ContactoDto> toDTOsList(List<Contacto> source);
+
+    @Mapping(target = "personaId", ignore = true)
+    ContactoCorreoElectronicoDto toCorreoDto(ContactoCorreoElectronico entity);
+
+    @Mapping(target = "personaId", ignore = true)
+    ContactoTelefonicoDto toTelefonoDto(ContactoTelefonico entity);
+
+    List<ContactoCorreoElectronicoDto> toCorreoDtosList(List<ContactoCorreoElectronico> source);
+
+    List<ContactoTelefonicoDto> toTelefonoDtosList(List<ContactoTelefonico> source);
 }

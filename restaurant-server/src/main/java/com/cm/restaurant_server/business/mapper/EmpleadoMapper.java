@@ -37,6 +37,14 @@ public interface EmpleadoMapper extends BaseMapper<Empleado, EmpleadoDto, Emplea
     @Mapping(target = "contactosTelefonicos", source = "contactoTelefonicoIds", qualifiedByName = "mapTelefonosIds")
     Empleado toUpdate(@MappingTarget Empleado entity, EmpleadoCreateDto dto);
 
+    @Override
+    @Mapping(target = "direccionId", source = "direccion.id")
+    @Mapping(target = "contactoCorreoElectronicoDtos", source = "contactosCorreosElectronicos")
+    @Mapping(target = "contactoCorreoElectronicoIds", ignore = true)
+    @Mapping(target = "contactoTelefonicoDtos", source = "contactosTelefonicos")
+    @Mapping(target = "contactoTelefonicoIds", ignore = true)
+    EmpleadoDto toDTO(Empleado entity);
+
     /*@Named("mapDireccionId")
     default Direccion mapDireccionId(String direccionId) {
         if (direccionId == null) return null;

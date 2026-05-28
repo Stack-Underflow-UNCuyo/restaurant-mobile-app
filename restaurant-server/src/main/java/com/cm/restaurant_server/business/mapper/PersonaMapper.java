@@ -36,6 +36,14 @@ public interface PersonaMapper extends BaseMapper<Persona, PersonaDto, PersonaCr
     @Mapping(target = "contactosTelefonicos", source = "contactoTelefonicoIds", qualifiedByName = "mapTelefonosIds")
     Persona toUpdate(@MappingTarget Persona entity, PersonaCreateDto dto);
 
+    @Override
+    @Mapping(target = "direccionId", source = "direccion.id")
+    @Mapping(target = "contactoCorreoElectronicoDtos", source = "contactosCorreosElectronicos")
+    @Mapping(target = "contactoCorreoElectronicoIds", ignore = true)
+    @Mapping(target = "contactoTelefonicoDtos", source = "contactosTelefonicos")
+    @Mapping(target = "contactoTelefonicoIds", ignore = true)
+    PersonaDto toDTO(Persona entity);
+
 
     @Named("mapCorreosIds")
     default List<ContactoCorreoElectronico> mapCorreosIds(List<String> correosIds) {
