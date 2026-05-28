@@ -8,6 +8,7 @@ import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
   ChevronDownIcon,
+  FolderIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,

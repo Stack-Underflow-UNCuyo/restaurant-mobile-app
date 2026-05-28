@@ -12,7 +12,7 @@ import org.mapstruct.SubclassMapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ContactoTelefonicoMapper.class, ContactoCorreoElectronicoMapper.class})
+@Mapper(componentModel = "spring")
 public interface ContactoMapper {
 
     @SubclassMapping(source = ContactoTelefonico.class, target = ContactoTelefonicoDto.class)
