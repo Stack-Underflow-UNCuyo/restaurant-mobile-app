@@ -7,6 +7,9 @@ import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
 import Spinner from "@/components/ui/Spinner";
 import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
+import TelefonoSection, { type TelefonoRow } from "@/components/contacto/TelefonoSection";
+import EmailSection, { type EmailRow } from "@/components/contacto/EmailSection";
+import DireccionModal from "@/components/direccion/DireccionModal";
 import { empresaService } from "@/services/empresaService";
 import { direccionService } from "@/services/direccionService";
 import { localidadService } from "@/services/localidadService";
@@ -14,7 +17,7 @@ import { contactoTelefonicoService } from "@/services/contactoTelefonicoService"
 import { contactoCorreoElectronicoService } from "@/services/contactoCorreoElectronicoService";
 import toast from "react-hot-toast";
 import { useModal } from "@/hooks/useModal";
-import type { Empresa } from "@/types/entities";
+import type { Empresa, Direccion } from "@/types/entities";
 import type { ContactoTelefonico, ContactoCorreoElectronico } from "@/types/contactos";
 import { TipoContacto, TipoTelefono } from "@/types/contactos";
 import { ApiError } from "@/lib/apiClient";
@@ -23,35 +26,10 @@ import { ApiError } from "@/lib/apiClient";
 
 type EmpresaFormData = { nombre: string; direccionId: string };
 
-type DireccionFormData = {
-    calle: string; numeracion: string; barrio: string; localidadId: string; observacion: string;
-};
-
-type TelefonoRow = { telefono: string; tipoTelefono: string; tipoContacto: string; observacion: string };
-type EmailRow    = { email: string; tipoContacto: string; observacion: string };
-
 type ExistingTelefonoRow = TelefonoRow & { id: string; toDelete: boolean };
 type ExistingEmailRow    = EmailRow    & { id: string; toDelete: boolean };
 
 type Errors = Record<string, boolean>;
-
-const emptyDireccion = (): DireccionFormData => ({
-    calle: "", numeracion: "", barrio: "", localidadId: "", observacion: "",
-});
-const emptyTelefono = (): TelefonoRow => ({ telefono: "", tipoTelefono: "", tipoContacto: "", observacion: "" });
-const emptyEmail    = (): EmailRow    => ({ email: "", tipoContacto: "", observacion: "" });
-
-// ── opciones ─────────────────────────────────────────────────────────────────
-
-const tipoContactoOptions = [
-    { value: TipoContacto.PERSONAL, label: "Personal" },
-    { value: TipoContacto.LABORAL,  label: "Laboral"  },
-    { value: TipoContacto.EMPRESA,  label: "Empresa"  },
-];
-const tipoTelefonoOptions = [
-    { value: TipoTelefono.FIJO,    label: "Fijo"    },
-    { value: TipoTelefono.CELULAR, label: "Celular" },
-];
 
 // ── type guard ───────────────────────────────────────────────────────────────
 
@@ -71,22 +49,17 @@ export default function EmpresaForm() {
     const [formData, setFormData] = useState<EmpresaFormData>({ nombre: "", direccionId: "" });
     const [errForm, setErrForm]   = useState<Errors>({});
 
-    // existing contacts (editable)
+    // existing contacts (editable / soft-deletable)
     const [existingTels,  setExistingTels]  = useState<ExistingTelefonoRow[]>([]);
     const [existingMails, setExistingMails] = useState<ExistingEmailRow[]>([]);
     const [errExistingTels,  setErrExistingTels]  = useState<Errors[]>([]);
     const [errExistingMails, setErrExistingMails] = useState<Errors[]>([]);
 
-    // new contacts
+    // new contacts (via shared sections)
     const [newTels,  setNewTels]  = useState<TelefonoRow[]>([]);
     const [newMails, setNewMails] = useState<EmailRow[]>([]);
     const [errNewTels,  setErrNewTels]  = useState<Errors[]>([]);
     const [errNewMails, setErrNewMails] = useState<Errors[]>([]);
-
-    // direccion sub-modal
-    const [direcForm, setDirecForm]       = useState<DireccionFormData>(emptyDireccion());
-    const [errDirec, setErrDirec]         = useState<Errors>({});
-    const [savingDirec, setSavingDirec]   = useState(false);
 
     const { isOpen, openModal, closeModal } = useModal();
     const { isOpen: isDirecOpen, openModal: openDirec, closeModal: closeDirec } = useModal();
@@ -137,7 +110,6 @@ export default function EmpresaForm() {
         setExistingMails(mails);
         setErrExistingTels(tels.map(() => ({})));
         setErrExistingMails(mails.map(() => ({})));
-
         setNewTels([]);
         setNewMails([]);
         setErrNewTels([]);
@@ -163,50 +135,28 @@ export default function EmpresaForm() {
 
     // ── new contacts helpers ─────────────────────────────────────────────────
 
-    const addNewTel = () => { setNewTels((p) => [...p, emptyTelefono()]); setErrNewTels((p) => [...p, {}]); };
-    const removeNewTel = (i: number) => { setNewTels((p) => p.filter((_, j) => j !== i)); setErrNewTels((p) => p.filter((_, j) => j !== i)); };
-    const updateNewTel = (i: number, field: keyof TelefonoRow, value: string) => {
+    const addNewTel     = () => { setNewTels((p) => [...p, { telefono: "", tipoTelefono: "", tipoContacto: "", observacion: "" }]); setErrNewTels((p) => [...p, {}]); };
+    const removeNewTel  = (i: number) => { setNewTels((p) => p.filter((_, j) => j !== i)); setErrNewTels((p) => p.filter((_, j) => j !== i)); };
+    const updateNewTel  = (i: number, field: keyof TelefonoRow, value: string) => {
         setNewTels((p) => p.map((t, j) => j === i ? { ...t, [field]: value } : t));
         setErrNewTels((p) => p.map((e, j) => j === i ? { ...e, [field]: false } : e));
     };
 
-    const addNewMail = () => { setNewMails((p) => [...p, emptyEmail()]); setErrNewMails((p) => [...p, {}]); };
+    const addNewMail    = () => { setNewMails((p) => [...p, { email: "", tipoContacto: "", observacion: "" }]); setErrNewMails((p) => [...p, {}]); };
     const removeNewMail = (i: number) => { setNewMails((p) => p.filter((_, j) => j !== i)); setErrNewMails((p) => p.filter((_, j) => j !== i)); };
     const updateNewMail = (i: number, field: keyof EmailRow, value: string) => {
         setNewMails((p) => p.map((e, j) => j === i ? { ...e, [field]: value } : e));
         setErrNewMails((p) => p.map((e, j) => j === i ? { ...e, [field]: false } : e));
     };
 
-    // ── direccion sub-modal ──────────────────────────────────────────────────
+    // ── direccion created callback ───────────────────────────────────────────
 
-    const openCrearDireccion = () => { setDirecForm(emptyDireccion()); setErrDirec({}); openDirec(); };
-
-    const handleDirecSubmit = async () => {
-        const newErr: Errors = {
-            calle: !direcForm.calle.trim(), numeracion: !direcForm.numeracion.trim(),
-            barrio: !direcForm.barrio.trim(), localidadId: !direcForm.localidadId,
-        };
-        if (Object.values(newErr).some(Boolean)) { setErrDirec(newErr); return; }
-        setSavingDirec(true);
-        try {
-            const nueva = await direccionService.create({
-                calle: direcForm.calle.trim(), numeracion: direcForm.numeracion.trim(),
-                barrio: direcForm.barrio.trim(), localidadId: direcForm.localidadId,
-                observacion: direcForm.observacion.trim() || undefined,
-            });
-            const option = {
-                value: String(nueva.id),
-                label: `${nueva.calle} ${nueva.numeracion}, ${nueva.barrio} — ${nueva.localidad?.nombre ?? ""}`,
-            };
-            setDireccionOptions((prev) => [...prev, option]);
-            setFormData((prev) => ({ ...prev, direccionId: String(nueva.id) }));
-            closeDirec();
-            toast.success("Dirección creada");
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Error al crear la dirección");
-        } finally {
-            setSavingDirec(false);
-        }
+    const handleDireccionCreada = (nueva: Direccion) => {
+        setDireccionOptions((prev) => [...prev, {
+            value: String(nueva.id),
+            label: `${nueva.calle} ${nueva.numeracion}, ${nueva.barrio} — ${nueva.localidad?.nombre ?? ""}`,
+        }]);
+        setFormData((p) => ({ ...p, direccionId: String(nueva.id) }));
     };
 
     // ── empresa submit ───────────────────────────────────────────────────────
@@ -215,16 +165,16 @@ export default function EmpresaForm() {
         const newErrForm: Errors = {
             nombre: !formData.nombre.trim(), direccionId: !formData.direccionId,
         };
-        const newErrExTels = existingTels.map((t): Errors =>
+        const newErrExTels: Errors[] = existingTels.map((t): Errors =>
             t.toDelete ? {} : { telefono: !t.telefono.trim(), tipoTelefono: !t.tipoTelefono, tipoContacto: !t.tipoContacto }
         );
-        const newErrExMails = existingMails.map((e): Errors =>
+        const newErrExMails: Errors[] = existingMails.map((e): Errors =>
             e.toDelete ? {} : { email: !e.email.trim(), tipoContacto: !e.tipoContacto }
         );
-        const newErrNewTels = newTels.map((t) => ({
+        const newErrNewTels: Errors[] = newTels.map((t) => ({
             telefono: !t.telefono.trim(), tipoTelefono: !t.tipoTelefono, tipoContacto: !t.tipoContacto,
         }));
-        const newErrNewMails = newMails.map((e) => ({
+        const newErrNewMails: Errors[] = newMails.map((e) => ({
             email: !e.email.trim(), tipoContacto: !e.tipoContacto,
         }));
 
@@ -247,17 +197,14 @@ export default function EmpresaForm() {
 
         setSaving(true);
         try {
-            // 1) update / delete existing contacts
             await Promise.all([
                 ...existingTels.filter((t) => t.toDelete).map((t) =>
                     contactoTelefonicoService.remove(t.id as unknown as number)
                 ),
                 ...existingTels.filter((t) => !t.toDelete).map((t) =>
                     contactoTelefonicoService.update(t.id as unknown as number, {
-                        telefono:     t.telefono,
-                        tipoTelefono: t.tipoTelefono as TipoTelefono,
-                        tipoContacto: t.tipoContacto as TipoContacto,
-                        observacion:  t.observacion,
+                        telefono: t.telefono, tipoTelefono: t.tipoTelefono as TipoTelefono,
+                        tipoContacto: t.tipoContacto as TipoContacto, observacion: t.observacion,
                     })
                 ),
                 ...existingMails.filter((e) => e.toDelete).map((e) =>
@@ -265,14 +212,11 @@ export default function EmpresaForm() {
                 ),
                 ...existingMails.filter((e) => !e.toDelete).map((e) =>
                     contactoCorreoElectronicoService.update(e.id as unknown as number, {
-                        email:        e.email,
-                        tipoContacto: e.tipoContacto as TipoContacto,
-                        observacion:  e.observacion,
+                        email: e.email, tipoContacto: e.tipoContacto as TipoContacto, observacion: e.observacion,
                     })
                 ),
             ]);
 
-            // 2) create new contacts
             const [telCreados, mailCreados] = await Promise.all([
                 Promise.all(newTels.map((t) =>
                     contactoTelefonicoService.create({
@@ -292,7 +236,6 @@ export default function EmpresaForm() {
                 ...mailCreados.map((c) => String(c.id)),
             ];
 
-            // 3) update empresa (nombre, direccion, new contact associations)
             const updated = await empresaService.update({
                 nombre:      formData.nombre.trim(),
                 direccionId: formData.direccionId,
@@ -403,7 +346,7 @@ export default function EmpresaForm() {
                             <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                     <Label className="mb-0">Dirección</Label>
-                                    <button type="button" onClick={openCrearDireccion}
+                                    <button type="button" onClick={openDirec}
                                         className="flex items-center gap-1 text-xs text-brand-500 hover:text-brand-600 transition-colors">
                                         <PlusIcon />Nueva dirección
                                     </button>
@@ -420,20 +363,10 @@ export default function EmpresaForm() {
                         </div>
                     </ModalSection>
 
-                    {/* contactos telefónicos */}
-                    <ModalSection title="Contactos Telefónicos"
-                        action={<button type="button" onClick={addNewTel}
-                            className="flex items-center gap-1 text-sm text-brand-500 hover:text-brand-600 transition-colors">
-                            <PlusIcon />Agregar teléfono
-                        </button>}
-                    >
-                        {existingTels.length === 0 && newTels.length === 0 ? (
-                            <p className="text-sm text-gray-400 dark:text-gray-500">
-                                Sin teléfonos. Hacé clic en &ldquo;Agregar teléfono&rdquo; para añadir.
-                            </p>
-                        ) : (
+                    {/* existing phone contacts */}
+                    {existingTels.length > 0 && (
+                        <ModalSection title="Teléfonos existentes">
                             <div className="space-y-3">
-                                {/* existing */}
                                 {existingTels.map((t, i) => (
                                     <ContactRow key={t.id} toDelete={t.toDelete} onToggleDelete={() => toggleDeleteTel(i)}>
                                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -448,16 +381,16 @@ export default function EmpresaForm() {
                                             </div>
                                             <div>
                                                 <Label>Tipo de Teléfono</Label>
-                                                <Select options={tipoTelefonoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={t.tipoTelefono}
+                                                <Select options={[{ value: "FIJO", label: "Fijo" }, { value: "CELULAR", label: "Celular" }]}
+                                                    placeholder="Tipo" defaultValue={t.tipoTelefono}
                                                     onChange={(v) => updateExistingTel(i, "tipoTelefono", v)}
                                                 />
                                                 {errExistingTels[i]?.tipoTelefono && <FieldError msg="Debe seleccionar el tipo" />}
                                             </div>
                                             <div>
                                                 <Label>Tipo de Contacto</Label>
-                                                <Select options={tipoContactoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={t.tipoContacto}
+                                                <Select options={[{ value: "PERSONAL", label: "Personal" }, { value: "LABORAL", label: "Laboral" }, { value: "EMPRESA", label: "Empresa" }]}
+                                                    placeholder="Tipo" defaultValue={t.tipoContacto}
                                                     onChange={(v) => updateExistingTel(i, "tipoContacto", v)}
                                                 />
                                                 {errExistingTels[i]?.tipoContacto && <FieldError msg="Debe seleccionar el tipo" />}
@@ -472,67 +405,14 @@ export default function EmpresaForm() {
                                         </div>
                                     </ContactRow>
                                 ))}
-                                {/* new */}
-                                {newTels.map((t, i) => (
-                                    <div key={i} className="rounded-lg border border-dashed border-brand-300 dark:border-brand-500/40 p-4 relative">
-                                        <button type="button" onClick={() => removeNewTel(i)}
-                                            className="absolute top-3 right-3 text-gray-300 hover:text-error-500 transition-colors">
-                                            <TrashBinIcon />
-                                        </button>
-                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                            <div>
-                                                <Label htmlFor={`nt-num-${i}`}>Teléfono</Label>
-                                                <Input id={`nt-num-${i}`} placeholder="Ej: 2614123456"
-                                                    defaultValue={t.telefono}
-                                                    error={errNewTels[i]?.telefono}
-                                                    hint={errNewTels[i]?.telefono ? "El teléfono es obligatorio" : ""}
-                                                    onChange={(e) => updateNewTel(i, "telefono", e.target.value)}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Label>Tipo de Teléfono</Label>
-                                                <Select options={tipoTelefonoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={t.tipoTelefono}
-                                                    onChange={(v) => updateNewTel(i, "tipoTelefono", v)}
-                                                />
-                                                {errNewTels[i]?.tipoTelefono && <FieldError msg="Debe seleccionar el tipo" />}
-                                            </div>
-                                            <div>
-                                                <Label>Tipo de Contacto</Label>
-                                                <Select options={tipoContactoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={t.tipoContacto}
-                                                    onChange={(v) => updateNewTel(i, "tipoContacto", v)}
-                                                />
-                                                {errNewTels[i]?.tipoContacto && <FieldError msg="Debe seleccionar el tipo" />}
-                                            </div>
-                                            <div>
-                                                <Label htmlFor={`nt-obs-${i}`}>Observación (Opcional)</Label>
-                                                <Input id={`nt-obs-${i}`} placeholder="Ej: Horario laboral"
-                                                    defaultValue={t.observacion}
-                                                    onChange={(e) => updateNewTel(i, "observacion", e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
                             </div>
-                        )}
-                    </ModalSection>
+                        </ModalSection>
+                    )}
 
-                    {/* contactos de correo */}
-                    <ModalSection title="Contactos de Correo Electrónico"
-                        action={<button type="button" onClick={addNewMail}
-                            className="flex items-center gap-1 text-sm text-brand-500 hover:text-brand-600 transition-colors">
-                            <PlusIcon />Agregar email
-                        </button>}
-                    >
-                        {existingMails.length === 0 && newMails.length === 0 ? (
-                            <p className="text-sm text-gray-400 dark:text-gray-500">
-                                Sin correos. Hacé clic en &ldquo;Agregar email&rdquo; para añadir.
-                            </p>
-                        ) : (
+                    {/* existing email contacts */}
+                    {existingMails.length > 0 && (
+                        <ModalSection title="Correos existentes">
                             <div className="space-y-3">
-                                {/* existing */}
                                 {existingMails.map((e, i) => (
                                     <ContactRow key={e.id} toDelete={e.toDelete} onToggleDelete={() => toggleDeleteMail(i)}>
                                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -547,8 +427,8 @@ export default function EmpresaForm() {
                                             </div>
                                             <div>
                                                 <Label>Tipo de Contacto</Label>
-                                                <Select options={tipoContactoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={e.tipoContacto}
+                                                <Select options={[{ value: "PERSONAL", label: "Personal" }, { value: "LABORAL", label: "Laboral" }, { value: "EMPRESA", label: "Empresa" }]}
+                                                    placeholder="Tipo" defaultValue={e.tipoContacto}
                                                     onChange={(v) => updateExistingMail(i, "tipoContacto", v)}
                                                 />
                                                 {errExistingMails[i]?.tipoContacto && <FieldError msg="Debe seleccionar el tipo" />}
@@ -563,44 +443,23 @@ export default function EmpresaForm() {
                                         </div>
                                     </ContactRow>
                                 ))}
-                                {/* new */}
-                                {newMails.map((e, i) => (
-                                    <div key={i} className="rounded-lg border border-dashed border-brand-300 dark:border-brand-500/40 p-4 relative">
-                                        <button type="button" onClick={() => removeNewMail(i)}
-                                            className="absolute top-3 right-3 text-gray-300 hover:text-error-500 transition-colors">
-                                            <TrashBinIcon />
-                                        </button>
-                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                            <div>
-                                                <Label htmlFor={`nm-addr-${i}`}>Email</Label>
-                                                <Input id={`nm-addr-${i}`} placeholder="contacto@ejemplo.com"
-                                                    defaultValue={e.email}
-                                                    error={errNewMails[i]?.email}
-                                                    hint={errNewMails[i]?.email ? "El email es obligatorio" : ""}
-                                                    onChange={(ev) => updateNewMail(i, "email", ev.target.value)}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Label>Tipo de Contacto</Label>
-                                                <Select options={tipoContactoOptions} placeholder="Seleccionar tipo"
-                                                    defaultValue={e.tipoContacto}
-                                                    onChange={(v) => updateNewMail(i, "tipoContacto", v)}
-                                                />
-                                                {errNewMails[i]?.tipoContacto && <FieldError msg="Debe seleccionar el tipo" />}
-                                            </div>
-                                            <div className="sm:col-span-2">
-                                                <Label htmlFor={`nm-obs-${i}`}>Observación (Opcional)</Label>
-                                                <Input id={`nm-obs-${i}`} placeholder="Ej: Email corporativo"
-                                                    defaultValue={e.observacion}
-                                                    onChange={(ev) => updateNewMail(i, "observacion", ev.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
                             </div>
-                        )}
-                    </ModalSection>
+                        </ModalSection>
+                    )}
+
+                    {/* new phone contacts — shared component */}
+                    <TelefonoSection
+                        rows={newTels} errors={errNewTels}
+                        onAdd={addNewTel} onRemove={removeNewTel} onUpdate={updateNewTel}
+                        idPrefix="nt"
+                    />
+
+                    {/* new email contacts — shared component */}
+                    <EmailSection
+                        rows={newMails} errors={errNewMails}
+                        onAdd={addNewMail} onRemove={removeNewMail} onUpdate={updateNewMail}
+                        idPrefix="nm"
+                    />
 
                     <div className="flex justify-end gap-3 pt-2 border-t border-gray-100 dark:border-white/[0.05]">
                         <Button variant="outline" size="sm" onClick={closeModal} disabled={saving}>Cancelar</Button>
@@ -609,72 +468,18 @@ export default function EmpresaForm() {
                 </div>
             </Modal>
 
-            {/* ── sub-modal: crear dirección ─────────────────────────────── */}
-            <Modal isOpen={isDirecOpen} onClose={closeDirec} className="max-w-md p-6">
-                <h4 className="mb-6 text-lg font-semibold text-gray-800 dark:text-white/90">Nueva Dirección</h4>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="nd-calle">Calle</Label>
-                        <Input id="nd-calle" placeholder="Ej: Av. San Martín" defaultValue={direcForm.calle}
-                            error={errDirec.calle} hint={errDirec.calle ? "La calle es obligatoria" : ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                setDirecForm((p) => ({ ...p, calle: e.target.value }));
-                                if (errDirec.calle) setErrDirec((p) => ({ ...p, calle: false }));
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="nd-num">Numeración</Label>
-                        <Input id="nd-num" placeholder="Ej: 1234" defaultValue={direcForm.numeracion}
-                            error={errDirec.numeracion} hint={errDirec.numeracion ? "La numeración es obligatoria" : ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                setDirecForm((p) => ({ ...p, numeracion: e.target.value }));
-                                if (errDirec.numeracion) setErrDirec((p) => ({ ...p, numeracion: false }));
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="nd-barrio">Barrio</Label>
-                        <Input id="nd-barrio" placeholder="Ej: Centro" defaultValue={direcForm.barrio}
-                            error={errDirec.barrio} hint={errDirec.barrio ? "El barrio es obligatorio" : ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                setDirecForm((p) => ({ ...p, barrio: e.target.value }));
-                                if (errDirec.barrio) setErrDirec((p) => ({ ...p, barrio: false }));
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <Label>Localidad</Label>
-                        <Select options={localidadOptions} placeholder="Seleccionar localidad"
-                            defaultValue={direcForm.localidadId}
-                            onChange={(v) => {
-                                setDirecForm((p) => ({ ...p, localidadId: v }));
-                                if (errDirec.localidadId) setErrDirec((p) => ({ ...p, localidadId: false }));
-                            }}
-                        />
-                        {errDirec.localidadId && <FieldError msg="Debe seleccionar una localidad" />}
-                    </div>
-                    <div>
-                        <Label htmlFor="nd-obs">Observación (Opcional)</Label>
-                        <Input id="nd-obs" placeholder="Ej: Esquina con calle Belgrano" defaultValue={direcForm.observacion}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setDirecForm((p) => ({ ...p, observacion: e.target.value }))
-                            }
-                        />
-                    </div>
-                    <div className="flex justify-end gap-3 pt-2">
-                        <Button variant="outline" size="sm" onClick={closeDirec} disabled={savingDirec}>Cancelar</Button>
-                        <Button size="sm" onClick={handleDirecSubmit} disabled={savingDirec}>
-                            {savingDirec ? "Guardando…" : "Crear Dirección"}
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+            {/* ── shared DireccionModal ──────────────────────────────────── */}
+            <DireccionModal
+                isOpen={isDirecOpen}
+                onClose={closeDirec}
+                localidadOptions={localidadOptions}
+                onCreated={handleDireccionCreada}
+            />
         </>
     );
 }
 
-// ── subcomponentes ────────────────────────────────────────────────────────────
+// ── subcomponentes locales ────────────────────────────────────────────────────
 
 function ContactRow({
     toDelete, onToggleDelete, children,
@@ -689,19 +494,14 @@ function ContactRow({
                 ? "border-error-200 bg-error-50/50 opacity-50 dark:border-error-500/30 dark:bg-error-500/5"
                 : "border-gray-100 dark:border-white/[0.05]"
         }`}>
-            <button
-                type="button"
-                onClick={onToggleDelete}
+            <button type="button" onClick={onToggleDelete}
                 title={toDelete ? "Deshacer eliminación" : "Eliminar"}
                 className={`absolute top-3 right-3 transition-colors ${
                     toDelete ? "text-error-400 hover:text-gray-400" : "text-gray-300 hover:text-error-500"
-                }`}
-            >
+                }`}>
                 <TrashBinIcon />
             </button>
-            {toDelete && (
-                <p className="text-xs text-error-500 mb-2 font-medium">Se eliminará al guardar</p>
-            )}
+            {toDelete && <p className="text-xs text-error-500 mb-2 font-medium">Se eliminará al guardar</p>}
             {children}
         </div>
     );
@@ -716,12 +516,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     );
 }
 
-function ModalSection({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
+function ModalSection({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="rounded-xl border border-gray-200 dark:border-white/[0.05]">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-white/[0.05]">
+            <div className="px-4 py-3 border-b border-gray-100 dark:border-white/[0.05]">
                 <h5 className="text-sm font-semibold text-gray-700 dark:text-white/80">{title}</h5>
-                {action}
             </div>
             <div className="px-4 py-4">{children}</div>
         </div>
