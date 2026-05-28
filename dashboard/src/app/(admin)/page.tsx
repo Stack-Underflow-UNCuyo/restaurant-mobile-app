@@ -9,8 +9,8 @@ import DemographicCard from "@/components/ecommerce/DemographicCard";
 
 
 export const metadata: Metadata = {
-  title: "Aromas de vino",
-  description: "Ecommerce Aromas de vino",
+  title: "Aromas de viña",
+  description: "Ecommerce Aromas de viña",
 };
 
 export default function Ecommerce() {

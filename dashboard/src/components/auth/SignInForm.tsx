@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { useState } from "react";
+import { APP_NAME } from "@/lib/constants";
 import toast from "react-hot-toast";
 
 export default function SignInForm() {
@@ -43,11 +44,11 @@ export default function SignInForm() {
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
-            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Sign In
+            <h1 className="mb-1 font-semibold text-brand-500 text-title-sm dark:text-brand-400 sm:text-title-md">
+              {APP_NAME}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email and password to sign in!
+              Ingresá tu email y contraseña para continuar.
             </p>
           </div>
           <div>

@@ -7,8 +7,8 @@ import React from "react";
 
 
 export const metadata: Metadata = {
-  title: "Aromas de vino",
-  description: "Profile Page Aromas de vino",
+  title: "Aromas de viña",
+  description: "Profile Page Aromas de viña",
 };
 
 export default function Profile() {

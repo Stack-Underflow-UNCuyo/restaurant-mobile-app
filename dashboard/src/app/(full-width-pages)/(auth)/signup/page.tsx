@@ -2,8 +2,8 @@ import SignUpForm from "@/components/auth/SignUpForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Aromas de vino",
-  description: "SignUp Page Aromas de vino",
+  title: "Aromas de viña",
+  description: "SignUp Page Aromas de viña",
   // other metadata
 };
 

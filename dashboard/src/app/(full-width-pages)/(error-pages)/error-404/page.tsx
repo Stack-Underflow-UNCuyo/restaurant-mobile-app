@@ -7,7 +7,7 @@ import React from "react";
 export const metadata: Metadata = {
   title: "Next.js Error 404 | Aromas de vion - Next.js Dashboard Template",
   description:
-    "This is Next.js Error 404 page for Aromas de vino - Next.js Tailwind CSS Admin Dashboard Template",
+    "This is Next.js Error 404 page for Aromas de viña - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
 export default function Error404() {
@@ -47,7 +47,7 @@ export default function Error404() {
       </div>
       {/* <!-- Footer --> */}
       <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} - Aromas de vino
+        &copy; {new Date().getFullYear()} - Aromas de viña
       </p>
     </div>
   );

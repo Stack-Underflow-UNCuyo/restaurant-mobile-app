@@ -5,6 +5,7 @@ import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
+import { APP_NAME } from "@/lib/constants";
 import React, { useState ,useEffect,useRef} from "react";
 
 const AppHeader: React.FC = () => {
@@ -83,21 +84,16 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/" className="lg:hidden">
+          <Link href="/" className="flex items-center gap-2 lg:hidden">
             <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
+              width={28}
+              height={28}
+              src="./images/logo/logo-icon.svg"
               alt="Logo"
             />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
+            <span className="text-base font-semibold tracking-tight text-gray-900 dark:text-white/90">
+              {APP_NAME}
+            </span>
           </Link>
 
           <button

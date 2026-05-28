@@ -6,8 +6,8 @@ import React from "react";
 
 
 export const metadata: Metadata = {
-  title: "Aromas de vino",
-  description: "Alerts Page Aromas de vino",
+  title: "Aromas de viña",
+  description: "Alerts Page Aromas de viña",
 };
 
 
