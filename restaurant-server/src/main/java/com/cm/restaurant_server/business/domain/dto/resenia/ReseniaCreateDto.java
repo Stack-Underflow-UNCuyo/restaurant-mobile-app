@@ -9,4 +9,5 @@ import lombok.*;
 public class ReseniaCreateDto {
     private String observacion;
     private String fechaResenia;
+    private String comandaId;
 }

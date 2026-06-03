@@ -21,7 +21,7 @@ public interface DetalleComandaMapper extends BaseMapper<DetalleComanda, Detalle
     DetalleComanda toUpdate(@MappingTarget DetalleComanda entity, DetalleComandaCreateDto dto);
 
     @Override
-    @Mapping(target = "comandaId", ignore = true)
-    @Mapping(target = "detalleSeccionCartaId", ignore = true)
+    @Mapping(target = "comandaId", source = "comanda.id")
+    @Mapping(target = "detalleSeccionCartaId", source = "detalleSeccionCarta.id")
     DetalleComandaDto toDTO(DetalleComanda entity);
 }
