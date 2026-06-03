@@ -14,6 +14,7 @@ import {
   PageIcon,
   PieChartIcon,
   TableIcon,
+  RestaurantIcon,
 } from "../icons/index";
 
 const MapPinIcon = () => (
@@ -92,6 +93,15 @@ const navItems: NavItem[] = [
     icon: <BuildingIcon />,
     name: "Empresa",
     path: "/empresa",
+  },
+  {
+    icon: <RestaurantIcon />,
+    name: "Restaurant",
+    subItems: [
+      { name: "Mesas", path: "/restaurant/mesas", pro: false },
+      { name: "Comandas de restaurante", path: "/restaurant/comandas-restaurant", pro: false },
+      { name: "Reseñas", path: "/restaurant/resenias", pro: false },
+    ],
   },
 ];
 
