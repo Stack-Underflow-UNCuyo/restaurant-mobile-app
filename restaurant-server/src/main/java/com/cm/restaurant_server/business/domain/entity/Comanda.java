@@ -27,7 +27,4 @@ public class Comanda extends Base {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comanda", orphanRemoval = true)
     @SQLRestriction("eliminado = false")
     private List<DetalleComanda> detalleComandas = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comanda", orphanRemoval = true)
-    @SQLRestriction("eliminado = false")
-    private List<Resenia> resenias = new ArrayList<>();
 }

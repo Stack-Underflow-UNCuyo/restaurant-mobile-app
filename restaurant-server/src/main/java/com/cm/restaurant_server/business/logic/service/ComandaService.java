@@ -2,7 +2,6 @@ package com.cm.restaurant_server.business.logic.service;
 
 import com.cm.restaurant_server.business.domain.entity.Comanda;
 import com.cm.restaurant_server.business.domain.entity.DetalleComanda;
-import com.cm.restaurant_server.business.domain.entity.Resenia;
 import com.cm.restaurant_server.business.repository.ComandaRepository;
 import jakarta.transaction.Transactional;
 
@@ -32,10 +31,5 @@ public class ComandaService extends BaseService<Comanda> {
     @Transactional
     public List<DetalleComanda> listarDetalleComanda(String idComanda) throws Exception {
         return this.findById(idComanda).getDetalleComandas();
-    }
-
-    @Transactional
-    public List<Resenia> listarResenias(String idComanda) throws Exception {
-        return this.findById(idComanda).getResenias();
     }
 }

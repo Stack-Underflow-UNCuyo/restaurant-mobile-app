@@ -88,7 +88,7 @@ public class ComandaController extends BaseController<Comanda, ComandaDto, Coman
 
     @GetMapping("/{id}/resenias")
     public ResponseEntity<List<ReseniaDto>> getResenias(@PathVariable String id) throws Exception {
-        List<Resenia> resenias = ((ComandaService) service).listarResenias(id);
+        List<Resenia> resenias = reseniaService.buscarPorComanda(id);
         return ResponseEntity.ok(reseniaMapper.toDTOsList(resenias));
     }
 
