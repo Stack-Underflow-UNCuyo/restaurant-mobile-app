@@ -1,13 +1,16 @@
 package com.cm.restaurant_server.business.domain.dto.detalleseccioncarta;
 
 import com.cm.restaurant_server.business.domain.dto.BaseDto;
-import com.cm.restaurant_server.business.domain.dto.seccioncarta.SeccionCartaDto;
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class DetalleSeccionCartaDto extends BaseDto {
-    private SeccionCartaDto seccionCarta;
+    private String seccionCartaId;
 }

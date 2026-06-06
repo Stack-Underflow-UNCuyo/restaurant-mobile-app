@@ -8,15 +8,25 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface DetalleSeccionCartaMenuMapper extends BaseMapper<DetalleSeccionCartaMenu, DetalleSeccionCartaMenuDto, DetalleSeccionCartaMenuCreateDto, DetalleSeccionCartaMenuCreateDto> {
+public interface DetalleSeccionCartaMenuMapper extends
+        BaseMapper<DetalleSeccionCartaMenu, DetalleSeccionCartaMenuDto, DetalleSeccionCartaMenuCreateDto, DetalleSeccionCartaMenuCreateDto> {
 
     @Override
+    @Mapping(target = "seccionCartaId", source = "seccionCarta.id")
+    DetalleSeccionCartaMenuDto toDTO(DetalleSeccionCartaMenu entity);
+
+    @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
     @Mapping(target = "menu", ignore = true)
     DetalleSeccionCartaMenu toEntityCreate(DetalleSeccionCartaMenuCreateDto dto);
 
     @Override
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
     @Mapping(target = "menu", ignore = true)
-    DetalleSeccionCartaMenu toUpdate(@MappingTarget DetalleSeccionCartaMenu entity, DetalleSeccionCartaMenuCreateDto dto);
+    DetalleSeccionCartaMenu toUpdate(@MappingTarget DetalleSeccionCartaMenu entity,
+            DetalleSeccionCartaMenuCreateDto dto);
 }

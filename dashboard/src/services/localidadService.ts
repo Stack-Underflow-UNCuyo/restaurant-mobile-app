@@ -6,6 +6,6 @@ type LocalidadPayload = { nombre: string; codigoPostal: string; departamentoId: 
 export const localidadService = {
   getAll: () => apiClient.get<Localidad[]>("/api/v1/localidades"),
   create: (data: LocalidadPayload) => apiClient.post<Localidad>("/api/v1/localidades", data),
-  update: (id: number, data: LocalidadPayload) => apiClient.put<Localidad>(`/api/v1/localidades/${id}`, data),
-  remove: (id: number) => apiClient.del(`/api/v1/localidades/${id}`),
+  update: (id: string, data: LocalidadPayload) => apiClient.put<Localidad>(`/api/v1/localidades/${id}`, data),
+  remove: (id: string) => apiClient.del(`/api/v1/localidades/${id}`),
 };

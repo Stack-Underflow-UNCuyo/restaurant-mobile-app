@@ -19,8 +19,6 @@ public class SeccionCarta extends Base {
     private String nombre;
     @ManyToOne
     private Categoria categoria;
-    @ManyToOne
-    private Carta carta;
     @OneToMany(mappedBy = "seccionCarta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleSeccionCarta> detallesSeccionCarta;
 }

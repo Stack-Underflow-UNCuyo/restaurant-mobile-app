@@ -11,6 +11,10 @@ import org.mapstruct.MappingTarget;
 public interface DetalleSeccionCartaMapper extends BaseMapper<DetalleSeccionCarta, DetalleSeccionCartaDto, DetalleSeccionCartaCreateDto, DetalleSeccionCartaCreateDto> {
 
     @Override
+    @Mapping(target = "seccionCartaId", source = "seccionCarta.id")
+    DetalleSeccionCartaDto toDTO(DetalleSeccionCarta entity);
+
+    @Override
     @Mapping(target = "seccionCarta", ignore = true)
     DetalleSeccionCarta toEntityCreate(DetalleSeccionCartaCreateDto dto);
 

@@ -1,12 +1,14 @@
 package com.cm.restaurant_server.business.logic.service;
 
-import com.cm.restaurant_server.business.domain.entity.Categoria;
-import com.cm.restaurant_server.business.repository.CategoriaRepository;
-import jakarta.transaction.Transactional;
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import com.cm.restaurant_server.business.domain.entity.Categoria;
+import com.cm.restaurant_server.business.repository.CategoriaRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CategoriaService extends BaseService<Categoria> {
@@ -33,11 +35,12 @@ public class CategoriaService extends BaseService<Categoria> {
     }
 
     @Transactional
-    public void crearCategoria(String nombre) throws Exception {
+    public Categoria crearCategoria(String nombre) throws Exception {
         validar(nombre);
         Categoria categoria = new Categoria();
         categoria.setNombre(nombre);
         save(categoria);
+        return categoria;
     }
 
     @Transactional

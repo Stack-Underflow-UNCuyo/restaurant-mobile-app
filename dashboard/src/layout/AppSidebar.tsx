@@ -15,6 +15,9 @@ import {
   PieChartIcon,
   TableIcon,
   RestaurantIcon,
+  GridIcon,
+  CalenderIcon,
+  UserCircleIcon,
 } from "../icons/index";
 
 const MapPinIcon = () => (
@@ -69,6 +72,54 @@ const navItems: NavItem[] = [
       { name: "Listar usuarios", path: "/usuario/listar", pro: false },
     ],
   },
+  {
+    icon: <FolderIcon />,
+    name: "Menus",
+    subItems: [
+      { name: "Detalle Menu", path: "/menus/detalle-menu", pro: false },
+      { name: "Detalle Seccion Carta Menu", path: "/menus/detalle-seccion-carta-menu", pro: false },
+      { name: "Detalle Seccion Carta Articulo Individual", path: "/menus/detalle-seccion-carta-articulo-individual", pro: false },
+      { name: "Carta", path: "/menus/carta", pro: false },
+      { name: "Categoria", path: "/menus/categoria", pro: false },
+      { name: "Menu", path: "/menus/menu", pro: false },
+      { name: "Seccion Carta", path: "/menus/seccion-carta", pro: false },
+    ],
+  },
+  {
+    icon: <GridIcon />,
+    name: "Dashboard",
+    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+  },
+  {
+    icon: <CalenderIcon />,
+    name: "Calendar",
+    path: "/calendar",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "User Profile",
+    path: "/profile",
+  },
+
+  {
+    name: "Forms",
+    icon: <ListIcon />,
+    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  },
+  {
+    name: "Tables",
+    icon: <TableIcon />,
+    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+  },
+  {
+    name: "Pages",
+    icon: <PageIcon />,
+    subItems: [
+      { name: "Blank Page", path: "/blank", pro: false },
+      { name: "404 Error", path: "/error-404", pro: false },
+    ],
+  },
+
   {
     icon: <FolderIcon />,
     name: "Facturas",

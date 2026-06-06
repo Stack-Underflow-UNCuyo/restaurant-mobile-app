@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.cm.restaurant_server.business.domain.dto.detalleseccioncarta.DetalleSeccionCartaDto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -12,7 +15,6 @@ import lombok.*;
 @AllArgsConstructor
 public class SeccionCartaCreateDto {
     private String nombre;
-    private String categoriaId;
-    private String cartaId;
+    private String categoriaNombre;
     private List<DetalleSeccionCartaDto> detallesSeccionCarta;
 }

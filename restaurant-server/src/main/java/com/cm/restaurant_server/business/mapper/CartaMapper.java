@@ -7,18 +7,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SeccionCartaMapper.class})
 public interface CartaMapper extends BaseMapper<Carta, CartaDto, CartaCreateDto, CartaCreateDto> {
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
-    @Mapping(target = "seccionCarta", ignore = true)
+    @Mapping(target = "seccionesCarta", ignore = true)
     Carta toEntityCreate(CartaCreateDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
-    @Mapping(target = "seccionCarta", ignore = true)
+    @Mapping(target = "seccionesCarta", ignore = true)
     Carta toUpdate(@MappingTarget Carta entity, CartaCreateDto dto);
 }
