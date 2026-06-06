@@ -1,3 +1,4 @@
+
 export interface Pais {
   id: string;
   nombre: string;
@@ -116,3 +117,11 @@ export interface Categoria {
   id: string;
   nombre: string;
 }
+import type { ContactoTelefonico, ContactoCorreoElectronico } from "./contactos";
+
+export interface Empresa {
+    id: string;
+    nombre: string;
+    direccion: Direccion | null;
+    contactos: (ContactoTelefonico | ContactoCorreoElectronico)[];
+};

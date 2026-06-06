@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import type { Usuario } from "@/types/usuario";
 
-type UsuarioPayload = {email: string; clave: string; rol: string; personaId: string };
+type UsuarioPayload = {email: string; clave: string; rol: string; personaId: string | number };
 
 export const usuarioService = {
     getAll: () => apiClient.get<Usuario[]>("/api/v1/usuarios"),

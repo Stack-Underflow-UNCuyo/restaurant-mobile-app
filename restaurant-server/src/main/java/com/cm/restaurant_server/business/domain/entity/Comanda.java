@@ -22,7 +22,7 @@ public class Comanda extends Base {
     private LocalDateTime fechaEntregaComanda;
     @Enumerated(EnumType.STRING)
     private EstadoComanda estadoComanda;
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Cliente cliente;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comanda", orphanRemoval = true)
     @SQLRestriction("eliminado = false")

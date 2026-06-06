@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FacturaService extends BaseService<Factura> {
+    private final DetalleFacturaService detalleFacturaService;
+
     public FacturaService(FacturaRepository repository, DetalleFacturaService detalleFacturaService) {
         super(repository);
+        this.detalleFacturaService = detalleFacturaService;
     }
 
     @Override
@@ -31,6 +34,34 @@ public class FacturaService extends BaseService<Factura> {
         var factura = this.findById(detalle.getFactura().getId());
         factura.getDetalleFacturas().add(detalle);
         return factura.getDetalleFacturas();
+    }
+
+    /**
+     * Asigna a la factura los detalles indicados
+     * se setea la factura en cada detalle y se guarda.
+     */
+    @Transactional
+    public void asignarDetalles(String facturaId, List<String> detalleIds) throws Exception {
+        if (detalleIds == null) {
+            return;
+        }
+        Factura factura = this.findById(facturaId);
+        for (String detalleId : detalleIds) {
+            DetalleFactura detalle = this.detalleFacturaService.findById(detalleId);
+            detalle.setFactura(factura);
+            this.detalleFacturaService.save(detalle);
+        }
+    }
+
+
+    //Reemplaza los detalles asignados a la factura por otros
+    @Transactional
+    public void reasignarDetalles(String facturaId, List<String> detalleIds) throws Exception {
+        for (DetalleFactura detalle : this.detalleFacturaService.listarPorFactura(facturaId)) {
+            detalle.setFactura(null);
+            this.detalleFacturaService.save(detalle);
+        }
+        this.asignarDetalles(facturaId, detalleIds);
     }
 
     protected FacturaRepository getRepository() {

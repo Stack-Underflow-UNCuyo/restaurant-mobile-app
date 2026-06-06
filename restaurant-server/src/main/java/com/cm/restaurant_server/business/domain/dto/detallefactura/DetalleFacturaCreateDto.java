@@ -9,6 +9,6 @@ import lombok.*;
 public class DetalleFacturaCreateDto {
     private int cantidad;
     private double subtotal;
-    private String facturaId;
+    // La factura se asigna desde la Factura 
     private String detalleComandaId;
 }

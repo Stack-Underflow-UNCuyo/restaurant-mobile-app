@@ -51,6 +51,7 @@ import HorizontaLDots from "./horizontal-dots.svg";
 import ChatIcon from "./chat.svg";
 import MoreDotIcon from "./more-dot.svg";
 import BellIcon from "./bell.svg";
+import RestaurantIcon from "./restaurant.svg";
 
 export {
   DownloadIcon,
@@ -106,4 +107,5 @@ export {
   HorizontaLDots,
   ChevronUpIcon,
   ChatIcon,
+  RestaurantIcon,
 };

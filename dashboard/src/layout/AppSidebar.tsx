@@ -3,20 +3,46 @@ import React, { useEffect, useRef, useState,useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { APP_NAME } from "@/lib/constants";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   FolderIcon,
-  GridIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,
   PieChartIcon,
   TableIcon,
+  RestaurantIcon,
+  GridIcon,
+  CalenderIcon,
   UserCircleIcon,
 } from "../icons/index";
+
+const MapPinIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"
+      fill="currentColor" />
+  </svg>
+);
+
+const UsersIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4zm6.5-1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm3.5 3c1.38 0 3 .85 3 2.5V19h-5v-1c0-1.04-.47-1.96-1.2-2.6.55-.24 1.15-.4 1.8-.47.46-.04.92-.05 1.4.07z"
+      fill="currentColor" />
+  </svg>
+);
+
+const BuildingIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd"
+      d="M4 3h16a1 1 0 0 1 1 1v17H3V4a1 1 0 0 1 1-1zm9 16v-5h-2v5h2zm-5 0v-5H7v5H5V5h14v14h-2v-5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v5H8zM8 7h2v2H8V7zm0 4h2v2H8v-2zm4-4h2v2h-2V7zm0 4h2v2h-2v-2z"
+      fill="currentColor" />
+  </svg>
+);
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -28,7 +54,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <FolderIcon />,
+    icon: <MapPinIcon />,
     name: "Dirección",
     subItems: [
       { name: "Países", path: "/direccion/paises", pro: false },
@@ -39,12 +65,11 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <FolderIcon />,
+    icon: <UsersIcon />,
     name: "Usuarios",
     subItems: [
       { name: "Crear usuario", path: "/usuario/crear", pro: false },
       { name: "Listar usuarios", path: "/usuario/listar", pro: false },
-      { name: "Listar empleados", path: "/usuario/listarEmpleados", pro: false },
     ],
   },
   {
@@ -97,6 +122,16 @@ const navItems: NavItem[] = [
 
   {
     icon: <FolderIcon />,
+    name: "Facturas",
+    subItems: [
+      { name: "Facturas", path: "/factura/factura", pro: false },
+      { name: "Detalles de factura", path: "/factura/detalleFactura", pro: false },
+      { name: "Formas de pago", path: "/factura/formaDePago", pro: false },
+      { name: "Promociones", path: "/factura/promocion", pro: false },
+    ],
+  },
+  {
+    icon: <BoxCubeIcon />,
     name: "Artículos",
     subItems: [
       { name: "Artículo", path: "/articulos/articulos", pro: false },
@@ -105,7 +140,20 @@ const navItems: NavItem[] = [
       { name: "Movimiento de Stock", path: "/articulos/movimientos-stock", pro: false },
     ],
   },
-  
+  {
+    icon: <BuildingIcon />,
+    name: "Empresa",
+    path: "/empresa",
+  },
+  {
+    icon: <RestaurantIcon />,
+    name: "Restaurant",
+    subItems: [
+      { name: "Mesas", path: "/restaurant/mesas", pro: false },
+      { name: "Comandas de restaurante", path: "/restaurant/comandas-restaurant", pro: false },
+      { name: "Reseñas", path: "/restaurant/resenias", pro: false },
+    ],
+  },
 ];
 
 const othersItems: NavItem[] = [
@@ -127,6 +175,24 @@ const othersItems: NavItem[] = [
       { name: "Buttons", path: "/buttons", pro: false },
       { name: "Images", path: "/images", pro: false },
       { name: "Videos", path: "/videos", pro: false },
+    ],
+  },
+  {
+    name: "Forms",
+    icon: <ListIcon />,
+    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  },
+  {
+    name: "Tables",
+    icon: <TableIcon />,
+    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+  },
+  {
+    name: "Pages",
+    icon: <PageIcon />,
+    subItems: [
+      { name: "Blank Page", path: "/blank", pro: false },
+      { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
 ];
@@ -345,31 +411,17 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <Image
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <Image
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
-          ) : (
-            <Image
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/images/logo/logo.png"
+            alt="Logo"
+            width={48}
+            height={48}
+          />
+          {(isExpanded || isHovered || isMobileOpen) && (
+            <span className="text-base font-semibold tracking-tight text-gray-900 dark:text-white/90">
+              {APP_NAME}
+            </span>
           )}
         </Link>
       </div>
@@ -411,7 +463,6 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
     </aside>
   );
