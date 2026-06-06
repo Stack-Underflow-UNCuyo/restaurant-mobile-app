@@ -73,6 +73,30 @@ export default function UserDropdown() {
         </div>
 
         <DropdownItem
+          tag="a"
+          href="/profile"
+          baseClassName=""
+          className="flex items-center gap-3 px-3 py-2 mt-3 w-full font-medium text-gray-700 rounded-lg text-theme-sm hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 transition-colors"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M12 2a5 5 0 1 1 0 10A5 5 0 0 1 12 2zm0 12c-5.33 0-8 2.68-8 4v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-1.32-2.67-4-8-4z"
+              fill="currentColor"
+            />
+          </svg>
+          Mi perfil
+        </DropdownItem>
+
+        <DropdownItem
           onItemClick={handleLogout}
           tag="button"
           baseClassName=""
