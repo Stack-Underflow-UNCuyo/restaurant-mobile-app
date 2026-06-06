@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import MenuTable from "@/components/menu/menu";
+import MenuTable from "@/components/menus/menu";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

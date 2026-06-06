@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import SeccionCartaTable from "@/components/menu/seccion-carta";
+import SeccionCartaTable from "@/components/menus/seccion-carta";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
