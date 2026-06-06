@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class CartaService extends BaseService<Carta> {
@@ -37,30 +39,25 @@ public class CartaService extends BaseService<Carta> {
         }
     }
 
-    private void validar(String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
-        if (idSeccionCarta == null || idSeccionCarta.isBlank()) {
-            throw new Exception("El id de la sección de la carta es obligatorio");
+    private List<SeccionCarta> buscarSeccionesCarta(List<String> ids) throws Exception {
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
         }
-        if (fechaDesde == null) {
-            throw new Exception("La fecha de inicio de la carta es obligatoria");
+        List<SeccionCarta> secciones = new ArrayList<>();
+        for (String id : ids) {
+            SeccionCarta seccion = seccionCartaRepository.findByIdAndEliminadoFalse(id)
+                    .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + id));
+            secciones.add(seccion);
         }
-        if (fechaHasta == null) {
-            throw new Exception("La fecha de fin de la carta es obligatoria");
-        }
-        if (fechaHasta.isBefore(fechaDesde)) {
-            throw new Exception("La fecha de fin no puede ser anterior a la fecha de inicio");
-        }
+        return secciones;
     }
 
     @Transactional
-    public Carta crearCarta(String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
-        validar(idSeccionCarta, fechaDesde, fechaHasta);
-        SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(idSeccionCarta)
-                .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + idSeccionCarta));
+    public Carta crearCarta(List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         Carta carta = new Carta();
-        carta.setSeccionCarta(seccionCarta);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
+        carta.setSeccionesCarta(buscarSeccionesCarta(seccionCartaIds));
         return save(carta);
     }
 
@@ -70,14 +67,11 @@ public class CartaService extends BaseService<Carta> {
     }
 
     @Transactional
-    public Carta modificarCarta(String id, String idSeccionCarta, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
-        validar(idSeccionCarta, fechaDesde, fechaHasta);
-        SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(idSeccionCarta)
-                .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + idSeccionCarta));
+    public Carta modificarCarta(String id, List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         Carta carta = findById(id);
-        carta.setSeccionCarta(seccionCarta);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
+        carta.setSeccionesCarta(buscarSeccionesCarta(seccionCartaIds));
         return update(id, carta);
     }
 

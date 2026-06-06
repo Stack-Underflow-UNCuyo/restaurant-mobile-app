@@ -1,7 +1,7 @@
 import { Persona } from "./empleado";
 
 export interface Usuario {
-    id: number;
+    id: string;
     email: string;
     clave: string;
     rol: string;

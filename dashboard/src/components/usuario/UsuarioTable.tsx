@@ -22,10 +22,10 @@ import { Usuario, Rol } from "@/types/usuario";
 import { ApiError } from "@/lib/apiClient";
 
 type UsuarioFormData = {
-    email: string; clave: string; rol: string; personaId: number;
+    email: string; clave: string; rol: string; personaId: string;
 };
 
-const emptyForm: UsuarioFormData = { email: "", clave: "", rol: "", personaId: 0 };
+const emptyForm: UsuarioFormData = { email: "", clave: "", rol: "", personaId: "" };
 
 const rolOptions = [
     { value: Rol.ADMIN, label: "Administrador" },
@@ -42,8 +42,8 @@ export default function UsuarioTable() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
     const [formData, setFormData] = useState<UsuarioFormData>(emptyForm);
     const [errors, setErrors] = useState<{ email?: string; clave?: string; rol?: string; }>({});
 
@@ -65,7 +65,7 @@ export default function UsuarioTable() {
         openModal();
     };
 
-    const requestDelete = (id: number) => {
+    const requestDelete = (id: string) => {
         setPendingDeleteId(id);
         openConfirm();
     };

@@ -49,8 +49,8 @@ export default function MenuTable() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [pendingDetalle, setPendingDetalle] = useState<DetalleFormItem>(emptyDetalle);
   const [errors, setErrors] = useState({ ...noErrors });
@@ -108,7 +108,7 @@ export default function MenuTable() {
     }));
   };
 
-  const requestDelete = (id: number) => {
+  const requestDelete = (id: string) => {
     setPendingDeleteId(id);
     openConfirm();
   };
@@ -143,10 +143,14 @@ export default function MenuTable() {
     const payload = {
       nombre: formData.nombre.trim(),
       precio: formData.precio,
-      detallesMenu: formData.detallesMenu.map((d) => ({
-        cantidad: d.cantidad,
-        detalleMenu: detallesMenu.find((a) => String(a.id) === d.detalleMenuId)!,
-      })),
+      detallesMenu: formData.detallesMenu.map((d) => {
+        const detalle = detallesMenu.find((a) => String(a.id) === d.detalleMenuId);
+        return {
+          nombre: detalle?.nombre ?? "",
+          cantidad: d.cantidad,
+          articuloId: detalle?.articulo ? String(detalle.articulo.id) : "",
+        };
+      }),
     };
 
     setSaving(true);

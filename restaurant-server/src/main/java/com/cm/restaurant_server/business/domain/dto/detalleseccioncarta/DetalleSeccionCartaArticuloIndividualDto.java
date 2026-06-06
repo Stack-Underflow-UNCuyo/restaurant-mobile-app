@@ -1,9 +1,11 @@
 package com.cm.restaurant_server.business.domain.dto.detalleseccioncarta;
 
-import java.util.List;
-
 import com.cm.restaurant_server.business.domain.dto.articulo.ArticuloDto;
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,5 +13,5 @@ import lombok.*;
 @Setter
 public class DetalleSeccionCartaArticuloIndividualDto extends DetalleSeccionCartaDto {
     private double precio;
-    private List<ArticuloDto> articulos;
+    private ArticuloDto articulo;
 }

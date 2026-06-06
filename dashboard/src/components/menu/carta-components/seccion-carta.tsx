@@ -5,14 +5,15 @@ import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import MenuArtIndividualFormComp, { type MenuIndividualFormData } from "./menu-individual-form-comp";
-import MenuComboFormComp, { type MenuComboFormData } from "./menu-combo-form-comp";
+import MenuComboFormComp from "./menu-combo-form-comp";
+import type { Menu } from "@/types/entities";
 
 type Props = {
   titulo?: string;
   categorias?: string[];
   children?: ReactNode;
-  onAddIndividual?: (data: MenuIndividualFormData) => void;
-  onAddCombo?: (data: MenuComboFormData) => void;
+  onAddIndividual?: (data: MenuIndividualFormData) => Promise<void>;
+  onAddCombo?: (savedCombo: Menu) => Promise<void>;
   onEdit?: () => void;
   onDelete?: () => void;
 };
@@ -76,13 +77,13 @@ const SeccionCartaComp: React.FC<Props> = ({
           {children}
           {isAddingIndividual && (
             <MenuArtIndividualFormComp
-              onSave={(data) => { onAddIndividual?.(data); setIsAddingIndividual(false); }}
+              onSave={async (data) => { await onAddIndividual?.(data); setIsAddingIndividual(false); }}
               onCancel={() => setIsAddingIndividual(false)}
             />
           )}
           {isAddingCombo && (
             <MenuComboFormComp
-              onSave={(data) => { onAddCombo?.(data); setIsAddingCombo(false); }}
+              onSuccess={async (savedCombo) => { await onAddCombo?.(savedCombo); setIsAddingCombo(false); }}
               onCancel={() => setIsAddingCombo(false)}
             />
           )}

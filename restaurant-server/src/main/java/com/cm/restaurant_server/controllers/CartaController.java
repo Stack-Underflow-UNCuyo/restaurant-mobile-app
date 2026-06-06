@@ -23,14 +23,14 @@ public class CartaController extends BaseController<Carta, CartaDto, CartaCreate
     @Override
     @PostMapping
     public ResponseEntity<CartaDto> save(@Valid @RequestBody CartaCreateDto dto) throws Exception {
-        Carta carta = ((CartaService) service).crearCarta(dto.getSeccionCartaId(), dto.getFechaDesde(), dto.getFechaHasta());
+        Carta carta = ((CartaService) service).crearCarta(dto.getSeccionCartaIds(), dto.getFechaDesde(), dto.getFechaHasta());
         return ResponseEntity.ok(mapper.toDTO(carta));
     }
 
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<CartaDto> update(@PathVariable String id, @Valid @RequestBody CartaCreateDto dto) throws Exception {
-        Carta carta = ((CartaService) service).modificarCarta(id, dto.getSeccionCartaId(), dto.getFechaDesde(), dto.getFechaHasta());
+        Carta carta = ((CartaService) service).modificarCarta(id, dto.getSeccionCartaIds(), dto.getFechaDesde(), dto.getFechaHasta());
         return ResponseEntity.ok(mapper.toDTO(carta));
     }
 

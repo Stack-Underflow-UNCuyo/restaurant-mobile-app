@@ -30,8 +30,8 @@ export default function LocalidadTable() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [errors, setErrors] = useState({ nombre: false, codigoPostal: false, departamentoId: false });
   const { isOpen, openModal, closeModal } = useModal();
@@ -68,7 +68,7 @@ export default function LocalidadTable() {
     openModal();
   };
 
-  const requestDelete = (id: number) => {
+  const requestDelete = (id: string) => {
     setPendingDeleteId(id);
     openConfirm();
   };

@@ -2,7 +2,7 @@ import { Contacto, ContactoCorreoElectronico } from "./contactos";
 import { Direccion } from "./entities";
 
 export interface Persona {
-    id: number;
+    id: string;
     nombre: string;
     apellido: string;
     fechaNacimiento: string;

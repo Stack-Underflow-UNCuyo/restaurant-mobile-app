@@ -1,29 +1,29 @@
 export interface Pais {
-  id: number;
+  id: string;
   nombre: string;
 }
 
 export interface Provincia {
-  id: number;
+  id: string;
   nombre: string;
   pais: Pais;
 }
 
 export interface Departamento {
-  id: number;
+  id: string;
   nombre: string;
   provincia: Provincia;
 }
 
 export interface Localidad {
-  id: number;
+  id: string;
   nombre: string;
   codigoPostal: string;
   departamento: Departamento;
 }
 
 export interface Direccion {
-  id: number;
+  id: string;
   calle: string;
   numeracion: string;
   barrio: string;
@@ -32,12 +32,12 @@ export interface Direccion {
 }
 
 export interface UnidadDeMedida {
-  id: number;
+  id: string;
   nombre: string;
 }
 
 export interface Articulo {
-  id: number;
+  id: string;
   nombre: string;
   descripcion?: string;
   sinTAC: boolean;
@@ -46,7 +46,7 @@ export interface Articulo {
 }
 
 export interface Stock {
-  id: number;
+  id: string;
   articulo: Articulo;
   cantidadActual: number;
   minimo: number;
@@ -58,7 +58,7 @@ export enum TipoMovimientoStock {
 }
 
 export interface MovimientoStock {
-  id: number;
+  id: string;
   fechaMovimiento: string;
   cantidad: number;
   tipoMovimientoStock: TipoMovimientoStock;
@@ -66,52 +66,53 @@ export interface MovimientoStock {
 }
 
 export interface DetalleMenu {
-  id: number;
+  id: string;
   nombre: string;
   cantidad: number;
   articulo: Articulo;
+  articuloCantidad: number;
 }
 
 export interface Menu {
-  id: number;
+  id: string;
   nombre: string;
   precio: number;
   detallesMenu: DetalleMenu[];
 }
 
 export interface Carta {
-  id: number;
-  seccionCartaId: string;
+  id: string;
+  seccionesCarta: SeccionCarta[];
   fechaDesde: string;
   fechaHasta: string;
 }
 
 export interface SeccionCarta {
-  id: number;
+  id: string;
   nombre: string;
-  categoria: Categoria;
+  categoria?: Categoria;
   detallesSeccionCarta: DetalleSeccionCarta[];
 }
 
 export interface DetalleSeccionCarta {
-  id: number;
-  seccionCarta: SeccionCarta;
+  id: string;
+  seccionCartaId: string;
 }
 
 export interface DetalleSeccionCartaMenu {
-  id: number;
-  seccionCarta: SeccionCarta;
+  id: string;
+  seccionCartaId: string;
   menu: Menu;
 }
 
 export interface DetalleSeccionCartaArticuloIndividual {
-  id: number;
-  seccionCarta: SeccionCarta;
+  id: string;
+  seccionCartaId: string;
   precio: number;
-  articulos: Articulo[];
+  articulo: Articulo;
 }
 
 export interface Categoria {
-  id: number;
+  id: string;
   nombre: string;
 }

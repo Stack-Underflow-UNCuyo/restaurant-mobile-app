@@ -11,14 +11,20 @@ import org.mapstruct.MappingTarget;
 public interface DetalleSeccionCartaArticuloIndividualMapper extends BaseMapper<DetalleSeccionCartaArticuloIndividual, DetalleSeccionCartaArticuloIndividualDto, DetalleSeccionCartaArticuloIndividualCreateDto, DetalleSeccionCartaArticuloIndividualCreateDto> {
 
     @Override
+    @Mapping(target = "seccionCartaId", source = "seccionCarta.id")
+    DetalleSeccionCartaArticuloIndividualDto toDTO(DetalleSeccionCartaArticuloIndividual entity);
+
+    @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
+    @Mapping(target = "articulo", ignore = true)
     DetalleSeccionCartaArticuloIndividual toEntityCreate(DetalleSeccionCartaArticuloIndividualCreateDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "seccionCarta", ignore = true)
+    @Mapping(target = "articulo", ignore = true)
     DetalleSeccionCartaArticuloIndividual toUpdate(@MappingTarget DetalleSeccionCartaArticuloIndividual entity, DetalleSeccionCartaArticuloIndividualCreateDto dto);
 }

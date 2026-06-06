@@ -13,6 +13,7 @@ type MenuItemProps = {
   precio: string | number;
   detalles?: DetalleItem[];
   onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 const MenuArtIndividualComp: React.FC<MenuItemProps> = ({
@@ -20,6 +21,7 @@ const MenuArtIndividualComp: React.FC<MenuItemProps> = ({
   precio = "$$$",
   detalles = [],
   onEdit,
+  onDelete,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasDetalles = detalles.length > 0;
@@ -41,7 +43,7 @@ const MenuArtIndividualComp: React.FC<MenuItemProps> = ({
             <button onClick={onEdit} className="text-gray-400 hover:text-brand-500 transition-colors">
               <PencilIcon />
             </button>
-            <button className="text-gray-400 hover:text-error-500 transition-colors">
+            <button onClick={onDelete} className="text-gray-400 hover:text-error-500 transition-colors">
               <TrashBinIcon />
             </button>
           </div>

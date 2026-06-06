@@ -11,6 +11,9 @@ export type ArticuloItem = {
 export type DetalleCombo = {
   nombre: string;
   cantidad: number;
+  articuloId?: string;
+  articuloCantidad?: number;
+  detalleMenuId?: string;
   articulos?: ArticuloItem[];
 };
 
@@ -19,9 +22,16 @@ type MenuComboProps = {
   precio: string | number;
   detalles?: DetalleCombo[];
   onEdit?: () => void;
+  onDelete?: () => void;
+  onDeleteDetalle?: (detalleMenuId: string) => void;
 };
 
-const DetalleComboRow: React.FC<{ detalle: DetalleCombo }> = ({ detalle }) => {
+type DetalleComboRowProps = {
+  detalle: DetalleCombo;
+  onDeleteDetalle?: (detalleMenuId: string) => void;
+};
+
+const DetalleComboRow: React.FC<DetalleComboRowProps> = ({ detalle, onDeleteDetalle }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasArticulos = detalle.articulos && detalle.articulos.length > 0;
 
@@ -34,9 +44,22 @@ const DetalleComboRow: React.FC<{ detalle: DetalleCombo }> = ({ detalle }) => {
         <span className="text-sm text-gray-700 dark:text-gray-300">
           {detalle.nombre}
         </span>
-        <span className="text-sm font-medium text-gray-800 dark:text-white/90 w-8 text-right">
-          {detalle.cantidad}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-800 dark:text-white/90 w-8 text-right">
+            {detalle.cantidad}
+          </span>
+          {onDeleteDetalle && detalle.detalleMenuId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteDetalle(detalle.detalleMenuId!);
+              }}
+              className="text-gray-400 hover:text-error-500 transition-colors"
+            >
+              <TrashBinIcon />
+            </button>
+          )}
+        </div>
       </div>
 
       {isExpanded && hasArticulos && (
@@ -76,6 +99,8 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
   precio = "$$$",
   detalles = [],
   onEdit,
+  onDelete,
+  onDeleteDetalle,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasDetalles = detalles.length > 0;
@@ -97,7 +122,7 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
             <button onClick={onEdit} className="text-gray-400 hover:text-brand-500 transition-colors">
               <PencilIcon />
             </button>
-            <button className="text-gray-400 hover:text-error-500 transition-colors">
+            <button onClick={onDelete} className="text-gray-400 hover:text-error-500 transition-colors">
               <TrashBinIcon />
             </button>
           </div>
@@ -108,7 +133,7 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
         <div className="px-4 pb-3 flex flex-col gap-2">
           <div className="border-t border-gray-100 dark:border-white/[0.05] pt-2 mb-1" />
           {detalles.map((detalle, index) => (
-            <DetalleComboRow key={index} detalle={detalle} />
+            <DetalleComboRow key={index} detalle={detalle} onDeleteDetalle={onDeleteDetalle} />
           ))}
         </div>
       )}

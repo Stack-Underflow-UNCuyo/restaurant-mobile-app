@@ -12,10 +12,16 @@ public interface DetalleMenuMapper
         extends BaseMapper<DetalleMenu, DetalleMenuDto, DetalleMenuCreateDto, DetalleMenuCreateDto> {
 
     @Override
-    @Mapping(target = "articulo.id", source = "articuloId")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
+    @Mapping(target = "menu", ignore = true)
+    @Mapping(target = "articulos", ignore = true)
     DetalleMenu toEntityCreate(DetalleMenuCreateDto dto);
 
     @Override
-    @Mapping(target = "articulo.id", source = "articuloId")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eliminado", ignore = true)
+    @Mapping(target = "menu", ignore = true)
+    @Mapping(target = "articulos", ignore = true)
     DetalleMenu toUpdate(@MappingTarget DetalleMenu entity, DetalleMenuCreateDto dto);
 }

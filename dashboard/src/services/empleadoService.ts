@@ -16,6 +16,6 @@ type EmpleadoPayload = {
 export const empleadoService = {
     getAll: () => apiClient.get<Empleado[]>("/api/v1/empleados"),
     create: (data: EmpleadoPayload) => apiClient.post<Empleado>("/api/v1/empleados", data),
-    update: (id: number, data: EmpleadoPayload) => apiClient.put<Empleado>(`/api/v1/empleados/${id}`, data),
-    remove: (id: number) => apiClient.del(`/api/v1/empleados/${id}`),
+    update: (id: string, data: EmpleadoPayload) => apiClient.put<Empleado>(`/api/v1/empleados/${id}`, data),
+    remove: (id: string) => apiClient.del(`/api/v1/empleados/${id}`),
 };

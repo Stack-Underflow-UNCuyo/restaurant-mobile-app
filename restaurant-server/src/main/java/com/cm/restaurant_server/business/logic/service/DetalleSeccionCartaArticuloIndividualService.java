@@ -1,15 +1,27 @@
 package com.cm.restaurant_server.business.logic.service;
 
+import com.cm.restaurant_server.business.domain.entity.Articulo;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCartaArticuloIndividual;
+import com.cm.restaurant_server.business.domain.entity.SeccionCarta;
+import com.cm.restaurant_server.business.repository.ArticuloRepository;
 import com.cm.restaurant_server.business.repository.DetalleSeccionCartaArticuloIndividualRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cm.restaurant_server.business.repository.SeccionCartaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DetalleSeccionCartaArticuloIndividualService extends BaseService<DetalleSeccionCartaArticuloIndividual> {
-    @Autowired
-    public DetalleSeccionCartaArticuloIndividualService(DetalleSeccionCartaArticuloIndividualRepository repository) {
+
+    private final ArticuloRepository articuloRepository;
+    private final SeccionCartaRepository seccionCartaRepository;
+
+    public DetalleSeccionCartaArticuloIndividualService(
+            DetalleSeccionCartaArticuloIndividualRepository repository,
+            ArticuloRepository articuloRepository,
+            SeccionCartaRepository seccionCartaRepository) {
         super(repository);
+        this.articuloRepository = articuloRepository;
+        this.seccionCartaRepository = seccionCartaRepository;
     }
 
     @Override
@@ -17,8 +29,33 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
         if (entity.getPrecio() <= 0) {
             throw new Exception("El precio del artículo individual debe ser mayor a cero");
         }
-        if (entity.getArticulos() == null || entity.getArticulos().isEmpty()) {
-            throw new Exception("El detalle debe tener al menos un artículo");
-        }
+    }
+
+    @Transactional
+    public DetalleSeccionCartaArticuloIndividual crearDetalleArticulo(
+            String seccionCartaId, double precio, String articuloId) throws Exception {
+        SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
+                .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
+        Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
+                .orElseThrow(() -> new Exception("Artículo no encontrado con id: " + articuloId));
+        DetalleSeccionCartaArticuloIndividual detalle = new DetalleSeccionCartaArticuloIndividual();
+        detalle.setSeccionCarta(seccionCarta);
+        detalle.setPrecio(precio);
+        detalle.setArticulo(articulo);
+        return save(detalle);
+    }
+
+    @Transactional
+    public DetalleSeccionCartaArticuloIndividual modificarDetalleArticulo(
+            String id, String seccionCartaId, double precio, String articuloId) throws Exception {
+        SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
+                .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
+        Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
+                .orElseThrow(() -> new Exception("Artículo no encontrado con id: " + articuloId));
+        DetalleSeccionCartaArticuloIndividual detalle = findById(id);
+        detalle.setSeccionCarta(seccionCarta);
+        detalle.setPrecio(precio);
+        detalle.setArticulo(articulo);
+        return update(id, detalle);
     }
 }

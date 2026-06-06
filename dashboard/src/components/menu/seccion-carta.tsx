@@ -15,9 +15,9 @@ import { seccionCartaService } from "@/services/seccionCartaService";
 import { categoriaService } from "@/services/categoriaService";
 import toast from "react-hot-toast";
 
-type FormData = { nombre: string; categoriaId: string, seccionesCartaId: string[] };
-const emptyForm: FormData = { nombre: "", categoriaId: "", seccionesCartaId: []  };
-const noErrors = { nombre: false, categoriaId: false, seccionesCartaId: false };
+type FormData = { nombre: string; categoriaNombre: string; seccionesCartaId: string[] };
+const emptyForm: FormData = { nombre: "", categoriaNombre: "", seccionesCartaId: [] };
+const noErrors = { nombre: false, categoriaNombre: false, seccionesCartaId: false };
 
 export default function SeccionCartaTable() {
   const [items, setItems] = useState<SeccionCarta[]>([]);
@@ -26,8 +26,8 @@ export default function SeccionCartaTable() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [pendingSeccionId, setPendingSeccionId] = useState("");
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [errors, setErrors] = useState({ ...noErrors });
@@ -38,7 +38,7 @@ export default function SeccionCartaTable() {
     Promise.all([seccionCartaService.getAll(), categoriaService.getAll(), seccionCartaService.getAll()])
       .then(([secciones, categorias, seccionesCarta]) => {
         setItems(secciones);
-        setCategoriaOptions(categorias.map((c: Categoria) => ({ value: String(c.id), label: c.nombre })));
+        setCategoriaOptions(categorias.map((c: Categoria) => ({ value: c.nombre, label: c.nombre })));
         setSeccionesOptions(seccionesCarta.map((s: SeccionCarta) => ({ value: String(s.id), label: s.nombre })));
       })
       .catch(() => toast.error("Error al cargar las secciones de carta"))
@@ -51,7 +51,7 @@ export default function SeccionCartaTable() {
     setEditingId(item.id);
     setFormData({
       nombre: item.nombre ?? "",
-      categoriaId: item.categoria ? String(item.categoria.id) : "",
+      categoriaNombre: item.categoria?.nombre ?? "",
       seccionesCartaId: (item.detallesSeccionCarta ?? []).map((a) => String(a.id)),
     });
     setErrors({ ...noErrors });
@@ -69,7 +69,7 @@ export default function SeccionCartaTable() {
     setFormData((prev) => ({ ...prev, articuloIds: prev.seccionesCartaId.filter((a) => a !== id) }));
   };
 
-  const requestDelete = (id: number) => { setPendingDeleteId(id); openConfirm(); };
+  const requestDelete = (id: string) => { setPendingDeleteId(id); openConfirm(); };
 
   const confirmDelete = async () => {
     if (pendingDeleteId === null) return;
@@ -87,15 +87,16 @@ export default function SeccionCartaTable() {
   };
 
   const handleSubmit = async () => {
-    const newErrors = { nombre: !formData.nombre.trim(), categoriaId: !formData.categoriaId, seccionesCartaId: !formData.seccionesCartaId };
+    const newErrors = { nombre: !formData.nombre.trim(), categoriaNombre: false, seccionesCartaId: !formData.seccionesCartaId };
     if (Object.values(newErrors).some(Boolean)) { setErrors(newErrors); return; }
     setSaving(true);
     try {
+      const payload = { nombre: formData.nombre, categoriaNombre: formData.categoriaNombre || undefined };
       if (editingId !== null) {
-        const updated = await seccionCartaService.update(editingId, formData);
+        const updated = await seccionCartaService.update(editingId, payload);
         setItems((prev) => prev.map((u) => (u.id === editingId ? updated : u)));
       } else {
-        const created = await seccionCartaService.create(formData);
+        const created = await seccionCartaService.create(payload);
         setItems((prev) => [...prev, created]);
       }
       closeModal();
@@ -163,9 +164,8 @@ export default function SeccionCartaTable() {
           </div>
           <div>
             <Label>Categoría</Label>
-            <Select options={categoriaOptions} placeholder="Seleccionar categoría" defaultValue={formData.categoriaId}
-              onChange={(value) => { setFormData((prev) => ({ ...prev, categoriaId: value })); if (errors.categoriaId) setErrors((prev) => ({ ...prev, categoriaId: false })); }} />
-            {errors.categoriaId && <p className="mt-1.5 text-xs text-error-500">Debe seleccionar una categoría</p>}
+            <Select options={[{ value: "", label: "Sin categoría" }, ...categoriaOptions]} placeholder="Seleccionar categoría" defaultValue={formData.categoriaNombre}
+              onChange={(value) => { setFormData((prev) => ({ ...prev, categoriaNombre: value })); }} />
           </div>
 
           <div>

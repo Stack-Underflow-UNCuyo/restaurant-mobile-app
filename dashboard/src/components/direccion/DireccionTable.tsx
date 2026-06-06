@@ -43,8 +43,8 @@ export default function DireccionTable() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
     const [formData, setFormData] = useState<DireccionFormData>(emptyForm);
     //para controlar si los campos del formulario son validos o no
     const [errors, setErrors] = useState({ calle: false, numeracion:false, barrio: false, localidadId: false,});
@@ -84,7 +84,7 @@ export default function DireccionTable() {
         openModal();
     };
 
-    const requestDelete = (id: number) => {
+    const requestDelete = (id: string) => {
         setPendingDeleteId(id);
         openConfirm();
     };

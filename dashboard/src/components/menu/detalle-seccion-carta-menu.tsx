@@ -9,32 +9,35 @@ import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
 import DeletionConfirmationPopUp from "@/components/ui/DeletionConfirmationPopUp";
 import Spinner from "@/components/ui/Spinner";
 import Select from "@/components/form/Select";
-import type { DetalleSeccionCartaMenu, Menu } from "@/types/entities";
+import type { DetalleSeccionCartaMenu, Menu, SeccionCarta } from "@/types/entities";
 import { detalleSeccionCartaMenuService } from "@/services/detalleSeccionCartaMenuService";
 import { menuService } from "@/services/menuService";
+import { seccionCartaService } from "@/services/seccionCartaService";
 import toast from "react-hot-toast";
 
-type FormData = { menuId: string };
-const emptyForm: FormData = { menuId: "" };
+type FormData = { seccionCartaId: string; menuId: string };
+const emptyForm: FormData = { seccionCartaId: "", menuId: "" };
 
 export default function DetalleSeccionCartaMenuTable() {
   const [items, setItems] = useState<DetalleSeccionCartaMenu[]>([]);
   const [menuOptions, setMenuOptions] = useState<{ value: string; label: string }[]>([]);
+  const [seccionOptions, setSeccionOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [menuError, setMenuError] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
 
   useEffect(() => {
-    Promise.all([detalleSeccionCartaMenuService.getAll(), menuService.getAll()])
-      .then(([detalles, menus]) => {
+    Promise.all([detalleSeccionCartaMenuService.getAll(), menuService.getAll(), seccionCartaService.getAll()])
+      .then(([detalles, menus, secciones]) => {
         setItems(detalles);
         setMenuOptions(menus.map((m: Menu) => ({ value: String(m.id), label: m.nombre ?? `Menú #${m.id}` })));
+        setSeccionOptions(secciones.map((s: SeccionCarta) => ({ value: s.id, label: s.nombre })));
       })
       .catch(() => toast.error("Error al cargar los datos"))
       .finally(() => setLoading(false));
@@ -44,12 +47,12 @@ export default function DetalleSeccionCartaMenuTable() {
 
   const openEdit = (item: DetalleSeccionCartaMenu) => {
     setEditingId(item.id);
-    setFormData({ menuId: item.menu ? String(item.menu.id) : "" });
+    setFormData({ seccionCartaId: item.seccionCartaId ?? "", menuId: item.menu ? String(item.menu.id) : "" });
     setMenuError(false);
     openModal();
   };
 
-  const requestDelete = (id: number) => { setPendingDeleteId(id); openConfirm(); };
+  const requestDelete = (id: string) => { setPendingDeleteId(id); openConfirm(); };
 
   const confirmDelete = async () => {
     if (pendingDeleteId === null) return;
@@ -67,7 +70,7 @@ export default function DetalleSeccionCartaMenuTable() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.menuId) { setMenuError(true); return; }
+    if (!formData.menuId || !formData.seccionCartaId) { setMenuError(true); return; }
     setSaving(true);
     try {
       if (editingId !== null) {
@@ -133,10 +136,15 @@ export default function DetalleSeccionCartaMenuTable() {
         </h4>
         <div className="space-y-4">
           <div>
+            <Label>Sección de carta</Label>
+            <Select options={seccionOptions} placeholder="Seleccionar sección" defaultValue={formData.seccionCartaId}
+              onChange={(value) => setFormData((prev) => ({ ...prev, seccionCartaId: value }))} />
+          </div>
+          <div>
             <Label>Menú</Label>
             <Select options={menuOptions} placeholder="Seleccionar menú" defaultValue={formData.menuId}
-              onChange={(value) => { setFormData({ menuId: value }); if (menuError) setMenuError(false); }} />
-            {menuError && <p className="mt-1.5 text-xs text-error-500">Debe seleccionar un menú</p>}
+              onChange={(value) => { setFormData((prev) => ({ ...prev, menuId: value })); if (menuError) setMenuError(false); }} />
+            {menuError && <p className="mt-1.5 text-xs text-error-500">Debe seleccionar una sección y un menú</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-white/[0.05]">
             <Button variant="outline" size="sm" onClick={closeModal} disabled={saving}>Cancelar</Button>

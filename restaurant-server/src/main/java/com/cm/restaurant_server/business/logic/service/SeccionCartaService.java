@@ -3,7 +3,6 @@ package com.cm.restaurant_server.business.logic.service;
 import com.cm.restaurant_server.business.domain.entity.Categoria;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCarta;
 import com.cm.restaurant_server.business.domain.entity.SeccionCarta;
-import com.cm.restaurant_server.business.repository.CategoriaRepository;
 import com.cm.restaurant_server.business.repository.SeccionCartaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,13 @@ import java.util.Collection;
 public class SeccionCartaService extends BaseService<SeccionCarta> {
 
     private final SeccionCartaRepository repository;
-    private final CategoriaRepository categoriaRepository;
+    private final CategoriaService categoriaService;
 
     @Autowired
-    public SeccionCartaService(SeccionCartaRepository repository, CategoriaRepository categoriaRepository) {
+    public SeccionCartaService(SeccionCartaRepository repository, CategoriaService categoriaService) {
         super(repository);
         this.repository = repository;
-        this.categoriaRepository = categoriaRepository;
+        this.categoriaService = categoriaService;
     }
 
     @Override
@@ -29,29 +28,23 @@ public class SeccionCartaService extends BaseService<SeccionCarta> {
         if (entity.getNombre() == null || entity.getNombre().isBlank()) {
             throw new Exception("El nombre de la sección de la carta es obligatorio");
         }
-        if (entity.getCategoria() == null) {
-            throw new Exception("La categoría de la sección de la carta es obligatoria");
-        }
     }
 
-    private void validar(String idCategoria, String nombre) throws Exception {
-        if (nombre == null || nombre.isBlank()) {
-            throw new Exception("El nombre de la sección de la carta es obligatorio");
-        }
-        if (idCategoria == null || idCategoria.isBlank()) {
-            throw new Exception("El id de la categoría es obligatorio");
+    private Categoria resolverCategoria(String categoriaName) throws Exception {
+        if (categoriaName == null || categoriaName.isBlank()) return null;
+        try {
+            return categoriaService.buscarCategoriaPorNombre(categoriaName);
+        } catch (Exception e) {
+            return categoriaService.crearCategoria(categoriaName);
         }
     }
 
     @Transactional
-    public void crearSeccionCarta(String idCategoria, String nombre) throws Exception {
-        validar(idCategoria, nombre);
-        Categoria categoria = categoriaRepository.findByIdAndEliminadoFalse(idCategoria)
-                .orElseThrow(() -> new Exception("Categoría no encontrada con id: " + idCategoria));
+    public SeccionCarta crearSeccionCarta(String categoriaName, String nombre) throws Exception {
         SeccionCarta seccionCarta = new SeccionCarta();
         seccionCarta.setNombre(nombre);
-        seccionCarta.setCategoria(categoria);
-        save(seccionCarta);
+        seccionCarta.setCategoria(resolverCategoria(categoriaName));
+        return save(seccionCarta);
     }
 
     @Transactional
@@ -66,14 +59,11 @@ public class SeccionCartaService extends BaseService<SeccionCarta> {
     }
 
     @Transactional
-    public void modificarSeccionCarta(String id, String idCategoria, String nombre) throws Exception {
-        validar(idCategoria, nombre);
-        Categoria categoria = categoriaRepository.findByIdAndEliminadoFalse(idCategoria)
-                .orElseThrow(() -> new Exception("Categoría no encontrada con id: " + idCategoria));
+    public SeccionCarta modificarSeccionCarta(String id, String categoriaName, String nombre) throws Exception {
         SeccionCarta seccionCarta = findById(id);
         seccionCarta.setNombre(nombre);
-        seccionCarta.setCategoria(categoria);
-        update(id, seccionCarta);
+        seccionCarta.setCategoria(resolverCategoria(categoriaName));
+        return update(id, seccionCarta);
     }
 
     @Transactional
