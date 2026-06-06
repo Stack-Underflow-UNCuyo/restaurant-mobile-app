@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CartasListTable from "@/components/menus/cartas-list";
+import CartasListTable from "@/components/menu/cartas-list";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import DetalleSeccionCartaMenuTable from "@/components/menus/detalle-seccion-carta-menu";
+import DetalleSeccionCartaMenuTable from "@/components/menu/detalle-seccion-carta-menu";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
