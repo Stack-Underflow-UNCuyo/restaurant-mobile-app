@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class DetalleSeccionCartaArticuloIndividual extends DetalleSeccionCarta {
     private double precio;
+    private String descripcion;
     @ManyToOne
     private Articulo articulo;
 }

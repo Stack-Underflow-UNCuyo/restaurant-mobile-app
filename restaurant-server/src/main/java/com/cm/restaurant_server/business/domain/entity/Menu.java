@@ -15,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Menu extends Base {
     private String nombre;
+    private String descripcion;
     private double precio;
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleMenu> detallesMenu;

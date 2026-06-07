@@ -13,6 +13,7 @@ import lombok.*;
 @Setter
 public class MenuDto extends BaseDto {
     private String nombre;
+    private String descripcion;
     private double precio;
     private List<DetalleMenuDto> detallesMenu;
 }

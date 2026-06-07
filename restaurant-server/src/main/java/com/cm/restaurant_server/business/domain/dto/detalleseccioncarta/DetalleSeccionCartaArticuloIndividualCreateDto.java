@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DetalleSeccionCartaArticuloIndividualCreateDto extends DetalleSeccionCartaCreateDto {
     private double precio;
+    private String descripcion;
     private String articuloId;
 }

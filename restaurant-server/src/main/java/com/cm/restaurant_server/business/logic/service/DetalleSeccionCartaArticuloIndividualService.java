@@ -33,7 +33,7 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
 
     @Transactional
     public DetalleSeccionCartaArticuloIndividual crearDetalleArticulo(
-            String seccionCartaId, double precio, String articuloId) throws Exception {
+            String seccionCartaId, double precio, String descripcion, String articuloId) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
@@ -41,13 +41,14 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
         DetalleSeccionCartaArticuloIndividual detalle = new DetalleSeccionCartaArticuloIndividual();
         detalle.setSeccionCarta(seccionCarta);
         detalle.setPrecio(precio);
+        detalle.setDescripcion(descripcion);
         detalle.setArticulo(articulo);
         return save(detalle);
     }
 
     @Transactional
     public DetalleSeccionCartaArticuloIndividual modificarDetalleArticulo(
-            String id, String seccionCartaId, double precio, String articuloId) throws Exception {
+            String id, String seccionCartaId, double precio, String descripcion, String articuloId) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
@@ -55,6 +56,7 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
         DetalleSeccionCartaArticuloIndividual detalle = findById(id);
         detalle.setSeccionCarta(seccionCarta);
         detalle.setPrecio(precio);
+        detalle.setDescripcion(descripcion);
         detalle.setArticulo(articulo);
         return update(id, detalle);
     }

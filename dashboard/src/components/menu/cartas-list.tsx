@@ -14,8 +14,8 @@ import type { Carta } from "@/types/entities";
 import { cartaService } from "@/services/cartaService";
 import toast from "react-hot-toast";
 
-type FormData = { fechaDesde: string; fechaHasta: string };
-const emptyForm: FormData = { fechaDesde: "", fechaHasta: "" };
+type FormData = { nombre: string; fechaDesde: string; fechaHasta: string };
+const emptyForm: FormData = { nombre: "", fechaDesde: "", fechaHasta: "" };
 
 export default function CartasListTable() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function CartasListTable() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
-  const [errors, setErrors] = useState<{ fechaDesde: boolean; fechaHasta: boolean }>({ fechaDesde: false, fechaHasta: false });
+  const [errors, setErrors] = useState<{ nombre: boolean; fechaDesde: boolean; fechaHasta: boolean }>({ nombre: false, fechaDesde: false, fechaHasta: false });
   const { isOpen, openModal, closeModal } = useModal();
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
 
@@ -40,14 +40,14 @@ export default function CartasListTable() {
   const openAdd = () => {
     setEditingId(null);
     setFormData(emptyForm);
-    setErrors({ fechaDesde: false, fechaHasta: false });
+    setErrors({ nombre: false, fechaDesde: false, fechaHasta: false });
     openModal();
   };
 
   const openEdit = (item: Carta) => {
     setEditingId(item.id);
-    setFormData({ fechaDesde: item.fechaDesde, fechaHasta: item.fechaHasta });
-    setErrors({ fechaDesde: false, fechaHasta: false });
+    setFormData({ nombre: item.nombre ?? "", fechaDesde: item.fechaDesde, fechaHasta: item.fechaHasta });
+    setErrors({ nombre: false, fechaDesde: false, fechaHasta: false });
     openModal();
   };
 
@@ -73,15 +73,17 @@ export default function CartasListTable() {
 
   const handleSubmit = async () => {
     const newErrors = {
+      nombre: !formData.nombre.trim(),
       fechaDesde: !formData.fechaDesde.trim(),
       fechaHasta: !formData.fechaHasta.trim(),
     };
     setErrors(newErrors);
-    if (newErrors.fechaDesde || newErrors.fechaHasta) return;
+    if (newErrors.nombre || newErrors.fechaDesde || newErrors.fechaHasta) return;
 
     setSaving(true);
     try {
       const payload = {
+        nombre: formData.nombre,
         fechaDesde: formData.fechaDesde,
         fechaHasta: formData.fechaHasta,
       };
@@ -113,7 +115,7 @@ export default function CartasListTable() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                {["Id", "Fecha Desde", "Fecha Hasta", "Secciones", "Acciones"].map((h) => (
+                {["Id", "Nombre", "Fecha Desde", "Fecha Hasta", "Secciones", "Acciones"].map((h) => (
                   <TableCell key={h} isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">{h}</TableCell>
                 ))}
               </TableRow>
@@ -128,6 +130,7 @@ export default function CartasListTable() {
                   onClick={() => router.push(`/menus/carta/${item.id}`)}
                 >
                   <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">{item.id}</TableCell>
+                  <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">{item.nombre ?? "-"}</TableCell>
                   <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">{item.fechaDesde}</TableCell>
                   <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">{item.fechaHasta}</TableCell>
                   <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">
@@ -154,6 +157,15 @@ export default function CartasListTable() {
           {editingId !== null ? "Editar Carta" : "Agregar Carta"}
         </h4>
         <div className="space-y-4">
+          <div>
+            <Label>Nombre</Label>
+            <Input type="text" defaultValue={formData.nombre} error={errors.nombre}
+              hint={errors.nombre ? "El nombre es obligatorio" : ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFormData((prev) => ({ ...prev, nombre: e.target.value }));
+                if (errors.nombre) setErrors((prev) => ({ ...prev, nombre: false }));
+              }} />
+          </div>
           <div>
             <Label>Fecha Desde</Label>
             <Input type="date" defaultValue={formData.fechaDesde} error={errors.fechaDesde}

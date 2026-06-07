@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PlusIcon, TrashBinIcon } from "@/icons";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
+import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
 import { menuService } from "@/services/menuService";
@@ -20,6 +21,7 @@ export type DetalleComboFormItem = {
 export type MenuComboFormData = {
   id?: string;
   nombre: string;
+  descripcion?: string;
   precio: string;
   detalles: DetalleComboFormItem[];
 };
@@ -40,6 +42,7 @@ type DetalleRow = {
 
 const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCancel }) => {
   const [nombre, setNombre] = useState(initialData?.nombre ?? "");
+  const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? "");
   const [precio, setPrecio] = useState(initialData?.precio ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const [articuloOptions, setArticuloOptions] = useState<{ value: string; label: string }[]>([]);
@@ -84,6 +87,7 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
     try {
       const payload = {
         nombre,
+        descripcion,
         precio: parseFloat(precio.replace(/[^\d.]/g, "")) || 0,
         detallesMenu: detalles.map((d) => ({
           nombre: d.nombre,
@@ -129,6 +133,15 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
             onChange={(e) => setPrecio(e.target.value)}
           />
         </div>
+      </div>
+
+      <div className="mb-5">
+        <Label>Descripción</Label>
+        <TextArea
+          placeholder="Descripción del combo..."
+          value={descripcion}
+          onChange={setDescripcion}
+        />
       </div>
 
       <div className="border border-gray-200 dark:border-white/[0.1] rounded-lg p-4 mb-5">

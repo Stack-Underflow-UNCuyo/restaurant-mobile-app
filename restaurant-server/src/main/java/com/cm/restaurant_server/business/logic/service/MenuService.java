@@ -46,6 +46,7 @@ public class MenuService extends BaseService<Menu> {
     public Menu crearMenuConDetalles(MenuCreateDto dto) {
         Menu menu = new Menu();
         menu.setNombre(dto.getNombre());
+        menu.setDescripcion(dto.getDescripcion());
         menu.setPrecio(dto.getPrecio());
         Menu menuGuardado = menuRepository.save(menu);
 
@@ -81,6 +82,7 @@ public class MenuService extends BaseService<Menu> {
         Menu menu = menuRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new RuntimeException("Menú no encontrado: " + id));
         menu.setNombre(dto.getNombre());
+        menu.setDescripcion(dto.getDescripcion());
         menu.setPrecio(dto.getPrecio());
 
         menu.getDetallesMenu().clear();

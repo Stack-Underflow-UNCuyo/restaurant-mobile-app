@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class CartaDto extends BaseDto {
+    private String nombre;
     private List<SeccionCartaDto> seccionesCarta;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;

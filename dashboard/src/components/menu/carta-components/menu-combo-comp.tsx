@@ -19,6 +19,7 @@ export type DetalleCombo = {
 
 type MenuComboProps = {
   nombre: string;
+  descripcion?: string;
   precio: string | number;
   detalles?: DetalleCombo[];
   onEdit?: () => void;
@@ -96,6 +97,7 @@ const DetalleComboRow: React.FC<DetalleComboRowProps> = ({ detalle, onDeleteDeta
 
 const MenuComboComp: React.FC<MenuComboProps> = ({
   nombre = "Nombre del Combo",
+  descripcion,
   precio = "$$$",
   detalles = [],
   onEdit,
@@ -129,9 +131,12 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
         </div>
       </div>
 
-      {isExpanded && hasDetalles && (
+      {isExpanded && (descripcion || hasDetalles) && (
         <div className="px-4 pb-3 flex flex-col gap-2">
           <div className="border-t border-gray-100 dark:border-white/[0.05] pt-2 mb-1" />
+          {descripcion && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 pb-1">{descripcion}</p>
+          )}
           {detalles.map((detalle, index) => (
             <DetalleComboRow key={index} detalle={detalle} onDeleteDetalle={onDeleteDetalle} />
           ))}

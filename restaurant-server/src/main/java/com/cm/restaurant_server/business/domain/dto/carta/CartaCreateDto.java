@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartaCreateDto {
+    private String nombre;
     private List<String> seccionCartaIds;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;

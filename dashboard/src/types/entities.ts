@@ -77,12 +77,14 @@ export interface DetalleMenu {
 export interface Menu {
   id: string;
   nombre: string;
+  descripcion?: string;
   precio: number;
   detallesMenu: DetalleMenu[];
 }
 
 export interface Carta {
   id: string;
+  nombre?: string;
   seccionesCarta: SeccionCarta[];
   fechaDesde: string;
   fechaHasta: string;
@@ -110,6 +112,7 @@ export interface DetalleSeccionCartaArticuloIndividual {
   id: string;
   seccionCartaId: string;
   precio: number;
+  descripcion?: string;
   articulo: Articulo;
 }
 

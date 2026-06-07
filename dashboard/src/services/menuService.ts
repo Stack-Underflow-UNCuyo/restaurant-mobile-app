@@ -11,6 +11,7 @@ export type DetalleMenuPayload = {
 
 export type MenuPayload = {
   nombre: string;
+  descripcion?: string;
   precio: number;
   detallesMenu: DetalleMenuPayload[];
 };

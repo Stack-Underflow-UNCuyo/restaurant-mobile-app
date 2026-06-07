@@ -13,5 +13,6 @@ import lombok.Setter;
 @Setter
 public class DetalleSeccionCartaArticuloIndividualDto extends DetalleSeccionCartaDto {
     private double precio;
+    private String descripcion;
     private ArticuloDto articulo;
 }

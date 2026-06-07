@@ -31,6 +31,7 @@ type ComboItem = {
   menuId: string;
   type: "combo";
   nombre: string;
+  descripcion?: string;
   precio: string;
   detalles: DetalleCombo[];
 };
@@ -78,6 +79,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
             menuId: d.menu.id,
             type: "combo",
             nombre: d.menu.nombre,
+            descripcion: d.menu.descripcion,
             precio: String(d.menu.precio),
             detalles: (d.menu.detallesMenu ?? []).map((dm) => ({
               nombre: dm.nombre,
@@ -237,6 +239,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
           menuId: savedMenu.id,
           type: "combo" as const,
           nombre: savedMenu.nombre,
+          descripcion: savedMenu.descripcion,
           precio: String(savedMenu.precio),
           detalles: (savedMenu.detallesMenu ?? []).map((d) => ({
             nombre: d.nombre,
@@ -293,6 +296,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               ...item,
               menuId: savedMenu.id,
               nombre: savedMenu.nombre,
+              descripcion: savedMenu.descripcion,
               precio: String(savedMenu.precio),
               detalles: (savedMenu.detallesMenu ?? []).map((d) => ({
                 nombre: d.nombre,
@@ -399,7 +403,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               return (
                 <MenuComboFormComp
                   key={item.id}
-                  initialData={{ id: item.menuId, nombre: item.nombre, precio: item.precio, detalles: item.detalles }}
+                  initialData={{ id: item.menuId, nombre: item.nombre, descripcion: item.descripcion, precio: item.precio, detalles: item.detalles }}
                   onSuccess={(savedMenu) => handleEditComboSuccess(section.id, item.id, savedMenu)}
                   onCancel={() => setEditingItemId(null)}
                 />
@@ -409,6 +413,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               <MenuComboComp
                 key={item.id}
                 nombre={item.nombre}
+                descripcion={item.descripcion}
                 precio={item.precio}
                 detalles={item.detalles}
                 onEdit={() => setEditingItemId(item.id)}

@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/apiClient";
 import type { Carta } from "@/types/entities";
 
 type CartaPayload = {
+  nombre?: string;
   seccionCartaIds?: string[];
   fechaDesde: string;
   fechaHasta: string;

@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Carta extends Base {
+    private String nombre;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     @ManyToMany

@@ -6,12 +6,12 @@ Full-stack restaurant management system with a Next.js dashboard and a Spring Bo
 
 ## Prerequisites
 
-| Tool | Version |
-|------|---------|
-| Java | 21 |
-| Maven | 3.8+ |
-| Node.js | 18+ |
-| PostgreSQL | 15+ |
+| Tool       | Version |
+| ---------- | ------- |
+| Java       | 21      |
+| Maven      | 3.8+    |
+| Node.js    | 18+     |
+| PostgreSQL | 15+     |
 
 ---
 
@@ -28,6 +28,7 @@ CREATE DATABASE restaurant;
 Set the following variables in your shell before running the server.
 
 **PowerShell:**
+
 ```powershell
 $env:DB_URL      = "jdbc:postgresql://localhost:5432/restaurant"
 $env:DB_USER     = "postgres"
@@ -36,6 +37,7 @@ $env:SECRET_KEY  = "any-long-random-string-at-least-32-chars"
 ```
 
 **Bash / zsh:**
+
 ```bash
 export DB_URL="jdbc:postgresql://localhost:5432/restaurant"
 export DB_USER="postgres"
@@ -53,12 +55,10 @@ mvn spring-boot:run
 The server starts on **http://localhost:8081**.  
 On first boot a default admin account is created automatically:
 
-| Field | Value |
-|-------|-------|
-| Email | admin@restaurant.com |
-| Password | 1234 |
-
----
+| Field    | Value                |
+| -------- | -------------------- |
+| Email    | admin@restaurant.com |
+| Password | 1234                 |
 
 ## Frontend (Next.js)
 

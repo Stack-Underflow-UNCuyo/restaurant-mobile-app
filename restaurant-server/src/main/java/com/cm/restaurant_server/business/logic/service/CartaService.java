@@ -53,8 +53,9 @@ public class CartaService extends BaseService<Carta> {
     }
 
     @Transactional
-    public Carta crearCarta(List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
+    public Carta crearCarta(String nombre, List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         Carta carta = new Carta();
+        carta.setNombre(nombre);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
         carta.setSeccionesCarta(buscarSeccionesCarta(seccionCartaIds));
@@ -67,8 +68,9 @@ public class CartaService extends BaseService<Carta> {
     }
 
     @Transactional
-    public Carta modificarCarta(String id, List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
+    public Carta modificarCarta(String id, String nombre, List<String> seccionCartaIds, LocalDate fechaDesde, LocalDate fechaHasta) throws Exception {
         Carta carta = findById(id);
+        carta.setNombre(nombre);
         carta.setFechaDesde(fechaDesde);
         carta.setFechaHasta(fechaHasta);
         carta.setSeccionesCarta(buscarSeccionesCarta(seccionCartaIds));

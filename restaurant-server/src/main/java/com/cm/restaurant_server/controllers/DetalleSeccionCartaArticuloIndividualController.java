@@ -21,7 +21,7 @@ public class DetalleSeccionCartaArticuloIndividualController extends BaseControl
     @PostMapping
     public ResponseEntity<DetalleSeccionCartaArticuloIndividualDto> save(@Valid @RequestBody DetalleSeccionCartaArticuloIndividualCreateDto dto) throws Exception {
         DetalleSeccionCartaArticuloIndividual detalle = ((DetalleSeccionCartaArticuloIndividualService) service)
-                .crearDetalleArticulo(dto.getSeccionCartaId(), dto.getPrecio(), dto.getArticuloId());
+                .crearDetalleArticulo(dto.getSeccionCartaId(), dto.getPrecio(), dto.getDescripcion(), dto.getArticuloId());
         return ResponseEntity.ok(((DetalleSeccionCartaArticuloIndividualMapper) mapper).toDTO(detalle));
     }
 
@@ -29,7 +29,7 @@ public class DetalleSeccionCartaArticuloIndividualController extends BaseControl
     @PutMapping("/{id}")
     public ResponseEntity<DetalleSeccionCartaArticuloIndividualDto> update(@PathVariable String id, @Valid @RequestBody DetalleSeccionCartaArticuloIndividualCreateDto dto) throws Exception {
         DetalleSeccionCartaArticuloIndividual detalle = ((DetalleSeccionCartaArticuloIndividualService) service)
-                .modificarDetalleArticulo(id, dto.getSeccionCartaId(), dto.getPrecio(), dto.getArticuloId());
+                .modificarDetalleArticulo(id, dto.getSeccionCartaId(), dto.getPrecio(), dto.getDescripcion(), dto.getArticuloId());
         return ResponseEntity.ok(((DetalleSeccionCartaArticuloIndividualMapper) mapper).toDTO(detalle));
     }
 }
