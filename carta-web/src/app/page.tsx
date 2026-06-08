@@ -8,20 +8,32 @@ export default async function HomePage() {
   const [empresa, cartas] = await Promise.all([empresaService.getActive(), cartaService.getAll()]);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-8 px-4 py-10 sm:px-6">
-      <header className="flex flex-col items-center gap-3 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element -- small bundled placeholder vector, no responsive variants needed */}
-        <img src={RESTAURANT_LOGO} alt="" className="h-24 w-24 rounded-full shadow-theme-md" />
-        <h1 className="text-title-sm font-semibold text-gray-800 sm:text-title-md">{empresa.nombre}</h1>
+    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col md:max-w-3xl">
+      <header className="grain relative flex flex-col items-center overflow-hidden bg-gradient-to-br from-brand-700 to-brand-950 px-4 pb-16 pt-14 text-center sm:px-6 sm:pb-20 md:pb-24">
+        <h1 className="font-fraunces text-title-sm italic text-white sm:text-title-md md:text-title-lg">{empresa.nombre}</h1>
+        <p className="mt-2 font-outfit text-theme-xs uppercase tracking-[0.2em] text-brand-100">Carta digital</p>
       </header>
 
-      <section className="flex flex-col gap-3">
-        {cartas.length === 0 ? (
-          <EmptyState message="Todavía no hay cartas publicadas." />
-        ) : (
-          cartas.map((carta) => <CartaListItem key={carta.id} carta={carta} />)
-        )}
-      </section>
+      <div className="flex flex-col gap-8 px-4 py-8 sm:px-6 md:px-8">
+        <div className="relative z-10 -mt-24 flex justify-center sm:-mt-28">
+          {/* eslint-disable-next-line @next/next/no-img-element -- logo bundleado, sin variantes responsive */}
+          <img
+            src={RESTAURANT_LOGO}
+            alt={`${empresa.nombre} — logo`}
+            loading="eager"
+            fetchPriority="high"
+            className="h-28 w-28 rounded-full border-4 border-paper-50 shadow-theme-lg sm:h-32 sm:w-32"
+          />
+        </div>
+
+        <section className="flex flex-col">
+          {cartas.length === 0 ? (
+            <EmptyState message="Todavía no hay cartas publicadas." />
+          ) : (
+            cartas.map((carta, index) => <CartaListItem key={carta.id} carta={carta} index={index} />)
+          )}
+        </section>
+      </div>
     </main>
   );
 }

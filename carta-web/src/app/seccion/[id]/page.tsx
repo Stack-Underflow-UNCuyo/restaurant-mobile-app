@@ -21,7 +21,7 @@ export default async function SeccionPage({
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col">
       <HeroHeader image={imageForItem(seccion.imagenUrl, seccion.categoria)} title={seccion.nombre} backHref={backHref} />
 
-      <div className="px-4 py-6 sm:px-6">
+      <div className="px-4 py-6 sm:px-6 md:px-8">
         <DetalleSeccionGrid detalles={seccion.detallesSeccionCarta} categoria={seccion.categoria} />
       </div>
     </main>

@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
+  variable: "--font-outfit",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  axes: ["opsz"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
 });
 
 export const metadata: Metadata = {
@@ -18,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${outfit.className} antialiased`}>{children}</body>
+      <body className={`${outfit.variable} ${fraunces.variable} font-outfit antialiased`}>{children}</body>
     </html>
   );
 }

@@ -20,11 +20,13 @@ export default async function MenuPreviewPage({ params }: { params: Promise<{ ca
 
       <div className="flex flex-col gap-6 py-6">
         {seccionesConItems.length === 0 ? (
-          <div className="px-4 sm:px-6">
+          <div className="px-4 sm:px-6 md:px-8">
             <EmptyState message="Todavía no hay platos cargados para mostrar en esta vista previa." />
           </div>
         ) : (
-          seccionesConItems.map((seccion) => <SeccionPreviewRow key={seccion.id} seccion={seccion} cartaId={cartaId} />)
+          seccionesConItems.map((seccion, index) => (
+            <SeccionPreviewRow key={seccion.id} seccion={seccion} cartaId={cartaId} index={index} />
+          ))
         )}
       </div>
     </main>

@@ -15,14 +15,17 @@ export default function DetalleSeccionGrid({
     return <EmptyState message="Todavía no hay platos cargados en esta sección." />;
   }
 
+  const featuredCount = Math.min(2, detalles.length);
+
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {detalles.map((detalle) => {
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
+      {detalles.map((detalle, index) => {
+        const featured = index < featuredCount;
         if (isDetalleArticulo(detalle)) {
-          return <ArticuloDetailCard key={detalle.id} detalle={detalle} categoria={categoria} />;
+          return <ArticuloDetailCard key={detalle.id} detalle={detalle} categoria={categoria} featured={featured} index={index} />;
         }
         if (isDetalleMenu(detalle)) {
-          return <ComboDetailCard key={detalle.id} detalle={detalle} categoria={categoria} />;
+          return <ComboDetailCard key={detalle.id} detalle={detalle} categoria={categoria} featured={featured} index={index} />;
         }
         return null;
       })}

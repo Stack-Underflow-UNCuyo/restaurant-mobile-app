@@ -5,21 +5,56 @@ import type { Categoria, DetalleSeccionCartaArticuloIndividual } from "@/types/e
 export default function ArticuloDetailCard({
   detalle,
   categoria,
+  featured = false,
+  index = 0,
 }: {
   detalle: DetalleSeccionCartaArticuloIndividual;
   categoria?: Categoria;
+  featured?: boolean;
+  index?: number;
 }) {
   const { articulo } = detalle;
   const descripcion = detalle.descripcion ?? articulo.descripcion;
+  const image = imageForItem(detalle.imagenUrl, categoria);
+
+  if (featured) {
+    return (
+      <article
+        style={{ animationDelay: `${index * 70}ms` }}
+        className="focus-ring stagger-item group col-span-2 flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-theme-sm sm:flex-row"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- la imagen viene del backend o es un placeholder bundleado, sin variantes responsive */}
+        <img
+          src={image}
+          alt={articulo.nombre}
+          loading="lazy"
+          className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105 sm:h-auto sm:w-2/5"
+        />
+        <div className="flex flex-1 flex-col gap-1.5 p-4 sm:p-5">
+          <h3 className="font-fraunces text-theme-xl italic text-gray-800">{articulo.nombre}</h3>
+          {descripcion && <p className="line-clamp-3 text-theme-sm text-gray-500">{descripcion}</p>}
+          <span className="mt-auto pt-2 text-theme-md font-semibold tabular-nums text-brand-500">{formatPrice(detalle.precio)}</span>
+        </div>
+      </article>
+    );
+  }
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs">
+    <article
+      style={{ animationDelay: `${index * 70}ms` }}
+      className="focus-ring stagger-item group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-theme-sm"
+    >
       {/* eslint-disable-next-line @next/next/no-img-element -- la imagen viene del backend o es un placeholder bundleado, sin variantes responsive */}
-      <img src={imageForItem(detalle.imagenUrl, categoria)} alt="" className="h-28 w-full object-cover sm:h-32" />
+      <img
+        src={image}
+        alt={articulo.nombre}
+        loading="lazy"
+        className="h-28 w-full object-cover transition-transform duration-500 group-hover:scale-105 sm:h-32"
+      />
       <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="text-theme-sm font-semibold text-gray-800">{articulo.nombre}</h3>
+        <h3 className="font-fraunces text-theme-sm italic text-gray-800">{articulo.nombre}</h3>
         {descripcion && <p className="line-clamp-2 text-theme-xs text-gray-500">{descripcion}</p>}
-        <span className="mt-auto pt-2 text-theme-sm font-semibold text-brand-500">{formatPrice(detalle.precio)}</span>
+        <span className="mt-auto pt-2 text-theme-sm font-semibold tabular-nums text-brand-500">{formatPrice(detalle.precio)}</span>
       </div>
     </article>
   );
