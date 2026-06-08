@@ -3,6 +3,7 @@ package com.cm.restaurant_server.business.logic.service;
 import com.cm.restaurant_server.business.domain.entity.Persona;
 import com.cm.restaurant_server.business.repository.BaseRepository;
 import com.cm.restaurant_server.business.repository.PersonaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,28 @@ public class PersonaService<T extends Persona> extends BaseService<T> {
 
     protected PersonaService(BaseRepository<T> repository) {
         super(repository);
+    }
+
+    @Override
+    @Transactional
+    public T update(String id, T entity) throws Exception {
+        try {
+            T existing = findById(id);
+            existing.setNombre(entity.getNombre());
+            existing.setApellido(entity.getApellido());
+            existing.setFechaNacimiento(entity.getFechaNacimiento());
+            existing.setTipoDocumento(entity.getTipoDocumento());
+            existing.setNumeroDocumento(entity.getNumeroDocumento());
+            existing.setDireccion(entity.getDireccion());
+            existing.getContactosCorreosElectronicos().clear();
+            existing.getContactosCorreosElectronicos().addAll(entity.getContactosCorreosElectronicos());
+            existing.getContactosTelefonicos().clear();
+            existing.getContactosTelefonicos().addAll(entity.getContactosTelefonicos());
+            validar(existing, CasoValidar.UPDATE);
+            return baseRepository.save(existing);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
