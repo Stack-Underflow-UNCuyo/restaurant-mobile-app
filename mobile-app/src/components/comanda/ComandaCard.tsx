@@ -62,7 +62,12 @@ export function ComandaCard({ comanda, numero }: Props) {
         )}
       </View>
 
-      {estado && <EstadoDetalleBadge estado={estado} />}
+      <View style={styles.footer}>
+        <ThemedText type="small" themeColor="textSecondary" style={styles.idText} numberOfLines={1}>
+          #{comanda.id.slice(0, 8).toUpperCase()}
+        </ThemedText>
+        {estado && <EstadoDetalleBadge estado={estado} />}
+      </View>
     </View>
   );
 }
@@ -83,4 +88,6 @@ const styles = StyleSheet.create({
   items: { gap: Spacing.one + 2 },
   item: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: Spacing.two },
   itemNombre: { flex: 1, fontFamily: Fonts.medium },
+  footer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: Spacing.two },
+  idText: { fontSize: 11, lineHeight: 16, fontFamily: Fonts.regular },
 });

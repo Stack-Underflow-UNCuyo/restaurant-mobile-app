@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/app-header";
 import { ComandaCard } from "@/components/comanda/ComandaCard";
-import { ComandaFilter, type FiltroComanda } from "@/components/comanda/ComandaFilter";
+import { ComandaEstadoFilter, type FiltroEstadoComanda } from "@/components/comanda/ComandaEstadoFilter";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Radius, Spacing } from "@/constants/theme";
@@ -26,13 +26,13 @@ export default function ComandasDashboard() {
   const { mesaId, numero } = useLocalSearchParams<{ mesaId?: string; numero?: string }>();
   const { comandas, loading, refreshing, error, refresh } = useComandas(mesaId ?? null);
 
-  const [filtro, setFiltro] = useState<FiltroComanda>("TODAS");
+  const [filtro, setFiltro] = useState<FiltroEstadoComanda>("TODAS");
 
   const visibles = useMemo(
     () =>
       filtro === "TODAS"
         ? comandas
-        : comandas.filter((c) => c.detalles.some((d) => d.estadoDetalleComanda === filtro)),
+        : comandas.filter((c) => c.estadoComanda === filtro),
     [comandas, filtro],
   );
 
@@ -59,11 +59,7 @@ export default function ComandasDashboard() {
         <AppHeader title="Comandas" subtitle={subtitulo} onBack={() => router.back()} logo={logo} />
 
         {!loading && !error && (
-          <ComandaFilter
-            detalles={comandas.flatMap((c) => c.detalles)}
-            value={filtro}
-            onChange={setFiltro}
-          />
+          <ComandaEstadoFilter comandas={comandas} value={filtro} onChange={setFiltro} />
         )}
 
         {loading ? (

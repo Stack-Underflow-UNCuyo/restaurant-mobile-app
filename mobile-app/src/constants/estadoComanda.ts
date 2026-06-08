@@ -8,8 +8,8 @@
  * y ENVIADO_A_LA_COCINA) — la app del mozo solo filtra por esos dos, que son los
  * que le interesa seguir mientras la cocina prepara el pedido.
  */
-import { Brand, Gray, Info, Success, Warning } from "@/constants/theme";
-import type { EstadoDetalleComanda } from "@/types/comanda";
+import { Brand, Error as ErrorColor, Gray, Info, Success, Warning } from "@/constants/theme";
+import type { EstadoComanda, EstadoDetalleComanda } from "@/types/comanda";
 
 export interface EstadoDetalleStyle {
   label: string;
@@ -58,6 +58,21 @@ const ORDEN_AVANCE: EstadoDetalleComanda[] = [
   "ENTREGADO_AL_CLIENTE",
   "PLAZO_EXCEDIDO_DE_ENTREGA",
 ];
+
+/** Estilos para el estado global de una comanda (usado en la vista de lista). */
+export const ESTADO_COMANDA_CONFIG: Record<EstadoComanda, EstadoDetalleStyle> = {
+  ABIERTA:              { label: "Abierta",     fg: Success[600],    bg: Success[50],    dot: Success[500] },
+  FINALIZADA:           { label: "Finalizada",  fg: Gray[600],       bg: Gray[100],      dot: Gray[400] },
+  ANULADA:              { label: "Anulada",     fg: ErrorColor[600], bg: ErrorColor[50], dot: ErrorColor[500] },
+  PENDIENTE_DE_ENTREGA: { label: "P. Entrega",  fg: Warning[600],    bg: Warning[50],    dot: Warning[500] },
+  ENTREGA_FALLIDA:      { label: "E. Fallida",  fg: ErrorColor[600], bg: ErrorColor[50], dot: ErrorColor[500] },
+};
+
+export const ESTADO_COMANDA_FALLBACK: EstadoDetalleStyle = ESTADO_COMANDA_CONFIG.ABIERTA;
+
+export function estadoComandaStyle(estado: EstadoComanda): EstadoDetalleStyle {
+  return ESTADO_COMANDA_CONFIG[estado] ?? ESTADO_COMANDA_FALLBACK;
+}
 
 export function estadoDetalleMasAvanzado(estados: EstadoDetalleComanda[]): EstadoDetalleComanda | null {
   if (estados.length === 0) return null;
