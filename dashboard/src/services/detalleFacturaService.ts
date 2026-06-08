@@ -1,10 +1,10 @@
 import { apiClient } from "@/lib/apiClient";
 import type { DetalleFactura } from "@/types/factura";
 
-// detalleComandaId se ignora por ahora
 export type DetalleFacturaPayload = {
     cantidad: number;
     subtotal: number;
+    detalleComandaId: string; // debe coincidir con el campo del DetalleFacturaCreateDto del backend
 };
 
 export const detalleFacturaService = {
