@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { TopBar } from "@/components/top-bar";
 import { Radius, Spacing } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
@@ -24,7 +25,8 @@ const ACCESOS: { label: string; href?: "/(mozo)/mesas" | "/(mozo)/comandas" | "/
 export default function MozoHome() {
   const router = useRouter();
   const theme = useTheme();
-  const { logout } = useAuth();
+  const { user } = useAuth();
+  const nombreUsuario = user?.nombre?.trim() || user?.email || "";
   const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
 
   useEffect(() => {
@@ -44,23 +46,12 @@ export default function MozoHome() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
+        <TopBar title={nombreEmpresa} showGreeting={false} />
         <ScrollView contentContainerStyle={styles.content}>
-          <Pressable
-            onPress={logout}
-            hitSlop={8}
-            style={({ pressed }) => [
-              styles.logout,
-              { borderColor: theme.border, opacity: pressed ? 0.6 : 1 },
-            ]}
-          >
-            <ThemedText type="smallBold" themeColor="textSecondary">
-              Salir
-            </ThemedText>
-          </Pressable>
 
           <View style={styles.hero}>
-            <ThemedText type="subtitle" style={styles.centerText}>
-              {nombreEmpresa}
+            <ThemedText type="subtitle" themeColor="textSecondary" style={styles.centerText}>
+              {nombreUsuario ? `Hola, ${nombreUsuario}` : "Bienvenido"}
             </ThemedText>
             <Image
               source={logo}
@@ -108,13 +99,6 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
     paddingBottom: Spacing.five,
     gap: Spacing.five,
-  },
-  logout: {
-    alignSelf: "flex-end",
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one + 2,
-    borderRadius: Radius.full,
-    borderWidth: 1,
   },
   hero: { alignItems: "center", gap: Spacing.three, marginTop: Spacing.three },
   centerText: { textAlign: "center" },

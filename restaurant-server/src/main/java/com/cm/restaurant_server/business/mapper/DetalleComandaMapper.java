@@ -6,10 +6,14 @@ import com.cm.restaurant_server.business.domain.entity.DetalleComanda;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCarta;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCartaArticuloIndividual;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCartaMenu;
+import com.cm.restaurant_server.business.domain.entity.DetalleMenu;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class DetalleComandaMapper implements
@@ -43,10 +47,23 @@ public abstract class DetalleComandaMapper implements
         DetalleSeccionCarta detalle = entity.getDetalleSeccionCarta();
         if (detalle instanceof DetalleSeccionCartaArticuloIndividual articulo) {
             dto.setNombre(articulo.getArticulo() != null ? articulo.getArticulo().getNombre() : null);
+            dto.setDescripcion(articulo.getDescripcion());
             dto.setPrecio(articulo.getPrecio());
         } else if (detalle instanceof DetalleSeccionCartaMenu menu) {
             dto.setNombre(menu.getMenu() != null ? menu.getMenu().getNombre() : null);
+            dto.setDescripcion(menu.getMenu() != null ? menu.getMenu().getDescripcion() : null);
             dto.setPrecio(menu.getMenu() != null ? menu.getMenu().getPrecio() : 0);
+            if (menu.getMenu() != null && menu.getMenu().getDetallesMenu() != null) {
+                List<String> componentes = menu.getMenu().getDetallesMenu().stream()
+                        .map(dm -> {
+                            String nombre = dm.getArticulo() != null
+                                    ? dm.getArticulo().getNombre()
+                                    : dm.getNombre();
+                            return dm.getCantidad() + "× " + nombre;
+                        })
+                        .collect(Collectors.toList());
+                dto.setComponentes(componentes);
+            }
         }
     }
 }
