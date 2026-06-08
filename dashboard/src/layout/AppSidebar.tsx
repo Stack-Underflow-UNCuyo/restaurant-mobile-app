@@ -84,7 +84,6 @@ const navItems: NavItem[] = [
     name: "Facturas",
     subItems: [
       { name: "Facturas", path: "/factura/factura", pro: false },
-      { name: "Detalles de factura", path: "/factura/detalleFactura", pro: false },
       { name: "Formas de pago", path: "/factura/formaDePago", pro: false },
       { name: "Promociones", path: "/factura/promocion", pro: false },
     ],

@@ -1,3 +1,4 @@
+import { DetalleComanda } from "./detalleComanda";
 import type { FormaDePago } from "./formaDePago";
 import type { Promocion } from "./promocion";
 
@@ -17,10 +18,10 @@ export interface Factura {
     promocion: Promocion | null;
 }
 
-// detalleComanda se ignora por ahora
 export interface DetalleFactura {
     id: string;
     cantidad: number;
     subtotal: number;
     factura: Factura | null;
+    detalleComanda: DetalleComanda | null;
 }
