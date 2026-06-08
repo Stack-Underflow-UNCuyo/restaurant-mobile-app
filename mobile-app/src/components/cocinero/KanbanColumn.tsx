@@ -59,14 +59,13 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     borderRadius: Radius.lg,
-    padding: Spacing.three,
-    gap: Spacing.two,
+    padding: Spacing.two,
+    gap: Spacing.one,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: Spacing.one,
   },
   title: { fontFamily: Fonts.semibold },
   countBadge: {
@@ -78,6 +77,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   countText: { color: "#ffffff", fontFamily: Fonts.bold, fontSize: 12 },
-  list: { gap: Spacing.two, paddingBottom: Spacing.three },
-  empty: { textAlign: "center", marginTop: Spacing.three },
+  list: { gap: Spacing.one, paddingBottom: Spacing.two },
+  empty: { textAlign: "center", marginTop: Spacing.two },
 });

@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
 import { KanbanColumn } from "@/components/cocinero/KanbanColumn";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { TopBar } from "@/components/top-bar";
 import { Radius, Spacing } from "@/constants/theme";
 import { useKanban } from "@/hooks/useKanban";
 import { useTheme } from "@/hooks/use-theme";
@@ -26,7 +26,7 @@ export default function CocineroKanban() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-        <AppHeader title="Cocina" logo={logo} />
+        <TopBar title="Cocina" logo={logo} />
 
         {loading ? (
           <View style={styles.center}>
@@ -44,9 +44,6 @@ export default function CocineroKanban() {
             </Pressable>
           </View>
         ) : (
-          // Single horizontal ScrollView fills the remaining screen height.
-          // Each KanbanColumn has its own vertical ScrollView for items —
-          // no same-direction nesting, so there are no gesture conflicts.
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
