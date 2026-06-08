@@ -5,15 +5,16 @@ import { ThemedText } from "@/components/themed-text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { formatPrice } from "@/lib/format";
-import type { DetalleSeccionCartaArticuloIndividual } from "@/types/carta";
+import type { Categoria, DetalleSeccionCartaArticuloIndividual } from "@/types/carta";
 
 interface Props {
   detalle: DetalleSeccionCartaArticuloIndividual;
+  seccionCategoria?: Categoria;
   /** Los primeros platos de la sección se muestran más grandes. */
   featured?: boolean;
 }
 
-export function ArticuloDetailCard({ detalle, featured = false }: Props) {
+export function ArticuloDetailCard({ detalle, seccionCategoria, featured = false }: Props) {
   const theme = useTheme();
   const { articulo } = detalle;
   const descripcion = detalle.descripcion ?? articulo.descripcion;
@@ -23,6 +24,7 @@ export function ArticuloDetailCard({ detalle, featured = false }: Props) {
       <ItemImage
         imagenUrl={detalle.imagenUrl}
         nombre={articulo.nombre}
+        categoria={seccionCategoria}
         style={featured ? styles.featuredImage : styles.image}
       />
       <View style={styles.body}>

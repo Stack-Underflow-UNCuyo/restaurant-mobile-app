@@ -5,12 +5,14 @@ import { ThemedText } from "@/components/themed-text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { formatPrice } from "@/lib/format";
+import type { Categoria } from "@/types/carta";
 
 export interface PreviewItem {
   id: string;
   nombre: string;
   precio: number;
   imagenUrl?: string;
+  categoria?: Categoria;
 }
 
 /** Tarjeta angosta para el carrusel horizontal de la vista previa del menú. */
@@ -19,7 +21,7 @@ export function ItemPreviewCard({ item }: { item: PreviewItem }) {
 
   return (
     <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-      <ItemImage imagenUrl={item.imagenUrl} nombre={item.nombre} style={styles.image} />
+      <ItemImage imagenUrl={item.imagenUrl} nombre={item.nombre} categoria={item.categoria} style={styles.image} />
       <View style={styles.body}>
         <ThemedText type="small" numberOfLines={1}>
           {item.nombre}

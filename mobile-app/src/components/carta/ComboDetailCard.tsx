@@ -5,15 +5,16 @@ import { ThemedText } from "@/components/themed-text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { formatPrice } from "@/lib/format";
-import type { DetalleSeccionCartaMenu } from "@/types/carta";
+import type { Categoria, DetalleSeccionCartaMenu } from "@/types/carta";
 
 interface Props {
   detalle: DetalleSeccionCartaMenu;
+  seccionCategoria?: Categoria;
   /** Los primeros combos de la sección se muestran más grandes, con la lista completa. */
   featured?: boolean;
 }
 
-export function ComboDetailCard({ detalle, featured = false }: Props) {
+export function ComboDetailCard({ detalle, seccionCategoria, featured = false }: Props) {
   const theme = useTheme();
   const { menu } = detalle;
   // El combo prioriza la imagen del Menu (reutilizable entre cartas) y cae al de su detalle de sección.
@@ -25,6 +26,7 @@ export function ComboDetailCard({ detalle, featured = false }: Props) {
       <ItemImage
         imagenUrl={imagenUrl}
         nombre={menu.nombre}
+        categoria={seccionCategoria}
         style={featured ? styles.featuredImage : styles.image}
       />
       <View style={styles.body}>

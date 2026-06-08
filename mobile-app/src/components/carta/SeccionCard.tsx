@@ -22,7 +22,7 @@ export function SeccionCard({ seccion, onPress, featured = false }: Props) {
         onPress={() => onPress(seccion)}
         style={({ pressed }) => [styles.featuredCard, { opacity: pressed ? 0.92 : 1 }]}
       >
-        <ItemImage imagenUrl={seccion.imagenUrl} nombre={seccion.nombre} style={StyleSheet.absoluteFill} />
+        <ItemImage imagenUrl={seccion.imagenUrl} nombre={seccion.nombre} categoria={seccion.categoria} style={StyleSheet.absoluteFill} />
         <View style={styles.featuredOverlay} />
         <View style={styles.featuredContent}>
           {seccion.categoria && (
@@ -48,7 +48,7 @@ export function SeccionCard({ seccion, onPress, featured = false }: Props) {
         { backgroundColor: theme.surface, borderColor: theme.border, opacity: pressed ? 0.85 : 1 },
       ]}
     >
-      <ItemImage imagenUrl={seccion.imagenUrl} nombre={seccion.nombre} style={styles.image} />
+      <ItemImage imagenUrl={seccion.imagenUrl} nombre={seccion.nombre} categoria={seccion.categoria} style={styles.image} />
       <View style={styles.body}>
         {seccion.categoria && (
           <View style={[styles.badge, { backgroundColor: Brand[50] }]}>

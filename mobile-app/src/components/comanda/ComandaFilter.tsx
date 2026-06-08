@@ -8,14 +8,13 @@ import {
 } from "@/constants/estadoComanda";
 import { Brand, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import type { EstadoDetalleComanda } from "@/types/comanda";
-import type { ComandaConDetalles } from "@/hooks/useComandas";
+import type { DetalleComanda, EstadoDetalleComanda } from "@/types/comanda";
 
 /** "TODAS" o uno de los estados de detalle filtrables. */
 export type FiltroComanda = "TODAS" | EstadoDetalleComanda;
 
 interface Props {
-  comandas: ComandaConDetalles[];
+  detalles: DetalleComanda[];
   value: FiltroComanda;
   onChange: (filtro: FiltroComanda) => void;
 }
@@ -23,20 +22,15 @@ interface Props {
 /** Estilo del chip "Todas", con los tonos de marca del resto de la app. */
 const ESTILO_TODAS: EstadoDetalleStyle = { label: "Todas", fg: Brand[600], bg: Brand[50], dot: Brand[500] };
 
-/** Una comanda "tiene" un estado de detalle si alguna de sus líneas lo tiene. */
-function cuentaComandasCon(comandas: ComandaConDetalles[], estado: EstadoDetalleComanda): number {
-  return comandas.filter((c) => c.detalles.some((d) => d.estadoDetalleComanda === estado)).length;
-}
-
 /** Chips de filtro por estado de detalle: cada uno tiñe su color al activarse y muestra su contador. */
-export function ComandaFilter({ comandas, value, onChange }: Props) {
+export function ComandaFilter({ detalles, value, onChange }: Props) {
   const theme = useTheme();
 
   const chips: { key: FiltroComanda; count: number; style: EstadoDetalleStyle }[] = [
-    { key: "TODAS", count: comandas.length, style: ESTILO_TODAS },
+    { key: "TODAS", count: detalles.length, style: ESTILO_TODAS },
     ...ESTADOS_DETALLE_FILTRABLES.map((estado) => ({
       key: estado as FiltroComanda,
-      count: cuentaComandasCon(comandas, estado),
+      count: detalles.filter((d) => d.estadoDetalleComanda === estado).length,
       style: estadoDetalleStyle(estado),
     })),
   ];

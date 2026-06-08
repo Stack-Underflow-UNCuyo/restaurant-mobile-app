@@ -8,7 +8,7 @@
  * y ENVIADO_A_LA_COCINA) — la app del mozo solo filtra por esos dos, que son los
  * que le interesa seguir mientras la cocina prepara el pedido.
  */
-import { Brand, Gray, Success, Warning } from "@/constants/theme";
+import { Brand, Gray, Info, Success, Warning } from "@/constants/theme";
 import type { EstadoDetalleComanda } from "@/types/comanda";
 
 export interface EstadoDetalleStyle {
@@ -26,7 +26,7 @@ export const ESTADO_DETALLE_CONFIG: Record<EstadoDetalleComanda, EstadoDetalleSt
   ENVIADO_A_LA_COCINA: { label: "En cocina", fg: Warning[600], bg: Warning[50], dot: Warning[500] },
   COCINERO_ASIGNADO: { label: "Asignado", fg: Brand[600], bg: Brand[50], dot: Brand[500] },
   ENTREGADO_PARA_DESPACHAR: { label: "Para despachar", fg: Success[600], bg: Success[50], dot: Success[500] },
-  ENTREGADO_AL_CLIENTE: { label: "Entregado", fg: Success[600], bg: Success[50], dot: Success[500] },
+  ENTREGADO_AL_CLIENTE: { label: "Entregado", fg: Info[600], bg: Info[50], dot: Info[500] },
   PLAZO_EXCEDIDO_DE_ENTREGA: { label: "Plazo excedido", fg: Gray[600], bg: Gray[100], dot: Gray[400] },
 };
 
@@ -38,7 +38,12 @@ export function estadoDetalleStyle(estado: EstadoDetalleComanda): EstadoDetalleS
 }
 
 /** Estados de detalle que el filtro de "Comandas" ofrece, además de "Todas". */
-export const ESTADOS_DETALLE_FILTRABLES: EstadoDetalleComanda[] = ["COCINERO_ASIGNADO", "ENVIADO_A_LA_COCINA"];
+export const ESTADOS_DETALLE_FILTRABLES: EstadoDetalleComanda[] = [
+  "ENVIADO_A_LA_COCINA",
+  "COCINERO_ASIGNADO",
+  "ENTREGADO_PARA_DESPACHAR",
+  "ENTREGADO_AL_CLIENTE",
+];
 
 /**
  * Estado "representativo" de una comanda para mostrar en su tarjeta: el más

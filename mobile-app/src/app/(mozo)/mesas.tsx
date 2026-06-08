@@ -28,7 +28,7 @@ export default function MesasDashboard() {
 
   const verComandas = (mesa: Mesa) => {
     router.push({
-      pathname: "/(mozo)/comandas",
+      pathname: "/(mozo)/comanda/[mesaId]",
       params: { mesaId: mesa.id, numero: String(mesa.identificadorMesa) },
     });
   };

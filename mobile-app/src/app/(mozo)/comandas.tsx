@@ -58,7 +58,13 @@ export default function ComandasDashboard() {
       <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
         <AppHeader title="Comandas" subtitle={subtitulo} onBack={() => router.back()} logo={logo} />
 
-        {!loading && !error && <ComandaFilter comandas={comandas} value={filtro} onChange={setFiltro} />}
+        {!loading && !error && (
+          <ComandaFilter
+            detalles={comandas.flatMap((c) => c.detalles)}
+            value={filtro}
+            onChange={setFiltro}
+          />
+        )}
 
         {loading ? (
           <View style={styles.center}>

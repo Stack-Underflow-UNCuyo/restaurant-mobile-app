@@ -12,15 +12,17 @@ import { Radius, Spacing } from "@/constants/theme";
 import { useSeccionDetalle } from "@/hooks/useSeccionDetalle";
 import { useTheme } from "@/hooks/use-theme";
 import { isDetalleArticulo, isDetalleMenu } from "@/types/carta";
-import type { DetalleSeccionCartaItem } from "@/types/carta";
+import type { Categoria, DetalleSeccionCartaItem } from "@/types/carta";
 
 const logo = require("../../../../assets/images/logo.png");
 const COLUMNS = 2;
 const FEATURED_COUNT = 2;
 
-function renderDetalle(detalle: DetalleSeccionCartaItem, featured: boolean) {
-  if (isDetalleArticulo(detalle)) return <ArticuloDetailCard detalle={detalle} featured={featured} />;
-  if (isDetalleMenu(detalle)) return <ComboDetailCard detalle={detalle} featured={featured} />;
+function renderDetalle(detalle: DetalleSeccionCartaItem, featured: boolean, categoria?: Categoria) {
+  if (isDetalleArticulo(detalle))
+    return <ArticuloDetailCard detalle={detalle} seccionCategoria={categoria} featured={featured} />;
+  if (isDetalleMenu(detalle))
+    return <ComboDetailCard detalle={detalle} seccionCategoria={categoria} featured={featured} />;
   return null;
 }
 
@@ -79,7 +81,7 @@ export default function SeccionDetalleScreen() {
               destacados.length > 0 ? (
                 <View style={styles.destacados}>
                   {destacados.map((detalle) => (
-                    <View key={detalle.id}>{renderDetalle(detalle, true)}</View>
+                    <View key={detalle.id}>{renderDetalle(detalle, true, seccion?.categoria)}</View>
                   ))}
                 </View>
               ) : null
@@ -88,7 +90,7 @@ export default function SeccionDetalleScreen() {
               <View style={styles.fila}>
                 {fila.map((detalle) => (
                   <View key={detalle.id} style={styles.celda}>
-                    {renderDetalle(detalle, false)}
+                    {renderDetalle(detalle, false, seccion?.categoria)}
                   </View>
                 ))}
                 {fila.length < COLUMNS && <View style={styles.relleno} />}

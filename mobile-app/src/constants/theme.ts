@@ -45,6 +45,7 @@ export const Gray = {
 export const Success = { 50: "#ecfdf3", 500: "#12b76a", 600: "#039855" } as const;
 export const Warning = { 50: "#fffaeb", 500: "#f79009", 600: "#dc6803" } as const;
 export const Error = { 50: "#fef3f2", 500: "#f04438", 600: "#d92d20" } as const;
+export const Info = { 50: "#eff8ff", 500: "#2e90fa", 600: "#1570ef" } as const;
 
 export const Colors = {
   light: {

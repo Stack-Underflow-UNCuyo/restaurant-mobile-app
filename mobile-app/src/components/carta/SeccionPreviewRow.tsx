@@ -5,15 +5,16 @@ import { ThemedText } from "@/components/themed-text";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { isDetalleArticulo, isDetalleMenu } from "@/types/carta";
-import type { DetalleSeccionCartaItem, SeccionCarta } from "@/types/carta";
+import type { Categoria, DetalleSeccionCartaItem, SeccionCarta } from "@/types/carta";
 
-function toPreviewItem(detalle: DetalleSeccionCartaItem): PreviewItem | null {
+function toPreviewItem(detalle: DetalleSeccionCartaItem, categoria?: Categoria): PreviewItem | null {
   if (isDetalleArticulo(detalle)) {
     return {
       id: detalle.id,
       nombre: detalle.articulo.nombre,
       precio: detalle.precio,
       imagenUrl: detalle.imagenUrl,
+      categoria,
     };
   }
   if (isDetalleMenu(detalle)) {
@@ -22,6 +23,7 @@ function toPreviewItem(detalle: DetalleSeccionCartaItem): PreviewItem | null {
       nombre: detalle.menu.nombre,
       precio: detalle.menu.precio,
       imagenUrl: detalle.menu.imagenUrl ?? detalle.imagenUrl,
+      categoria,
     };
   }
   return null;
@@ -36,7 +38,7 @@ interface Props {
 export function SeccionPreviewRow({ seccion, onVerMas }: Props) {
   const theme = useTheme();
   const items = seccion.detallesSeccionCarta
-    .map(toPreviewItem)
+    .map((d) => toPreviewItem(d, seccion.categoria))
     .filter((item): item is PreviewItem => item !== null);
 
   if (items.length === 0) return null;
