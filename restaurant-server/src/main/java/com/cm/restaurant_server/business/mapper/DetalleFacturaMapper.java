@@ -13,11 +13,11 @@ public interface DetalleFacturaMapper
 
     @Override
     @Mapping(target = "factura", ignore = true)
-    @Mapping(target = "detalleComanda", ignore = true)
+    @Mapping(target = "detalleComanda.id", source = "detalleComandaId")
     DetalleFactura toEntityCreate(DetalleFacturaCreateDto dto);
 
     @Override
     @Mapping(target = "factura", ignore = true)
-    @Mapping(target = "detalleComanda", ignore = true)
+    @Mapping(target = "detalleComanda.id", source = "detalleComandaId")
     DetalleFactura toUpdate(@MappingTarget DetalleFactura entity, DetalleFacturaCreateDto dto);
 }
