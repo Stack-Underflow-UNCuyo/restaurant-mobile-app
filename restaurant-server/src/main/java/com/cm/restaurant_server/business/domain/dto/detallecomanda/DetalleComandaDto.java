@@ -13,4 +13,8 @@ public class DetalleComandaDto extends BaseDto {
     private EstadoDetalleComanda estadoDetalleComanda;
     private String comandaId;
     private String detalleSeccionCartaId;
+    /** Nombre del artículo o menú pedido (resuelto desde el detalle de carta polimórfico). */
+    private String nombre;
+    /** Precio unitario del artículo o menú pedido. */
+    private double precio;
 }

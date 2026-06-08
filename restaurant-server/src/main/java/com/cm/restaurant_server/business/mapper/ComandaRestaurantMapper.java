@@ -31,5 +31,6 @@ public interface ComandaRestaurantMapper extends
 
     @Override
     @Mapping(target = "clienteId", source = "cliente.id")
+    @Mapping(target = "mesaRestauranteId", source = "mesaRestaurante.id")
     ComandaRestaurantDto toDTO(ComandaRestaurant entity);
 }

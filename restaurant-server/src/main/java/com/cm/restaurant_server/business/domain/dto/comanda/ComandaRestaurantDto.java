@@ -9,4 +9,5 @@ import lombok.*;
 @Setter
 public class ComandaRestaurantDto extends ComandaDto {
     private EmpleadoDto empleado;
+    private String mesaRestauranteId;
 }

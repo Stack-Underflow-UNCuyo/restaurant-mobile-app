@@ -14,9 +14,9 @@ import { getEmpresaActiva } from "@/services/empresaService";
 const logo = require("../../../assets/images/logo.png");
 const NOMBRE_POR_DEFECTO = "Aromas de Viña";
 
-const ACCESOS: { label: string; href?: "/(mozo)/mesas" }[] = [
+const ACCESOS: { label: string; href?: "/(mozo)/mesas" | "/(mozo)/comandas" }[] = [
   { label: "Ver Mesas", href: "/(mozo)/mesas" },
-  { label: "Estados Comanda" },
+  { label: "Estados Comanda", href: "/(mozo)/comandas" },
   { label: "Ver Cartas" },
 ];
 

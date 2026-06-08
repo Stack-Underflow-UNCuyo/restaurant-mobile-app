@@ -102,6 +102,12 @@ public class ComandaRestaurantController
         }
     }
 
+    @GetMapping("/mesa/{mesaId}")
+    public ResponseEntity<List<ComandaRestaurantDto>> getAllByMesa(@PathVariable String mesaId) {
+        List<ComandaRestaurant> comandas = ((ComandaRestaurantService) service).findAllByMesa(mesaId);
+        return ResponseEntity.ok(((ComandaRestaurantMapper) mapper).toDTOsList(comandas));
+    }
+
     @GetMapping("/{id}/detalles")
     public ResponseEntity<List<DetalleComandaDto>> getDetalles(@PathVariable String id) throws Exception {
         List<DetalleComanda> detalles = comandaService.listarDetalleComanda(id);

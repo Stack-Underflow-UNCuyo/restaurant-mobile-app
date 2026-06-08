@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,6 +30,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
     private final DetalleSeccionCartaMenuRepository detalleMenuSeccionRepo;
     private final MenuRepository menuRepo;
     private final CartaRepository cartaRepo;
+    private final ComandaRestaurantRepository comandaRestaurantRepo;
+    private final DetalleComandaRepository detalleComandaRepo;
     private final PasswordEncoder passwordEncoder;
 
     public RestaurantDataInitializer(
@@ -44,6 +47,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             DetalleSeccionCartaMenuRepository detalleMenuSeccionRepo,
             MenuRepository menuRepo,
             CartaRepository cartaRepo,
+            ComandaRestaurantRepository comandaRestaurantRepo,
+            DetalleComandaRepository detalleComandaRepo,
             PasswordEncoder passwordEncoder) {
         this.unidadDeMedidaRepo = unidadDeMedidaRepo;
         this.categoriaRepo = categoriaRepo;
@@ -57,6 +62,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         this.detalleMenuSeccionRepo = detalleMenuSeccionRepo;
         this.menuRepo = menuRepo;
         this.cartaRepo = cartaRepo;
+        this.comandaRestaurantRepo = comandaRestaurantRepo;
+        this.detalleComandaRepo = detalleComandaRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -67,10 +74,11 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         Map<String, UnidadDeMedida> unidades = crearUnidadesDeMedida();
         Map<String, Categoria> categorias = crearCategorias();
         Map<String, Articulo> articulos = crearArticulos(unidades);
-        crearMesas();
+        Map<Integer, MesaRestaurante> mesas = crearMesas();
         crearFormasDePago();
-        crearEmpleados();
-        crearCartaCompleta(categorias, articulos);
+        Map<TipoEmpleado, Empleado> empleados = crearEmpleados();
+        Map<String, DetalleSeccionCarta> itemsCarta = crearCartaCompleta(categorias, articulos);
+        crearComandas(mesas, empleados, itemsCarta);
     }
 
     private Map<String, UnidadDeMedida> crearUnidadesDeMedida() {
@@ -136,25 +144,27 @@ public class RestaurantDataInitializer implements CommandLineRunner {
 
     private record MesaSeed(int identificador, EstadoMesa estado, int capacidad, String zona) {}
 
-    private void crearMesas() {
+    private Map<Integer, MesaRestaurante> crearMesas() {
         List<MesaSeed> seeds = List.of(
-            new MesaSeed(1, EstadoMesa.LIBRE, 2, "Salón Principal"),
+            new MesaSeed(1, EstadoMesa.OCUPADA, 2, "Salón Principal"),
             new MesaSeed(2, EstadoMesa.LIBRE, 4, "Salón Principal"),
             new MesaSeed(3, EstadoMesa.OCUPADA, 4, "Terraza"),
             new MesaSeed(4, EstadoMesa.LIBRE, 6, "Terraza"),
             new MesaSeed(5, EstadoMesa.RESERVADA, 2, "Barra"),
-            new MesaSeed(6, EstadoMesa.LIBRE, 4, "Salón Principal"),
+            new MesaSeed(6, EstadoMesa.OCUPADA, 4, "Salón Principal"),
             new MesaSeed(7, EstadoMesa.LIBRE, 8, "Salón Privado"),
             new MesaSeed(8, EstadoMesa.FUERA_DE_SERVICIO, 4, "Terraza")
         );
+        Map<Integer, MesaRestaurante> resultado = new HashMap<>();
         for (MesaSeed seed : seeds) {
             MesaRestaurante mesa = new MesaRestaurante();
             mesa.setIdentificadorMesa(seed.identificador());
             mesa.setEstadoMesa(seed.estado());
             mesa.setCapacidadPersonas(seed.capacidad());
             mesa.setZonaFisica(seed.zona());
-            mesaRepo.save(mesa);
+            resultado.put(seed.identificador(), mesaRepo.save(mesa));
         }
+        return resultado;
     }
 
     private record FormaDePagoSeed(TipoPago tipo, String observacion) {}
@@ -175,12 +185,13 @@ public class RestaurantDataInitializer implements CommandLineRunner {
 
     private record EmpleadoSeed(String nombre, String apellido, LocalDate fechaNacimiento, String dni, TipoEmpleado tipoEmpleado, String email, String clave) {}
 
-    private void crearEmpleados() {
+    private Map<TipoEmpleado, Empleado> crearEmpleados() {
         List<EmpleadoSeed> seeds = List.of(
             new EmpleadoSeed("María", "Gómez", LocalDate.of(1995, 4, 12), "35123456", TipoEmpleado.MOZO, "maria.gomez@restaurant.com", "mozo1234"),
             new EmpleadoSeed("Juan", "Pérez", LocalDate.of(1988, 9, 23), "30987654", TipoEmpleado.COCINERO, "juan.perez@restaurant.com", "cocinero1234"),
             new EmpleadoSeed("Lucía", "Fernández", LocalDate.of(1992, 1, 30), "33456789", TipoEmpleado.ADMINISTRATIVO, "lucia.fernandez@restaurant.com", "admin1234")
         );
+        Map<TipoEmpleado, Empleado> resultado = new HashMap<>();
         for (EmpleadoSeed seed : seeds) {
             Empleado empleado = new Empleado();
             empleado.setNombre(seed.nombre());
@@ -190,6 +201,7 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             empleado.setNumeroDocumento(seed.dni());
             empleado.setTipoEmpleado(seed.tipoEmpleado());
             empleado = empleadoRepo.save(empleado);
+            resultado.put(seed.tipoEmpleado(), empleado);
 
             Usuario usuario = new Usuario();
             usuario.setEmail(seed.email());
@@ -198,13 +210,16 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             usuario.setPersona(empleado);
             usuarioRepo.save(usuario);
         }
+        return resultado;
     }
 
     private record DetalleArticuloSeed(String articulo, double precio, String descripcion) {}
 
     private record DetalleMenuSeed(String nombre, int cantidad, String articulo) {}
 
-    private void crearCartaCompleta(Map<String, Categoria> categorias, Map<String, Articulo> articulos) {
+    private Map<String, DetalleSeccionCarta> crearCartaCompleta(Map<String, Categoria> categorias, Map<String, Articulo> articulos) {
+        Map<String, DetalleSeccionCarta> itemsCarta = new HashMap<>();
+
         Map<String, List<DetalleArticuloSeed>> seccionesConArticulos = new LinkedHashMap<>();
         seccionesConArticulos.put("Entradas", List.of(
             new DetalleArticuloSeed("Empanadas de Carne", 5400, "Porción de 3 unidades, servidas con salsa criolla"),
@@ -252,7 +267,7 @@ public class RestaurantDataInitializer implements CommandLineRunner {
                 detalle.setPrecio(seed.precio());
                 detalle.setDescripcion(seed.descripcion());
                 detalle.setArticulo(articulos.get(seed.articulo()));
-                detalleArticuloRepo.save(detalle);
+                itemsCarta.put(seed.articulo(), detalleArticuloRepo.save(detalle));
             }
         }
 
@@ -289,7 +304,7 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             DetalleSeccionCartaMenu detalleMenu = new DetalleSeccionCartaMenu();
             detalleMenu.setSeccionCarta(seccionCombos);
             detalleMenu.setMenu(combo);
-            detalleMenuSeccionRepo.save(detalleMenu);
+            itemsCarta.put(combo.getNombre(), detalleMenuSeccionRepo.save(detalleMenu));
         }
 
         Carta carta = new Carta();
@@ -298,6 +313,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         carta.setFechaHasta(LocalDate.now().plusYears(1));
         carta.setSeccionesCarta(secciones);
         cartaRepo.save(carta);
+
+        return itemsCarta;
     }
 
     private Menu crearCombo(String nombre, String descripcion, double precio, Map<String, Articulo> articulos, List<DetalleMenuSeed> detalles) {
@@ -324,5 +341,56 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         menu.setDetallesMenu(detallesMenu);
 
         return menuRepo.save(menu);
+    }
+
+    private record DetalleComandaSeed(String item, int cantidad, EstadoDetalleComanda estado) {}
+
+    private record ComandaRestaurantSeed(int mesaIdentificador, TipoEmpleado mozo, EstadoComanda estado, long minutosAtras, List<DetalleComandaSeed> detalles) {}
+
+    private void crearComandas(Map<Integer, MesaRestaurante> mesas, Map<TipoEmpleado, Empleado> empleados, Map<String, DetalleSeccionCarta> itemsCarta) {
+        LocalDateTime ahora = LocalDateTime.now();
+        List<ComandaRestaurantSeed> seeds = List.of(
+            new ComandaRestaurantSeed(1, TipoEmpleado.MOZO, EstadoComanda.ABIERTA, 18, List.of(
+                new DetalleComandaSeed("Empanadas de Carne", 1, EstadoDetalleComanda.ENTREGADO_AL_CLIENTE),
+                new DetalleComandaSeed("Bife de Chorizo", 1, EstadoDetalleComanda.COCINERO_ASIGNADO),
+                new DetalleComandaSeed("Agua Mineral", 2, EstadoDetalleComanda.ENTREGADO_AL_CLIENTE)
+            )),
+            new ComandaRestaurantSeed(1, TipoEmpleado.MOZO, EstadoComanda.ABIERTA, 5, List.of(
+                new DetalleComandaSeed("Flan Casero", 1, EstadoDetalleComanda.EN_PROCESO_DE_SOLICITUD),
+                new DetalleComandaSeed("Café", 2, EstadoDetalleComanda.EN_PROCESO_DE_SOLICITUD)
+            )),
+            new ComandaRestaurantSeed(3, TipoEmpleado.MOZO, EstadoComanda.ABIERTA, 30, List.of(
+                new DetalleComandaSeed("Tabla de Fiambres", 1, EstadoDetalleComanda.ENTREGADO_AL_CLIENTE),
+                new DetalleComandaSeed("Pizza Especial", 1, EstadoDetalleComanda.COCINERO_ASIGNADO),
+                new DetalleComandaSeed("Cerveza Artesanal", 3, EstadoDetalleComanda.ENTREGADO_AL_CLIENTE)
+            )),
+            new ComandaRestaurantSeed(3, TipoEmpleado.MOZO, EstadoComanda.ABIERTA, 7, List.of(
+                new DetalleComandaSeed("Papas Fritas", 2, EstadoDetalleComanda.ENVIADO_A_LA_COCINA),
+                new DetalleComandaSeed("Gaseosa Cola", 2, EstadoDetalleComanda.ENVIADO_A_LA_COCINA)
+            )),
+            new ComandaRestaurantSeed(6, TipoEmpleado.MOZO, EstadoComanda.ABIERTA, 12, List.of(
+                new DetalleComandaSeed("Milanesa Napolitana", 2, EstadoDetalleComanda.COCINERO_ASIGNADO),
+                new DetalleComandaSeed("Ñoquis de Papa", 1, EstadoDetalleComanda.ENVIADO_A_LA_COCINA),
+                new DetalleComandaSeed("Copa de Vino Malbec", 2, EstadoDetalleComanda.ENTREGADO_AL_CLIENTE)
+            ))
+        );
+
+        for (ComandaRestaurantSeed seed : seeds) {
+            ComandaRestaurant comanda = new ComandaRestaurant();
+            comanda.setFechaSolicitudComanda(ahora.minusMinutes(seed.minutosAtras()));
+            comanda.setEstadoComanda(seed.estado());
+            comanda.setEmpleado(empleados.get(seed.mozo()));
+            comanda.setMesaRestaurante(mesas.get(seed.mesaIdentificador()));
+            comanda = comandaRestaurantRepo.save(comanda);
+
+            for (DetalleComandaSeed detalleSeed : seed.detalles()) {
+                DetalleComanda detalle = new DetalleComanda();
+                detalle.setCantidad(detalleSeed.cantidad());
+                detalle.setEstadoDetalleComanda(detalleSeed.estado());
+                detalle.setComanda(comanda);
+                detalle.setDetalleSeccionCarta(itemsCarta.get(detalleSeed.item()));
+                detalleComandaRepo.save(detalle);
+            }
+        }
     }
 }

@@ -1,66 +1,64 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/app-header";
-import { EstadoFilter, type FiltroMesa } from "@/components/mesa/EstadoFilter";
-import { MesaCard } from "@/components/mesa/MesaCard";
-import { MesaEstadoSheet } from "@/components/mesa/MesaEstadoSheet";
+import { ComandaCard } from "@/components/comanda/ComandaCard";
+import { ComandaFilter, type FiltroComanda } from "@/components/comanda/ComandaFilter";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { requiereAtencion } from "@/constants/estadoMesa";
 import { Radius, Spacing } from "@/constants/theme";
-import { useMesas } from "@/hooks/useMesas";
+import { useComandas } from "@/hooks/useComandas";
 import { useTheme } from "@/hooks/use-theme";
-import type { Mesa } from "@/types/mesa";
 
 const logo = require("../../../assets/images/logo.png");
 const COLUMNS = 2;
 
-export default function MesasDashboard() {
+/**
+ * Comandas de una mesa (cuando se llega tocando una MesaCard, con mesaId +
+ * numero por parámetro) o de toda la casa (desde "Estados Comanda" en el home,
+ * sin parámetros).
+ */
+export default function ComandasDashboard() {
   const router = useRouter();
   const theme = useTheme();
-  const { mesas, loading, refreshing, error, refresh, cambiarEstado } = useMesas();
+  const { mesaId, numero } = useLocalSearchParams<{ mesaId?: string; numero?: string }>();
+  const { comandas, loading, refreshing, error, refresh } = useComandas(mesaId ?? null);
 
-  const [filtro, setFiltro] = useState<FiltroMesa>("TODAS");
-  const [mesaSel, setMesaSel] = useState<Mesa | null>(null);
-
-  const verComandas = (mesa: Mesa) => {
-    router.push({
-      pathname: "/(mozo)/comandas",
-      params: { mesaId: mesa.id, numero: String(mesa.identificadorMesa) },
-    });
-  };
+  const [filtro, setFiltro] = useState<FiltroComanda>("TODAS");
 
   const visibles = useMemo(
-    () => (filtro === "TODAS" ? mesas : mesas.filter((m) => m.estadoMesa === filtro)),
-    [mesas, filtro],
+    () =>
+      filtro === "TODAS"
+        ? comandas
+        : comandas.filter((c) => c.detalles.some((d) => d.estadoDetalleComanda === filtro)),
+    [comandas, filtro],
   );
 
   // Agrupamos de a COLUMNS para que cada tarjeta conserve su tamaño real:
   // con numColumns + flex:1, la última fila incompleta estira su única
   // tarjeta a todo el ancho. Acá completamos esa fila con un relleno invisible.
   const filas = useMemo(() => {
-    const grupos: Mesa[][] = [];
-    for (let i = 0; i < visibles.length; i += COLUMNS) grupos.push(visibles.slice(i, i + COLUMNS));
+    const grupos: { comanda: (typeof visibles)[number]; numero: number }[][] = [];
+    for (let i = 0; i < visibles.length; i += COLUMNS) {
+      grupos.push(
+        visibles.slice(i, i + COLUMNS).map((comanda, j) => ({ comanda, numero: i + j + 1 })),
+      );
+    }
     return grupos;
   }, [visibles]);
 
-  // Mantener sincronizada la mesa abierta en el sheet con la lista (tras refresh).
-  const mesaActual = mesaSel ? (mesas.find((m) => m.id === mesaSel.id) ?? mesaSel) : null;
+  const subtitulo = mesaId
+    ? `Mesa ${numero ?? ""}`.trim()
+    : `${comandas.length} en total`;
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-        <AppHeader
-          title="Mesas"
-          subtitle={`${mesas.length} en total`}
-          onBack={() => router.back()}
-          logo={logo}
-        />
+        <AppHeader title="Comandas" subtitle={subtitulo} onBack={() => router.back()} logo={logo} />
 
-        {!loading && !error && <EstadoFilter mesas={mesas} value={filtro} onChange={setFiltro} />}
+        {!loading && !error && <ComandaFilter comandas={comandas} value={filtro} onChange={setFiltro} />}
 
         {loading ? (
           <View style={styles.center}>
@@ -71,10 +69,7 @@ export default function MesasDashboard() {
             <ThemedText type="default" style={styles.centerText}>
               {error}
             </ThemedText>
-            <Pressable
-              onPress={refresh}
-              style={[styles.retry, { backgroundColor: theme.brand }]}
-            >
+            <Pressable onPress={refresh} style={[styles.retry, { backgroundColor: theme.brand }]}>
               <ThemedText type="smallBold" style={{ color: theme.brandText }}>
                 Reintentar
               </ThemedText>
@@ -83,18 +78,12 @@ export default function MesasDashboard() {
         ) : (
           <FlatList
             data={filas}
-            keyExtractor={(fila) => fila.map((m) => m.id).join("-")}
+            keyExtractor={(fila) => fila.map(({ comanda }) => comanda.id).join("-")}
             contentContainerStyle={styles.list}
             renderItem={({ item: fila }) => (
               <View style={styles.fila}>
-                {fila.map((mesa) => (
-                  <MesaCard
-                    key={mesa.id}
-                    mesa={mesa}
-                    onPress={verComandas}
-                    onLongPress={setMesaSel}
-                    atencion={requiereAtencion(mesa.estadoMesa)}
-                  />
+                {fila.map(({ comanda, numero }) => (
+                  <ComandaCard key={comanda.id} comanda={comanda} numero={numero} />
                 ))}
                 {fila.length < COLUMNS && <View style={styles.relleno} />}
               </View>
@@ -105,19 +94,13 @@ export default function MesasDashboard() {
             ListEmptyComponent={
               <View style={styles.center}>
                 <ThemedText type="default" themeColor="textSecondary" style={styles.centerText}>
-                  No hay mesas{filtro !== "TODAS" ? " con este estado" : ""}.
+                  No hay comandas{filtro !== "TODAS" ? " con este estado" : ""}.
                 </ThemedText>
               </View>
             }
           />
         )}
       </SafeAreaView>
-
-      <MesaEstadoSheet
-        mesa={mesaActual}
-        onClose={() => setMesaSel(null)}
-        onSelect={cambiarEstado}
-      />
     </ThemedView>
   );
 }

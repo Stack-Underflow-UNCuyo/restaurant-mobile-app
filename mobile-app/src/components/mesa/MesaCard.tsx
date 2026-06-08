@@ -8,13 +8,16 @@ import type { Mesa } from "@/types/mesa";
 
 interface Props {
   mesa: Mesa;
+  /** Toque corto: ver las comandas de la mesa. */
   onPress: (mesa: Mesa) => void;
+  /** Toque largo: cambiar el estado de la mesa (abre MesaEstadoSheet). */
+  onLongPress: (mesa: Mesa) => void;
   /** Resalta la tarjeta con un aviso (ej. mesas reservadas a preparar). */
   atencion?: boolean;
 }
 
 /** Tarjeta de una mesa: barra de estado, número, ubicación y capacidad. */
-export function MesaCard({ mesa, onPress, atencion }: Props) {
+export function MesaCard({ mesa, onPress, onLongPress, atencion }: Props) {
   const theme = useTheme();
   const s = estadoStyle(mesa.estadoMesa);
 
@@ -22,6 +25,7 @@ export function MesaCard({ mesa, onPress, atencion }: Props) {
     <View style={styles.wrapper}>
       <Pressable
         onPress={() => onPress(mesa)}
+        onLongPress={() => onLongPress(mesa)}
         style={({ pressed }) => [
           styles.card,
           { backgroundColor: theme.surface, borderColor: theme.border, opacity: pressed ? 0.85 : 1 },
