@@ -1,6 +1,7 @@
 /**
- * Estado de la lista de cartas: carga, error y refresh (espejo de useMesas
- * pero de solo lectura — la carta digital no tiene mutaciones).
+ * Estado de la lista de cartas: carga, error y refresh.
+ * Todos los setState se ejecutan dentro de callbacks asíncronos (.then/.catch)
+ * para cumplir con react-hooks/set-state-in-effect.
  */
 import { useCallback, useEffect, useState } from "react";
 
@@ -20,28 +21,35 @@ export function useCartas(): UseCartasResult {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const cargar = useCallback(async (mode: "initial" | "refresh") => {
-    if (mode === "refresh") setRefreshing(true);
-    else setLoading(true);
-    setError(null);
-    try {
-      setCartas(await getCartas());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudieron cargar las cartas.");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+  const [refreshId, setRefreshId] = useState(0);
 
   useEffect(() => {
-    cargar("initial");
-  }, [cargar]);
+    let cancelled = false;
+    getCartas()
+      .then((data) => {
+        if (!cancelled) {
+          setCartas(data);
+          setError(null);
+          setLoading(false);
+          setRefreshing(false);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "No se pudieron cargar las cartas.");
+          setLoading(false);
+          setRefreshing(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshId]);
 
   const refresh = useCallback(() => {
-    cargar("refresh");
-  }, [cargar]);
+    setRefreshing(true);
+    setRefreshId((id) => id + 1);
+  }, []);
 
   return { cartas, loading, refreshing, error, refresh };
 }

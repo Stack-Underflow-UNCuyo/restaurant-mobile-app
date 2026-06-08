@@ -1,7 +1,6 @@
 /**
- * Estado del detalle de una carta (con sus secciones): carga, error y
- * refresh. Lo usan tanto la pantalla de secciones como la vista previa del
- * menú, que necesitan la misma Carta completa.
+ * Estado del detalle de una carta (con sus secciones): carga, error y refresh.
+ * Lo usan la pantalla de secciones y la vista previa del menú.
  */
 import { useCallback, useEffect, useState } from "react";
 
@@ -21,32 +20,36 @@ export function useCartaDetalle(cartaId: string | undefined): UseCartaDetalleRes
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const cargar = useCallback(
-    async (mode: "initial" | "refresh") => {
-      if (!cartaId) return;
-      if (mode === "refresh") setRefreshing(true);
-      else setLoading(true);
-      setError(null);
-      try {
-        setCarta(await getCartaById(cartaId));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "No se pudo cargar la carta.");
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [cartaId],
-  );
+  const [refreshId, setRefreshId] = useState(0);
 
   useEffect(() => {
-    cargar("initial");
-  }, [cargar]);
+    if (!cartaId) return;
+    let cancelled = false;
+    getCartaById(cartaId)
+      .then((data) => {
+        if (!cancelled) {
+          setCarta(data);
+          setError(null);
+          setLoading(false);
+          setRefreshing(false);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "No se pudo cargar la carta.");
+          setLoading(false);
+          setRefreshing(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cartaId, refreshId]);
 
   const refresh = useCallback(() => {
-    cargar("refresh");
-  }, [cargar]);
+    setRefreshing(true);
+    setRefreshId((id) => id + 1);
+  }, []);
 
   return { carta, loading, refreshing, error, refresh };
 }

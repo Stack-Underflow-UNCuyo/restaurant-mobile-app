@@ -14,10 +14,10 @@ import { getEmpresaActiva } from "@/services/empresaService";
 const logo = require("../../../assets/images/logo.png");
 const NOMBRE_POR_DEFECTO = "Aromas de Viña";
 
-const ACCESOS: { label: string; href?: "/(mozo)/mesas" | "/(mozo)/comandas" }[] = [
+const ACCESOS: { label: string; href?: "/(mozo)/mesas" | "/(mozo)/comandas" | "/(mozo)/carta" }[] = [
   { label: "Ver Mesas", href: "/(mozo)/mesas" },
   { label: "Estados Comanda", href: "/(mozo)/comandas" },
-  { label: "Ver Cartas" },
+  { label: "Ver Cartas", href: "/(mozo)/carta" },
 ];
 
 /** Landing del mozo: nombre y logo del local, con accesos a sus pantallas. */
