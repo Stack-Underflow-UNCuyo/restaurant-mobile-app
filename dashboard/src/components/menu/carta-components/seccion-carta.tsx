@@ -7,10 +7,12 @@ import { useModal } from "@/hooks/useModal";
 import MenuArtIndividualFormComp, { type MenuIndividualFormData } from "./menu-individual-form-comp";
 import MenuComboFormComp from "./menu-combo-form-comp";
 import type { Menu } from "@/types/entities";
+import { API_BASE_URL } from "@/lib/constants";
 
 type Props = {
   titulo?: string;
   categorias?: string[];
+  imagenUrl?: string;
   children?: ReactNode;
   onAddIndividual?: (data: MenuIndividualFormData) => Promise<void>;
   onAddCombo?: (savedCombo: Menu) => Promise<void>;
@@ -21,6 +23,7 @@ type Props = {
 const SeccionCartaComp: React.FC<Props> = ({
   titulo = "Sección Entradas",
   categorias = ["Entrada", "Carnes", "Compartidos"],
+  imagenUrl,
   children,
   onAddIndividual,
   onAddCombo,
@@ -46,9 +49,17 @@ const SeccionCartaComp: React.FC<Props> = ({
       <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-white/[0.05]">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-semibold text-gray-800 dark:text-white/90">
-              {titulo}
-            </h3>
+            <div className="flex items-center gap-3">
+              {imagenUrl && (
+                <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-white/[0.05]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`${API_BASE_URL}${imagenUrl}`} alt={titulo} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <h3 className="text-base font-semibold text-gray-800 dark:text-white/90">
+                {titulo}
+              </h3>
+            </div>
             <div className="flex items-center gap-2">
               <button onClick={onEdit} className="text-gray-400 hover:text-brand-500 transition-colors">
                 <PencilIcon />

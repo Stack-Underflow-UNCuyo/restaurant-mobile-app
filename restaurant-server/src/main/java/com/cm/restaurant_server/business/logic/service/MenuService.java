@@ -22,14 +22,17 @@ public class MenuService extends BaseService<Menu> {
     private final MenuRepository menuRepository;
     private final DetalleMenuRepository detalleMenuRepository;
     private final ArticuloRepository articuloRepository;
+    private final ImagenService imagenService;
 
     public MenuService(MenuRepository menuRepository,
             DetalleMenuRepository detalleMenuRepository,
-            ArticuloRepository articuloRepository) {
+            ArticuloRepository articuloRepository,
+            ImagenService imagenService) {
         super(menuRepository);
         this.menuRepository = menuRepository;
         this.detalleMenuRepository = detalleMenuRepository;
         this.articuloRepository = articuloRepository;
+        this.imagenService = imagenService;
     }
 
     @Override
@@ -48,6 +51,15 @@ public class MenuService extends BaseService<Menu> {
         menu.setNombre(dto.getNombre());
         menu.setDescripcion(dto.getDescripcion());
         menu.setPrecio(dto.getPrecio());
+        
+        try {
+            if (dto.getImagen() != null) {
+                menu.setImagen(imagenService.crearImagenLocal(dto.getImagen()));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar la imagen", e);
+        }
+
         Menu menuGuardado = menuRepository.save(menu);
 
         if (dto.getDetallesMenu() != null) {
@@ -84,6 +96,14 @@ public class MenuService extends BaseService<Menu> {
         menu.setNombre(dto.getNombre());
         menu.setDescripcion(dto.getDescripcion());
         menu.setPrecio(dto.getPrecio());
+        
+        try {
+            if (dto.getImagen() != null && dto.getImagen().getContenido() != null) {
+                menu.setImagen(imagenService.crearImagenLocal(dto.getImagen()));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar la imagen", e);
+        }
 
         menu.getDetallesMenu().clear();
 

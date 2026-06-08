@@ -1,6 +1,6 @@
 import DetalleSeccionGrid from "@/components/detalle/DetalleSeccionGrid";
 import HeroHeader from "@/components/ui/HeroHeader";
-import { imageForCategoria } from "@/lib/images";
+import { imageForItem } from "@/lib/images";
 import { seccionCartaService } from "@/services/seccionCartaService";
 
 export default async function SeccionPage({
@@ -19,7 +19,7 @@ export default async function SeccionPage({
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col">
-      <HeroHeader image={imageForCategoria(seccion.categoria)} title={seccion.nombre} backHref={backHref} />
+      <HeroHeader image={imageForItem(seccion.imagenUrl, seccion.categoria)} title={seccion.nombre} backHref={backHref} />
 
       <div className="px-4 py-6 sm:px-6">
         <DetalleSeccionGrid detalles={seccion.detallesSeccionCarta} categoria={seccion.categoria} />

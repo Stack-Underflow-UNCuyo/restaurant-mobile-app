@@ -1,5 +1,7 @@
 package com.cm.restaurant_server.business.domain.dto.detalleseccioncarta;
 
+import com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -21,7 +21,7 @@ public class DetalleSeccionCartaMenuController extends BaseController<DetalleSec
     @PostMapping
     public ResponseEntity<DetalleSeccionCartaMenuDto> save(@Valid @RequestBody DetalleSeccionCartaMenuCreateDto dto) throws Exception {
         DetalleSeccionCartaMenu detalle = ((DetalleSeccionCartaMenuService) service)
-                .crearDetalleMenu(dto.getSeccionCartaId(), dto.getMenuId());
+                .crearDetalleMenu(dto.getSeccionCartaId(), dto.getMenuId(), dto.getImagen());
         return ResponseEntity.ok(((DetalleSeccionCartaMenuMapper) mapper).toDTO(detalle));
     }
 
@@ -29,7 +29,7 @@ public class DetalleSeccionCartaMenuController extends BaseController<DetalleSec
     @PutMapping("/{id}")
     public ResponseEntity<DetalleSeccionCartaMenuDto> update(@PathVariable String id, @Valid @RequestBody DetalleSeccionCartaMenuCreateDto dto) throws Exception {
         DetalleSeccionCartaMenu detalle = ((DetalleSeccionCartaMenuService) service)
-                .modificarDetalleMenu(id, dto.getSeccionCartaId(), dto.getMenuId());
+                .modificarDetalleMenu(id, dto.getSeccionCartaId(), dto.getMenuId(), dto.getImagen());
         return ResponseEntity.ok(((DetalleSeccionCartaMenuMapper) mapper).toDTO(detalle));
     }
 }

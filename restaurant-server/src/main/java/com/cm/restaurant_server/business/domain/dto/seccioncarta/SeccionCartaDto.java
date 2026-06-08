@@ -15,5 +15,7 @@ import lombok.*;
 public class SeccionCartaDto extends BaseDto {
     private String nombre;
     private CategoriaDto categoria;
+    private String imagenUrl;
+    private String imagenNombre;
     private List<DetalleSeccionCartaDto> detallesSeccionCarta;
 }

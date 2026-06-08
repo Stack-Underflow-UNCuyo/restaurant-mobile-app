@@ -11,6 +11,6 @@ import lombok.*;
 public class ImagenDto extends BaseDto {
     private String nombre;
     private String mime;
-    private byte[] contenido;
+    private String url;
     private TipoImagen tipoImagen;
 }

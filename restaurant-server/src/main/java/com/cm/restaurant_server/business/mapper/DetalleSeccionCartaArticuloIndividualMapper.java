@@ -12,6 +12,8 @@ public interface DetalleSeccionCartaArticuloIndividualMapper extends BaseMapper<
 
     @Override
     @Mapping(target = "seccionCartaId", source = "seccionCarta.id")
+    @Mapping(target = "imagenUrl", source = "imagen.url")
+    @Mapping(target = "imagenNombre", source = "imagen.nombre")
     DetalleSeccionCartaArticuloIndividualDto toDTO(DetalleSeccionCartaArticuloIndividual entity);
 
     @Override

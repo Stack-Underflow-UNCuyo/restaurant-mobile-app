@@ -13,4 +13,6 @@ import lombok.*;
 public class DetalleSeccionCarta extends Base {
     @ManyToOne
     private SeccionCarta seccionCarta;
+    @ManyToOne
+    private Imagen imagen;
 }

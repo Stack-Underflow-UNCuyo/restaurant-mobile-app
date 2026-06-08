@@ -1,23 +1,32 @@
 import Link from "next/link";
 import ItemPreviewCard, { type PreviewItem } from "@/components/preview/ItemPreviewCard";
-import { imageForCategoria } from "@/lib/images";
+import { imageForItem } from "@/lib/images";
 import { isDetalleArticulo, isDetalleMenu } from "@/types/entities";
-import type { DetalleSeccionCartaItem, SeccionCarta } from "@/types/entities";
+import type { Categoria, DetalleSeccionCartaItem, SeccionCarta } from "@/types/entities";
 
-function toPreviewItem(detalle: DetalleSeccionCartaItem, image: string): PreviewItem | null {
+function toPreviewItem(detalle: DetalleSeccionCartaItem, categoria?: Categoria): PreviewItem | null {
   if (isDetalleArticulo(detalle)) {
-    return { id: detalle.id, nombre: detalle.articulo.nombre, precio: detalle.precio, image };
+    return {
+      id: detalle.id,
+      nombre: detalle.articulo.nombre,
+      precio: detalle.precio,
+      image: imageForItem(detalle.imagenUrl, categoria),
+    };
   }
   if (isDetalleMenu(detalle)) {
-    return { id: detalle.id, nombre: detalle.menu.nombre, precio: detalle.menu.precio, image };
+    return {
+      id: detalle.id,
+      nombre: detalle.menu.nombre,
+      precio: detalle.menu.precio,
+      image: imageForItem(detalle.menu.imagenUrl ?? detalle.imagenUrl, categoria),
+    };
   }
   return null;
 }
 
 export default function SeccionPreviewRow({ seccion, cartaId }: { seccion: SeccionCarta; cartaId: string }) {
-  const image = imageForCategoria(seccion.categoria);
   const items = seccion.detallesSeccionCarta
-    .map((detalle) => toPreviewItem(detalle, image))
+    .map((detalle) => toPreviewItem(detalle, seccion.categoria))
     .filter((item): item is PreviewItem => item !== null);
 
   if (items.length === 0) return null;

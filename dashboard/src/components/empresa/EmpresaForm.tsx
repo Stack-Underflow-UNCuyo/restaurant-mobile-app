@@ -199,19 +199,19 @@ export default function EmpresaForm() {
         try {
             await Promise.all([
                 ...existingTels.filter((t) => t.toDelete).map((t) =>
-                    contactoTelefonicoService.remove(t.id as unknown as number)
+                    contactoTelefonicoService.remove(t.id)
                 ),
                 ...existingTels.filter((t) => !t.toDelete).map((t) =>
-                    contactoTelefonicoService.update(t.id as unknown as number, {
+                    contactoTelefonicoService.update(t.id, {
                         telefono: t.telefono, tipoTelefono: t.tipoTelefono as TipoTelefono,
                         tipoContacto: t.tipoContacto as TipoContacto, observacion: t.observacion,
                     })
                 ),
                 ...existingMails.filter((e) => e.toDelete).map((e) =>
-                    contactoCorreoElectronicoService.remove(e.id as unknown as number)
+                    contactoCorreoElectronicoService.remove(e.id)
                 ),
                 ...existingMails.filter((e) => !e.toDelete).map((e) =>
-                    contactoCorreoElectronicoService.update(e.id as unknown as number, {
+                    contactoCorreoElectronicoService.update(e.id, {
                         email: e.email, tipoContacto: e.tipoContacto as TipoContacto, observacion: e.observacion,
                     })
                 ),

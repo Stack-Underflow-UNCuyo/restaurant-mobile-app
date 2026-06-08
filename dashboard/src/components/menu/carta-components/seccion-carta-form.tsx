@@ -4,18 +4,24 @@ import { CloseLineIcon, PlusIcon } from "@/icons";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import FileInput from "@/components/form/input/FileInput";
+import { API_BASE_URL } from "@/lib/constants";
+
+export type SeccionImagenData = { nombre: string; mime: string; contenido: string; tipoImagen: string };
 
 type SeccionFormProps = {
   initialTitulo?: string;
   initialCategorias?: string[];
+  initialImagenUrl?: string;
   itemsAgregados?: React.ReactNode;
-  onSave: (data: { titulo: string; categorias: string[] }) => void;
+  onSave: (data: { titulo: string; categorias: string[]; imagen?: SeccionImagenData }) => void;
   onCancel: () => void;
 };
 
 const SeccionCartaFormComp: React.FC<SeccionFormProps> = ({
   initialTitulo = "",
   initialCategorias = [],
+  initialImagenUrl,
   itemsAgregados,
   onSave,
   onCancel,
@@ -24,6 +30,26 @@ const SeccionCartaFormComp: React.FC<SeccionFormProps> = ({
   const [categorias, setCategorias] = useState<string[]>(initialCategorias);
   const [nuevaCat, setNuevaCat] = useState("");
   const [isAddingCat, setIsAddingCat] = useState(false);
+  const [imagen, setImagen] = useState<SeccionImagenData | undefined>(undefined);
+  const [imagenUrl, setImagenUrl] = useState<string | undefined>(initialImagenUrl);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = (event.target?.result as string).split(',')[1];
+        setImagen({
+          nombre: file.name,
+          mime: file.type,
+          contenido: base64String,
+          tipoImagen: "PRODUCTO",
+        });
+        setImagenUrl(undefined);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddCategoria = () => {
     if (nuevaCat.trim()) {
@@ -88,6 +114,23 @@ const SeccionCartaFormComp: React.FC<SeccionFormProps> = ({
             </button>
           )}
         </div>
+
+        <div className="mt-4">
+          <Label>Imagen</Label>
+          <div className="flex items-center gap-4">
+            {imagenUrl && (
+              <div className="w-12 h-12 rounded overflow-hidden bg-gray-100 dark:bg-white/[0.05] flex-shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`${API_BASE_URL}${imagenUrl}`} alt="Imagen actual" className="w-full h-full object-cover" />
+              </div>
+            )}
+            <div className="flex-1">
+              <FileInput onChange={handleFileChange} />
+              {imagen && <p className="text-xs text-gray-500 mt-1">Archivo nuevo: {imagen.nombre}</p>}
+              {!imagen && imagenUrl && <p className="text-xs text-gray-500 mt-1">Sube una imagen para reemplazar la actual.</p>}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2 p-5">
@@ -106,7 +149,7 @@ const SeccionCartaFormComp: React.FC<SeccionFormProps> = ({
           <Button size="sm" variant="outline" onClick={onCancel}>
             Cancelar
           </Button>
-          <Button size="sm" onClick={() => onSave({ titulo, categorias })}>
+          <Button size="sm" onClick={() => onSave({ titulo, categorias, imagen })}>
             Guardar
           </Button>
         </div>

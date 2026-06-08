@@ -51,8 +51,8 @@ export default function UsuarioTable() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
     const [detailUsuario, setDetailUsuario] = useState<Usuario | null>(null);
     const [formData, setFormData] = useState<UsuarioFormData>(emptyForm);
     const [errors, setErrors] = useState<{ email?: string; clave?: string; rol?: string; }>({});
@@ -93,7 +93,7 @@ export default function UsuarioTable() {
         openDetail();
     };
 
-    const requestDelete = (id: number) => {
+    const requestDelete = (id: string) => {
         setPendingDeleteId(id);
         openConfirm();
     };

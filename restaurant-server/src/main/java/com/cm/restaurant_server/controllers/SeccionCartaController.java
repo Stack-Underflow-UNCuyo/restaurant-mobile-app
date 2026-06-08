@@ -30,7 +30,7 @@ public class SeccionCartaController
     public ResponseEntity<SeccionCartaDto> save(@Valid @RequestBody SeccionCartaCreateDto dto) throws Exception {
         System.out.println(dto);
         SeccionCarta saved = ((SeccionCartaService) service).crearSeccionCarta(dto.getCategoriaNombre(),
-                dto.getNombre());
+                dto.getNombre(), dto.getImagen());
         return ResponseEntity.ok(mapper.toDTO(saved));
     }
 
@@ -39,7 +39,7 @@ public class SeccionCartaController
     public ResponseEntity<SeccionCartaDto> update(@PathVariable String id,
             @Valid @RequestBody SeccionCartaCreateDto dto) throws Exception {
         SeccionCarta updated = ((SeccionCartaService) service).modificarSeccionCarta(id, dto.getCategoriaNombre(),
-                dto.getNombre());
+                dto.getNombre(), dto.getImagen());
         return ResponseEntity.ok(mapper.toDTO(updated));
     }
 }

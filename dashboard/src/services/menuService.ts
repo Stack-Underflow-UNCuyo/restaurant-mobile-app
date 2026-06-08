@@ -14,6 +14,7 @@ export type MenuPayload = {
   descripcion?: string;
   precio: number;
   detallesMenu: DetalleMenuPayload[];
+  imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
 };
 
 

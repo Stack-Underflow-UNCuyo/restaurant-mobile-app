@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon, PencilIcon, TrashBinIcon } from "@/icons";
+import { API_BASE_URL } from "@/lib/constants";
 
 export type ArticuloItem = {
   nombre: string;
@@ -22,6 +23,7 @@ type MenuComboProps = {
   descripcion?: string;
   precio: string | number;
   detalles?: DetalleCombo[];
+  imagenUrl?: string;
   onEdit?: () => void;
   onDelete?: () => void;
   onDeleteDetalle?: (detalleMenuId: string) => void;
@@ -100,6 +102,7 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
   descripcion,
   precio = "$$$",
   detalles = [],
+  imagenUrl,
   onEdit,
   onDelete,
   onDeleteDetalle,
@@ -110,12 +113,20 @@ const MenuComboComp: React.FC<MenuComboProps> = ({
   return (
     <div className="border border-gray-200 dark:border-white/[0.1] rounded-lg bg-white dark:bg-transparent overflow-hidden transition-all duration-200">
       <div className="flex justify-between items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/[0.02]">
-        <span
-          className="flex-1 text-sm font-medium text-gray-800 dark:text-white/90 cursor-pointer select-none"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          {nombre}
-        </span>
+        <div className="flex items-center gap-3">
+          {imagenUrl && (
+            <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-white/[0.05]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${API_BASE_URL}${imagenUrl}`} alt={nombre} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <span
+            className="flex-1 text-sm font-medium text-gray-800 dark:text-white/90 cursor-pointer select-none"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {nombre}
+          </span>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm font-semibold text-gray-800 dark:text-white/90">
             {precio}

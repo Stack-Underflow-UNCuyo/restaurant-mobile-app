@@ -31,6 +31,7 @@ export interface Menu {
   descripcion?: string;
   precio: number;
   detallesMenu: DetalleMenu[];
+  imagenUrl?: string;
 }
 
 export interface Carta {
@@ -45,6 +46,7 @@ export interface SeccionCarta {
   id: string;
   nombre: string;
   categoria?: Categoria;
+  imagenUrl?: string;
   detallesSeccionCarta: DetalleSeccionCartaItem[];
 }
 
@@ -52,6 +54,7 @@ export interface DetalleSeccionCartaMenu {
   id: string;
   seccionCartaId: string;
   menu: Menu;
+  imagenUrl?: string;
 }
 
 export interface DetalleSeccionCartaArticuloIndividual {
@@ -60,6 +63,7 @@ export interface DetalleSeccionCartaArticuloIndividual {
   precio: number;
   descripcion?: string;
   articulo: Articulo;
+  imagenUrl?: string;
 }
 
 // La API no incluye un campo discriminador: se distingue por la presencia

@@ -14,14 +14,17 @@ public class DetalleSeccionCartaMenuService extends BaseService<DetalleSeccionCa
 
     private final MenuRepository menuRepository;
     private final SeccionCartaRepository seccionCartaRepository;
+    private final ImagenService imagenService;
 
     public DetalleSeccionCartaMenuService(
             DetalleSeccionCartaMenuRepository repository,
             MenuRepository menuRepository,
-            SeccionCartaRepository seccionCartaRepository) {
+            SeccionCartaRepository seccionCartaRepository,
+            ImagenService imagenService) {
         super(repository);
         this.menuRepository = menuRepository;
         this.seccionCartaRepository = seccionCartaRepository;
+        this.imagenService = imagenService;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class DetalleSeccionCartaMenuService extends BaseService<DetalleSeccionCa
     }
 
     @Transactional
-    public DetalleSeccionCartaMenu crearDetalleMenu(String seccionCartaId, String menuId) throws Exception {
+    public DetalleSeccionCartaMenu crearDetalleMenu(String seccionCartaId, String menuId, com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Menu menu = menuRepository.findByIdAndEliminadoFalse(menuId)
@@ -40,11 +43,16 @@ public class DetalleSeccionCartaMenuService extends BaseService<DetalleSeccionCa
         DetalleSeccionCartaMenu detalle = new DetalleSeccionCartaMenu();
         detalle.setSeccionCarta(seccionCarta);
         detalle.setMenu(menu);
+        
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            detalle.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+        
         return save(detalle);
     }
 
     @Transactional
-    public DetalleSeccionCartaMenu modificarDetalleMenu(String id, String seccionCartaId, String menuId) throws Exception {
+    public DetalleSeccionCartaMenu modificarDetalleMenu(String id, String seccionCartaId, String menuId, com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Menu menu = menuRepository.findByIdAndEliminadoFalse(menuId)
@@ -52,6 +60,11 @@ public class DetalleSeccionCartaMenuService extends BaseService<DetalleSeccionCa
         DetalleSeccionCartaMenu detalle = findById(id);
         detalle.setSeccionCarta(seccionCarta);
         detalle.setMenu(menu);
+        
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            detalle.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+        
         return update(id, detalle);
     }
 }

@@ -10,6 +10,9 @@ import { menuService } from "@/services/menuService";
 import { articuloService } from "@/services/articuloService";
 import toast from "react-hot-toast";
 import type { Articulo, Menu } from "@/types/entities";
+import { API_BASE_URL } from "@/lib/constants";
+
+import FileInput from "@/components/form/input/FileInput";
 
 export type DetalleComboFormItem = {
   nombre: string;
@@ -24,6 +27,8 @@ export type MenuComboFormData = {
   descripcion?: string;
   precio: string;
   detalles: DetalleComboFormItem[];
+  imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
+  imagenUrl?: string;
 };
 
 type FormProps = {
@@ -44,6 +49,8 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
   const [nombre, setNombre] = useState(initialData?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? "");
   const [precio, setPrecio] = useState(initialData?.precio ?? "");
+  const [imagen, setImagen] = useState<{ nombre: string; mime: string; contenido: string; tipoImagen: string } | undefined>(initialData?.imagen);
+  const [imagenUrl, setImagenUrl] = useState<string | undefined>(initialData?.imagenUrl);
   const [isLoading, setIsLoading] = useState(false);
   const [articuloOptions, setArticuloOptions] = useState<{ value: string; label: string }[]>([]);
   const [detalles, setDetalles] = useState<DetalleRow[]>(() =>
@@ -82,6 +89,24 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
     );
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = (event.target?.result as string).split(',')[1];
+        setImagen({
+          nombre: file.name,
+          mime: file.type,
+          contenido: base64String,
+          tipoImagen: "PRODUCTO"
+        });
+        setImagenUrl(undefined); // Ocultar imagen anterior si sube una nueva
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -95,6 +120,7 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
           articuloId: d.articuloId,
           articuloCantidad: Number(d.articuloCantidad) || 0,
         })),
+        imagen,
       };
       let response;
 
@@ -142,6 +168,23 @@ const MenuComboFormComp: React.FC<FormProps> = ({ initialData, onSuccess, onCanc
           value={descripcion}
           onChange={setDescripcion}
         />
+      </div>
+
+      <div className="mb-5">
+        <Label>Imagen</Label>
+        <div className="flex items-center gap-4">
+          {imagenUrl && (
+            <div className="w-12 h-12 rounded overflow-hidden bg-gray-100 dark:bg-white/[0.05] flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${API_BASE_URL}${imagenUrl}`} alt="Imagen actual" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="flex-1">
+            <FileInput onChange={handleFileChange} />
+            {imagen && <p className="text-xs text-gray-500 mt-1">Archivo nuevo: {imagen.nombre}</p>}
+            {!imagen && imagenUrl && <p className="text-xs text-gray-500 mt-1">Sube una imagen para reemplazar la actual.</p>}
+          </div>
+        </div>
       </div>
 
       <div className="border border-gray-200 dark:border-white/[0.1] rounded-lg p-4 mb-5">

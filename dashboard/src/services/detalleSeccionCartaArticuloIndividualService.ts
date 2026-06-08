@@ -5,6 +5,7 @@ type DetalleSeccionCartaArticuloPayload = {
   seccionCartaId: string;
   precio: number;
   articuloId: string;
+  imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
 };
 
 export const detalleSeccionCartaArticuloIndividualService = {

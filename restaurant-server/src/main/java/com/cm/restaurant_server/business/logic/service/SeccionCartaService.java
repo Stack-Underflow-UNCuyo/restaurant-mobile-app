@@ -1,5 +1,6 @@
 package com.cm.restaurant_server.business.logic.service;
 
+import com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto;
 import com.cm.restaurant_server.business.domain.entity.Categoria;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCarta;
 import com.cm.restaurant_server.business.domain.entity.SeccionCarta;
@@ -15,12 +16,15 @@ public class SeccionCartaService extends BaseService<SeccionCarta> {
 
     private final SeccionCartaRepository repository;
     private final CategoriaService categoriaService;
+    private final ImagenService imagenService;
 
     @Autowired
-    public SeccionCartaService(SeccionCartaRepository repository, CategoriaService categoriaService) {
+    public SeccionCartaService(SeccionCartaRepository repository, CategoriaService categoriaService,
+            ImagenService imagenService) {
         super(repository);
         this.repository = repository;
         this.categoriaService = categoriaService;
+        this.imagenService = imagenService;
     }
 
     @Override
@@ -40,10 +44,15 @@ public class SeccionCartaService extends BaseService<SeccionCarta> {
     }
 
     @Transactional
-    public SeccionCarta crearSeccionCarta(String categoriaName, String nombre) throws Exception {
+    public SeccionCarta crearSeccionCarta(String categoriaName, String nombre, ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = new SeccionCarta();
         seccionCarta.setNombre(nombre);
         seccionCarta.setCategoria(resolverCategoria(categoriaName));
+
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            seccionCarta.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+
         return save(seccionCarta);
     }
 
@@ -59,10 +68,15 @@ public class SeccionCartaService extends BaseService<SeccionCarta> {
     }
 
     @Transactional
-    public SeccionCarta modificarSeccionCarta(String id, String categoriaName, String nombre) throws Exception {
+    public SeccionCarta modificarSeccionCarta(String id, String categoriaName, String nombre, ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = findById(id);
         seccionCarta.setNombre(nombre);
         seccionCarta.setCategoria(resolverCategoria(categoriaName));
+
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            seccionCarta.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+
         return update(id, seccionCarta);
     }
 

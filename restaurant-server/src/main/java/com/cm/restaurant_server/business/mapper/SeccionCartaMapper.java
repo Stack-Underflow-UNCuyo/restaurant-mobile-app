@@ -29,6 +29,8 @@ public abstract class SeccionCartaMapper
     protected DetalleSeccionCartaMenuMapper detalleMenuMapper;
 
     @Override
+    @Mapping(target = "imagenUrl", source = "imagen.url")
+    @Mapping(target = "imagenNombre", source = "imagen.nombre")
     @Mapping(target = "detallesSeccionCarta", ignore = true)
     public abstract SeccionCartaDto toDTO(SeccionCarta entity);
 
@@ -36,6 +38,7 @@ public abstract class SeccionCartaMapper
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "detallesSeccionCarta", ignore = true)
     public abstract SeccionCarta toEntityCreate(SeccionCartaCreateDto dto);
 
@@ -43,6 +46,7 @@ public abstract class SeccionCartaMapper
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "detallesSeccionCarta", ignore = true)
     public abstract SeccionCarta toUpdate(@MappingTarget SeccionCarta entity, SeccionCartaCreateDto dto);
 

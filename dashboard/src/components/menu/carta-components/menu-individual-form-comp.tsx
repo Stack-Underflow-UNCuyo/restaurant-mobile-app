@@ -7,11 +7,16 @@ import Select from "@/components/form/Select";
 import type { Articulo } from "@/types/entities";
 import { articuloService } from "@/services/articuloService";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "@/lib/constants";
+
+import FileInput from "@/components/form/input/FileInput";
 
 export type MenuIndividualFormData = {
   articuloId: string;
   articuloNombre: string;
   precio: number;
+  imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
+  imagenUrl?: string;
 };
 
 type FormProps = {
@@ -23,6 +28,8 @@ type FormProps = {
 const MenuArtIndividualFormComp: React.FC<FormProps> = ({ initialData, onSave, onCancel }) => {
   const [articuloId, setArticuloId] = useState(initialData?.articuloId ?? "");
   const [precio, setPrecio] = useState(initialData?.precio ? String(initialData.precio) : "");
+  const [imagen, setImagen] = useState<{ nombre: string; mime: string; contenido: string; tipoImagen: string } | undefined>(initialData?.imagen);
+  const [imagenUrl, setImagenUrl] = useState<string | undefined>(initialData?.imagenUrl);
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,6 +43,24 @@ const MenuArtIndividualFormComp: React.FC<FormProps> = ({ initialData, onSave, o
 
   const articuloOptions = articulos.map((a) => ({ value: a.id, label: a.nombre }));
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = (event.target?.result as string).split(',')[1];
+        setImagen({
+          nombre: file.name,
+          mime: file.type,
+          contenido: base64String,
+          tipoImagen: "PRODUCTO"
+        });
+        setImagenUrl(undefined); // Ocultar imagen anterior si sube una nueva
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!articuloId || !precio.trim() || Number(precio) <= 0) {
       toast.error("Seleccione un artículo y un precio válido");
@@ -48,6 +73,7 @@ const MenuArtIndividualFormComp: React.FC<FormProps> = ({ initialData, onSave, o
         articuloId,
         articuloNombre: selected?.nombre ?? "",
         precio: Number(precio),
+        imagen
       });
     } finally {
       setSaving(false);
@@ -73,6 +99,22 @@ const MenuArtIndividualFormComp: React.FC<FormProps> = ({ initialData, onSave, o
             defaultValue={precio}
             onChange={(e) => setPrecio(e.target.value)}
           />
+        </div>
+      </div>
+      <div className="mb-5">
+        <Label>Imagen</Label>
+        <div className="flex items-center gap-4">
+          {imagenUrl && (
+            <div className="w-12 h-12 rounded overflow-hidden bg-gray-100 dark:bg-white/[0.05] flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${API_BASE_URL}${imagenUrl}`} alt="Imagen actual" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="flex-1">
+            <FileInput onChange={handleFileChange} />
+            {imagen && <p className="text-xs text-gray-500 mt-1">Archivo nuevo: {imagen.nombre}</p>}
+            {!imagen && imagenUrl && <p className="text-xs text-gray-500 mt-1">Sube una imagen para reemplazar la actual.</p>}
+          </div>
         </div>
       </div>
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-white/[0.05]">

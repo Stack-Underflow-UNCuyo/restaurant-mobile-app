@@ -14,14 +14,17 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
 
     private final ArticuloRepository articuloRepository;
     private final SeccionCartaRepository seccionCartaRepository;
+    private final ImagenService imagenService;
 
     public DetalleSeccionCartaArticuloIndividualService(
             DetalleSeccionCartaArticuloIndividualRepository repository,
             ArticuloRepository articuloRepository,
-            SeccionCartaRepository seccionCartaRepository) {
+            SeccionCartaRepository seccionCartaRepository,
+            ImagenService imagenService) {
         super(repository);
         this.articuloRepository = articuloRepository;
         this.seccionCartaRepository = seccionCartaRepository;
+        this.imagenService = imagenService;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
 
     @Transactional
     public DetalleSeccionCartaArticuloIndividual crearDetalleArticulo(
-            String seccionCartaId, double precio, String descripcion, String articuloId) throws Exception {
+            String seccionCartaId, double precio, String descripcion, String articuloId, com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
@@ -43,12 +46,17 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
         detalle.setPrecio(precio);
         detalle.setDescripcion(descripcion);
         detalle.setArticulo(articulo);
+        
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            detalle.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+        
         return save(detalle);
     }
 
     @Transactional
     public DetalleSeccionCartaArticuloIndividual modificarDetalleArticulo(
-            String id, String seccionCartaId, double precio, String descripcion, String articuloId) throws Exception {
+            String id, String seccionCartaId, double precio, String descripcion, String articuloId, com.cm.restaurant_server.business.domain.dto.imagen.ImagenCreateDto imagenDto) throws Exception {
         SeccionCarta seccionCarta = seccionCartaRepository.findByIdAndEliminadoFalse(seccionCartaId)
                 .orElseThrow(() -> new Exception("Sección de la carta no encontrada con id: " + seccionCartaId));
         Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(articuloId)
@@ -58,6 +66,11 @@ public class DetalleSeccionCartaArticuloIndividualService extends BaseService<De
         detalle.setPrecio(precio);
         detalle.setDescripcion(descripcion);
         detalle.setArticulo(articulo);
+        
+        if (imagenDto != null && imagenDto.getContenido() != null) {
+            detalle.setImagen(imagenService.crearImagenLocal(imagenDto));
+        }
+        
         return update(id, detalle);
     }
 }

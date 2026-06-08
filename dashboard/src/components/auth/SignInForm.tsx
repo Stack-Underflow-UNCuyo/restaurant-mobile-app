@@ -35,7 +35,7 @@ export default function SignInForm() {
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
-          <div className="mb-5 sm:mb-8" align="center">
+          <div className="mb-5 sm:mb-8 text-center">
             <Image
               src="/images/logo/logo.png"
               alt={APP_NAME}

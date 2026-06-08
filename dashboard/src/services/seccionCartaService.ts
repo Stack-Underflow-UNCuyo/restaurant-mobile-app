@@ -1,7 +1,11 @@
 import { apiClient } from "@/lib/apiClient";
 import type { SeccionCarta } from "@/types/entities";
 
-type SeccionCartaPayload = { nombre: string; categoriaNombre?: string };
+type SeccionCartaPayload = {
+  nombre: string;
+  categoriaNombre?: string;
+  imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
+};
 
 export const seccionCartaService = {
   getAll: () => apiClient.get<SeccionCarta[]>("/api/v1/secciones-carta"),

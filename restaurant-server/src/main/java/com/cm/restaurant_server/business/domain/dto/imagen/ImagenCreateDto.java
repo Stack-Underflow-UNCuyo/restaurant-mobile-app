@@ -1,8 +1,12 @@
 package com.cm.restaurant_server.business.domain.dto.imagen;
 
 import com.cm.restaurant_server.business.domain.enumeration.TipoImagen;
+
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

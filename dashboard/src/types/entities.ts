@@ -66,6 +66,13 @@ export interface MovimientoStock {
   stock: Stock;
 }
 
+export interface Imagen {
+  id: string;
+  nombre: string;
+  mime: string;
+  url: string;
+}
+
 export interface DetalleMenu {
   id: string;
   nombre: string;
@@ -80,6 +87,7 @@ export interface Menu {
   descripcion?: string;
   precio: number;
   detallesMenu: DetalleMenu[];
+  imagenUrl?: string;
 }
 
 export interface Carta {
@@ -94,18 +102,21 @@ export interface SeccionCarta {
   id: string;
   nombre: string;
   categoria?: Categoria;
+  imagenUrl?: string;
   detallesSeccionCarta: DetalleSeccionCarta[];
 }
 
 export interface DetalleSeccionCarta {
   id: string;
   seccionCartaId: string;
+  imagenUrl?: string;
 }
 
 export interface DetalleSeccionCartaMenu {
   id: string;
   seccionCartaId: string;
   menu: Menu;
+  imagenUrl?: string;
 }
 
 export interface DetalleSeccionCartaArticuloIndividual {
@@ -114,6 +125,7 @@ export interface DetalleSeccionCartaArticuloIndividual {
   precio: number;
   descripcion?: string;
   articulo: Articulo;
+  imagenUrl?: string;
 }
 
 export interface Categoria {

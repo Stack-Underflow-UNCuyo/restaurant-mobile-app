@@ -13,4 +13,6 @@ import lombok.Setter;
 @Setter
 public class DetalleSeccionCartaDto extends BaseDto {
     private String seccionCartaId;
+    private String imagenUrl;
+    private String imagenNombre;
 }

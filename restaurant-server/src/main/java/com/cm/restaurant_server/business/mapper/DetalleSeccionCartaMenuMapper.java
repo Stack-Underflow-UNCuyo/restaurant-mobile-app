@@ -7,12 +7,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = MenuMapper.class)
 public interface DetalleSeccionCartaMenuMapper extends
         BaseMapper<DetalleSeccionCartaMenu, DetalleSeccionCartaMenuDto, DetalleSeccionCartaMenuCreateDto, DetalleSeccionCartaMenuCreateDto> {
 
     @Override
     @Mapping(target = "seccionCartaId", source = "seccionCarta.id")
+    @Mapping(target = "imagenUrl", source = "imagen.url")
+    @Mapping(target = "imagenNombre", source = "imagen.nombre")
     DetalleSeccionCartaMenuDto toDTO(DetalleSeccionCartaMenu entity);
 
     @Override

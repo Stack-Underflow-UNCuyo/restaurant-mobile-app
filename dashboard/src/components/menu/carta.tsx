@@ -23,6 +23,7 @@ type IndividualItem = {
   nombre: string;
   precio: string;
   articuloId?: string;
+  imagenUrl?: string;
   detalles: DetalleItem[];
 };
 
@@ -33,12 +34,13 @@ type ComboItem = {
   nombre: string;
   descripcion?: string;
   precio: string;
+  imagenUrl?: string;
   detalles: DetalleCombo[];
 };
 
 type SectionItem = IndividualItem | ComboItem;
 
-type Section = { id: string; titulo: string; categorias: string[] };
+type Section = { id: string; titulo: string; categorias: string[]; imagenUrl?: string };
 
 export default function CartaTable({ cartaId }: { cartaId: string }) {
   const [sections, setSections] = useState<Section[]>([]);
@@ -67,6 +69,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
           id: s.id,
           titulo: s.nombre,
           categorias: s.categoria ? [s.categoria.nombre] : [],
+          imagenUrl: s.imagenUrl,
         })));
 
         const bySection: Record<string, SectionItem[]> = {};
@@ -81,6 +84,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
             nombre: d.menu.nombre,
             descripcion: d.menu.descripcion,
             precio: String(d.menu.precio),
+            imagenUrl: d.menu.imagenUrl ?? d.imagenUrl,
             detalles: (d.menu.detallesMenu ?? []).map((dm) => ({
               nombre: dm.nombre,
               cantidad: dm.cantidad,
@@ -104,6 +108,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
             nombre: d.articulo?.nombre ?? "Articulo individual",
             precio: String(d.precio),
             articuloId: d.articulo?.id,
+            imagenUrl: d.imagenUrl,
             detalles: d.articulo ? [{
               nombre: d.articulo.nombre,
               cantidad: 1,
@@ -138,18 +143,19 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
     setEditingSectionId(tempId);
   };
 
-  const handleSaveSection = async (sectionId: string, data: { titulo: string; categorias: string[] }) => {
+  const handleSaveSection = async (sectionId: string, data: { titulo: string; categorias: string[]; imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string } }) => {
     try {
       const payload = {
         nombre: data.titulo,
         categoriaNombre: data.categorias[0] || undefined,
+        imagen: data.imagen,
       };
 
       if (sectionId.startsWith("temp-")) {
         const saved = await seccionCartaService.create(payload);
         const newSections = sections.map((s) =>
           s.id === sectionId
-            ? { id: saved.id, titulo: saved.nombre, categorias: saved.categoria ? [saved.categoria.nombre] : [] }
+            ? { id: saved.id, titulo: saved.nombre, categorias: saved.categoria ? [saved.categoria.nombre] : [], imagenUrl: saved.imagenUrl }
             : s
         );
         setSections(newSections);
@@ -163,7 +169,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
         const saved = await seccionCartaService.update(sectionId, payload);
         setSections((prev) => prev.map((s) =>
           s.id === sectionId
-            ? { ...s, titulo: saved.nombre, categorias: saved.categoria ? [saved.categoria.nombre] : [] }
+            ? { ...s, titulo: saved.nombre, categorias: saved.categoria ? [saved.categoria.nombre] : [], imagenUrl: saved.imagenUrl }
             : s
         ));
       }
@@ -203,6 +209,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
       seccionCartaId: sectionId,
       precio: data.precio,
       articuloId: data.articuloId,
+      imagen: data.imagen,
     });
     setItemsBySection((prev) => ({
       ...prev,
@@ -214,6 +221,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
           nombre: saved.articulo?.nombre ?? data.articuloNombre,
           precio: String(saved.precio),
           articuloId: saved.articulo?.id ?? data.articuloId,
+          imagenUrl: saved.imagenUrl,
           detalles: saved.articulo ? [{
             nombre: saved.articulo.nombre,
             cantidad: 1,
@@ -241,6 +249,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
           nombre: savedMenu.nombre,
           descripcion: savedMenu.descripcion,
           precio: String(savedMenu.precio),
+          imagenUrl: savedMenu.imagenUrl ?? saved.imagenUrl,
           detalles: (savedMenu.detallesMenu ?? []).map((d) => ({
             nombre: d.nombre,
             cantidad: d.cantidad,
@@ -264,6 +273,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
       seccionCartaId: sectionId,
       precio: data.precio,
       articuloId: data.articuloId,
+      imagen: data.imagen,
     });
     setItemsBySection((prev) => ({
       ...prev,
@@ -274,6 +284,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               nombre: saved.articulo?.nombre ?? data.articuloNombre,
               precio: String(saved.precio),
               articuloId: saved.articulo?.id ?? data.articuloId,
+              imagenUrl: saved.imagenUrl ?? item.imagenUrl,
               detalles: saved.articulo ? [{
                 nombre: saved.articulo.nombre,
                 cantidad: 1,
@@ -298,6 +309,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               nombre: savedMenu.nombre,
               descripcion: savedMenu.descripcion,
               precio: String(savedMenu.precio),
+              imagenUrl: savedMenu.imagenUrl ?? item.imagenUrl,
               detalles: (savedMenu.detallesMenu ?? []).map((d) => ({
                 nombre: d.nombre,
                 cantidad: d.cantidad,
@@ -381,6 +393,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
                     articuloId: item.articuloId ?? "",
                     articuloNombre: item.nombre,
                     precio: Number(item.precio),
+                    imagenUrl: item.imagenUrl,
                   }}
                   onSave={(data) => handleEditIndividualSave(section.id, item.id, data)}
                   onCancel={() => setEditingItemId(null)}
@@ -394,6 +407,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
                   nombre={item.nombre}
                   precio={item.precio}
                   detalles={item.detalles}
+                  imagenUrl={item.imagenUrl}
                   onEdit={() => setEditingItemId(item.id)}
                   onDelete={() => setPendingDeleteItem({ sectionId: section.id, id: item.id, type: "individual" })}
                 />
@@ -403,7 +417,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               return (
                 <MenuComboFormComp
                   key={item.id}
-                  initialData={{ id: item.menuId, nombre: item.nombre, descripcion: item.descripcion, precio: item.precio, detalles: item.detalles }}
+                  initialData={{ id: item.menuId, nombre: item.nombre, descripcion: item.descripcion, precio: item.precio, detalles: item.detalles, imagenUrl: item.imagenUrl }}
                   onSuccess={(savedMenu) => handleEditComboSuccess(section.id, item.id, savedMenu)}
                   onCancel={() => setEditingItemId(null)}
                 />
@@ -416,6 +430,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
                 descripcion={item.descripcion}
                 precio={item.precio}
                 detalles={item.detalles}
+                imagenUrl={item.imagenUrl}
                 onEdit={() => setEditingItemId(item.id)}
                 onDelete={() => setPendingDeleteItem({ sectionId: section.id, id: item.id, type: "combo" })}
                 onDeleteDetalle={(detalleMenuId) => setPendingDeleteDetalle({ sectionId: section.id, itemId: item.id, detalleMenuId })}
@@ -429,6 +444,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
                 <SeccionCartaFormComp
                   initialTitulo={section.titulo}
                   initialCategorias={section.categorias}
+                  initialImagenUrl={section.imagenUrl}
                   itemsAgregados={sectionItems.length > 0 ? <>{itemsJSX}</> : undefined}
                   onSave={(data) => handleSaveSection(section.id, data)}
                   onCancel={() => handleCancelSectionEdit(section.id)}
@@ -442,6 +458,7 @@ export default function CartaTable({ cartaId }: { cartaId: string }) {
               <SeccionCartaComp
                 titulo={section.titulo}
                 categorias={section.categorias}
+                imagenUrl={section.imagenUrl}
                 onAddIndividual={(data) => handleAddIndividual(section.id, data)}
                 onAddCombo={(savedMenu) => handleAddCombo(section.id, savedMenu)}
                 onEdit={() => setEditingSectionId(section.id)}

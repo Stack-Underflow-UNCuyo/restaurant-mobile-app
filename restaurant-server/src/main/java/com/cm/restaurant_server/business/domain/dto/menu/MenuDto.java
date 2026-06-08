@@ -15,5 +15,7 @@ public class MenuDto extends BaseDto {
     private String nombre;
     private String descripcion;
     private double precio;
+    private String imagenUrl;
+    private String imagenNombre;
     private List<DetalleMenuDto> detallesMenu;
 }

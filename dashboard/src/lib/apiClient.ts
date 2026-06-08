@@ -1,5 +1,5 @@
 //automatiza las peticiones a Spring
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8081";
+import { API_BASE_URL as BASE_URL } from "./constants";
 
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
