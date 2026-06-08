@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FacturaRepository extends BaseRepository<Factura> {
     List<Factura> findByEstado(EstadoFactura estado);
+
+    // Para autoincrementar el número de factura (mayor número existente)
+    Factura findTopByEliminadoFalseOrderByNumeroFacturaDesc();
 }

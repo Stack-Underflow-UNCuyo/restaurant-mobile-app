@@ -24,6 +24,11 @@ public class DetalleFacturaService extends BaseService<DetalleFactura> {
         return getRepository().findByFacturaIdAndEliminadoFalse(facturaId);
     }
 
+    // True si la comanda ya tiene una factura generada
+    public boolean comandaYaFacturada(String comandaId) {
+        return getRepository().existsByDetalleComanda_Comanda_IdAndFacturaIsNotNullAndEliminadoFalse(comandaId);
+    }
+
     protected DetalleFacturaRepository getRepository() {
         return (DetalleFacturaRepository) this.baseRepository;
     }

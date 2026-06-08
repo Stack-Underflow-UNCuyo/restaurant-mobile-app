@@ -1,6 +1,5 @@
 /**
- * Estado del detalle de una sección de carta (con sus platos): carga, error
- * y refresh — misma forma que useCartaDetalle.
+ * Estado del detalle de una sección de carta (con sus platos): carga, error y refresh.
  */
 import { useCallback, useEffect, useState } from "react";
 
@@ -20,32 +19,36 @@ export function useSeccionDetalle(id: string | undefined): UseSeccionDetalleResu
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const cargar = useCallback(
-    async (mode: "initial" | "refresh") => {
-      if (!id) return;
-      if (mode === "refresh") setRefreshing(true);
-      else setLoading(true);
-      setError(null);
-      try {
-        setSeccion(await getSeccionCartaById(id));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "No se pudo cargar la sección.");
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [id],
-  );
+  const [refreshId, setRefreshId] = useState(0);
 
   useEffect(() => {
-    cargar("initial");
-  }, [cargar]);
+    if (!id) return;
+    let cancelled = false;
+    getSeccionCartaById(id)
+      .then((data) => {
+        if (!cancelled) {
+          setSeccion(data);
+          setError(null);
+          setLoading(false);
+          setRefreshing(false);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "No se pudo cargar la sección.");
+          setLoading(false);
+          setRefreshing(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, refreshId]);
 
   const refresh = useCallback(() => {
-    cargar("refresh");
-  }, [cargar]);
+    setRefreshing(true);
+    setRefreshId((id) => id + 1);
+  }, []);
 
   return { seccion, loading, refreshing, error, refresh };
 }
