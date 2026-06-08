@@ -1,89 +1,100 @@
-import { useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { EstadoFilter, type FiltroMesa } from "@/components/mesa/EstadoFilter";
-import { MesaCard } from "@/components/mesa/MesaCard";
-import { MesaEstadoSheet } from "@/components/mesa/MesaEstadoSheet";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Radius, Spacing } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
-import { useMesas } from "@/hooks/useMesas";
 import { useTheme } from "@/hooks/use-theme";
-import type { Mesa } from "@/types/mesa";
+import { getEmpresaActiva } from "@/services/empresaService";
 
-const COLUMNS = 2;
+const logo = require("../../../assets/images/logo.png");
+const NOMBRE_POR_DEFECTO = "Aromas de Viña";
 
-export default function MesasDashboard() {
-  const { logout } = useAuth();
+const ACCESOS: { label: string; href?: "/(mozo)/mesas" }[] = [
+  { label: "Ver Mesas", href: "/(mozo)/mesas" },
+  { label: "Estados Comanda" },
+  { label: "Ver Cartas" },
+];
+
+/** Landing del mozo: nombre y logo del local, con accesos a sus pantallas. */
+export default function MozoHome() {
+  const router = useRouter();
   const theme = useTheme();
-  const { mesas, loading, refreshing, error, refresh, cambiarEstado } = useMesas();
+  const { logout } = useAuth();
+  const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
 
-  const [filtro, setFiltro] = useState<FiltroMesa>("TODAS");
-  const [mesaSel, setMesaSel] = useState<Mesa | null>(null);
-
-  const visibles = useMemo(
-    () => (filtro === "TODAS" ? mesas : mesas.filter((m) => m.estadoMesa === filtro)),
-    [mesas, filtro],
-  );
-
-  // Mantener sincronizada la mesa abierta en el sheet con la lista (tras refresh).
-  const mesaActual = mesaSel ? (mesas.find((m) => m.id === mesaSel.id) ?? mesaSel) : null;
+  useEffect(() => {
+    let activo = true;
+    getEmpresaActiva()
+      .then((empresa) => {
+        if (activo && empresa.nombre) setNombreEmpresa(empresa.nombre);
+      })
+      .catch(() => {
+        // Sin conexión o backend caído: nos quedamos con el nombre por defecto.
+      });
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-        <AppHeader title="Mesas" subtitle={`${mesas.length} en total`} onLogout={logout} />
-
-        {!loading && !error && <EstadoFilter mesas={mesas} value={filtro} onChange={setFiltro} />}
-
-        {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color={theme.brand} />
-          </View>
-        ) : error ? (
-          <View style={styles.center}>
-            <ThemedText type="default" style={styles.centerText}>
-              {error}
+      <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
+        <ScrollView contentContainerStyle={styles.content}>
+          <Pressable
+            onPress={logout}
+            hitSlop={8}
+            style={({ pressed }) => [
+              styles.logout,
+              { borderColor: theme.border, opacity: pressed ? 0.6 : 1 },
+            ]}
+          >
+            <ThemedText type="smallBold" themeColor="textSecondary">
+              Salir
             </ThemedText>
-            <Pressable
-              onPress={refresh}
-              style={[styles.retry, { backgroundColor: theme.brand }]}
-            >
-              <ThemedText type="smallBold" style={{ color: theme.brandText }}>
-                Reintentar
-              </ThemedText>
-            </Pressable>
-          </View>
-        ) : (
-          <FlatList
-            data={visibles}
-            keyExtractor={(m) => m.id}
-            numColumns={COLUMNS}
-            columnWrapperStyle={styles.column}
-            contentContainerStyle={styles.list}
-            renderItem={({ item }) => <MesaCard mesa={item} onPress={setMesaSel} />}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.brand} />
-            }
-            ListEmptyComponent={
-              <View style={styles.center}>
-                <ThemedText type="default" themeColor="textSecondary" style={styles.centerText}>
-                  No hay mesas{filtro !== "TODAS" ? " con este estado" : ""}.
-                </ThemedText>
-              </View>
-            }
-          />
-        )}
-      </SafeAreaView>
+          </Pressable>
 
-      <MesaEstadoSheet
-        mesa={mesaActual}
-        onClose={() => setMesaSel(null)}
-        onSelect={cambiarEstado}
-      />
+          <View style={styles.hero}>
+            <ThemedText type="subtitle" style={styles.centerText}>
+              {nombreEmpresa}
+            </ThemedText>
+            <Image
+              source={logo}
+              style={styles.logo}
+              contentFit="contain"
+              accessibilityLabel={`${nombreEmpresa} — logo`}
+            />
+          </View>
+
+          <View style={styles.accesos}>
+            {ACCESOS.map((acceso) => (
+              <Pressable
+                key={acceso.label}
+                disabled={!acceso.href}
+                onPress={() => acceso.href && router.push(acceso.href)}
+                style={({ pressed }) => [
+                  styles.acceso,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                  acceso.href && pressed ? { opacity: 0.7 } : null,
+                ]}
+              >
+                <ThemedText type="smallBold">{acceso.label}</ThemedText>
+                {acceso.href ? (
+                  <ThemedText themeColor="textSecondary">›</ThemedText>
+                ) : (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Próximamente
+                  </ThemedText>
+                )}
+              </Pressable>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </ThemedView>
   );
 }
@@ -91,19 +102,31 @@ export default function MesasDashboard() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safe: { flex: 1 },
-  list: { padding: Spacing.four, paddingTop: Spacing.two, gap: Spacing.three },
-  column: { gap: Spacing.three },
-  center: {
+  content: {
     flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: Spacing.five,
-    gap: Spacing.three,
-  },
-  centerText: { textAlign: "center" },
-  retry: {
     paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two + 2,
-    borderRadius: Radius.md,
+    paddingTop: Spacing.two,
+    paddingBottom: Spacing.five,
+    gap: Spacing.five,
+  },
+  logout: {
+    alignSelf: "flex-end",
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one + 2,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
+  hero: { alignItems: "center", gap: Spacing.three, marginTop: Spacing.three },
+  centerText: { textAlign: "center" },
+  logo: { width: 132, height: 140 },
+  accesos: { gap: Spacing.three },
+  acceso: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.four,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
   },
 });

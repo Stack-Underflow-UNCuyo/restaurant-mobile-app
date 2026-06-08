@@ -31,3 +31,11 @@ export const ESTADO_FALLBACK: EstadoStyle = ESTADO_CONFIG.FUERA_DE_SERVICIO;
 export function estadoStyle(estado: EstadoMesa): EstadoStyle {
   return ESTADO_CONFIG[estado] ?? ESTADO_FALLBACK;
 }
+
+/**
+ * Mesas que requieren la atención del mozo: las reservadas, porque hay que
+ * prepararlas antes de que lleguen los comensales.
+ */
+export function requiereAtencion(estado: EstadoMesa): boolean {
+  return estado === "RESERVADA";
+}
