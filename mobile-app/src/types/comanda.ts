@@ -35,6 +35,10 @@ export interface DetalleComanda {
   detalleSeccionCartaId: string;
   /** Nombre del artículo o menú pedido (resuelto por el backend). */
   nombre: string | null;
+  /** Descripción del artículo individual, o del menú. */
+  descripcion: string | null;
+  /** Sub-items de un menú (ej. "1× Milanesa"). Null para artículos individuales. */
+  componentes: string[] | null;
   /** Precio unitario del artículo o menú pedido. */
   precio: number;
 }
