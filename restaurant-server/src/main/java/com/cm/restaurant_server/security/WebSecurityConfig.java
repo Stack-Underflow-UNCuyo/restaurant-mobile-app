@@ -3,6 +3,7 @@ package com.cm.restaurant_server.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +23,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private static final String[] ADMIN_MANAGED_PATHS = {
+            "/api/v1/articulos/**",
+            "/api/v1/categorias/**",
+            "/api/v1/menus/**",
+            "/api/v1/detalles-menu/**",
+            "/api/v1/cartas/**",
+            "/api/v1/secciones-carta/**",
+            "/api/v1/detalles-seccion-carta/**",
+            "/api/v1/detalles-seccion-carta-articulo/**",
+            "/api/v1/detalles-seccion-carta-menu/**",
+            "/api/v1/formas-de-pago/**",
+            "/api/v1/unidades-de-medida/**",
+            "/api/v1/paises/**",
+            "/api/v1/provincias/**",
+            "/api/v1/departamentos/**",
+            "/api/v1/localidades/**",
+            "/api/v1/promociones/**",
+            "/api/v1/imagenes/**",
+            "/api/v1/stocks/**",
+            "/api/v1/movimientos-stock/**"
+    };
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -30,23 +53,44 @@ public class WebSecurityConfig {
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf((csrf) -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/").permitAll()
+                        // Public
                         .requestMatchers("/auth/login").permitAll()
-                        .anyRequest().permitAll()
-                );
+                        .requestMatchers(HttpMethod.GET, "/api/v1/cartas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/secciones-carta/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/empresa").permitAll()
+
+                        // Any authenticated user: own profile
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios/me").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/me").authenticated()
+
+                        // Admin-only (all methods)
+                        .requestMatchers("/api/v1/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/empleados/me").authenticated()
+                        .requestMatchers("/api/v1/empleados/**").hasRole("ADMIN")
+
+                        // Catalog/config: admin writes, any auth reads
+                        .requestMatchers(HttpMethod.POST, ADMIN_MANAGED_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, ADMIN_MANAGED_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, ADMIN_MANAGED_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/empresa/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/empresa/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/empresa/**").hasRole("ADMIN")
+
+                        // ── Everything else: any logged-in user ──────────────────────────
+                        .anyRequest().authenticated());
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Cualquier puerto de localhost: dashboard (3000) y la web de Expo de la app movil.
+        // Cualquier puerto de localhost: dashboard (3000) y la web de Expo de la app
+        // movil.
         config.setAllowedOriginPatterns(List.of("http://localhost:*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

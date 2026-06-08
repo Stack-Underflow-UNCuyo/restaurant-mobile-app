@@ -20,7 +20,7 @@ export default function ProfileContent() {
 
     async function load() {
       try {
-        const u = await profileService.getUsuario(authUser!.id);
+        const u = await profileService.getUsuario();
         setUsuario(u);
         if (u.personaId) {
           const p = await profileService.getPersona(u.personaId);

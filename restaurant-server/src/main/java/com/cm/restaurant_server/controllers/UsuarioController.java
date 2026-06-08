@@ -6,9 +6,11 @@ import com.cm.restaurant_server.business.domain.entity.Usuario;
 import com.cm.restaurant_server.business.logic.service.BaseService;
 import com.cm.restaurant_server.business.logic.service.UsuarioService;
 import com.cm.restaurant_server.business.mapper.BaseMapper;
+import com.cm.restaurant_server.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,35 @@ public class UsuarioController extends BaseController<Usuario, UsuarioDto, Usuar
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"error\":\"Error. Por favor intente más tarde.\"}");
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(Authentication authentication) {
+        try {
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            Usuario usuario = usuarioService.findById(principal.getUserId());
+            return ResponseEntity.ok(mapper.toDTO(usuario));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\":\"Error. Por favor intente más tarde.\"}");
+        }
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMe(Authentication authentication, @RequestBody UsuarioCreateDto dto) {
+        try {
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            Usuario existing = usuarioService.findById(principal.getUserId());
+            existing.setEmail(dto.getEmail());
+            if (dto.getClave() != null && !dto.getClave().isBlank()) {
+                existing.setClave(new BCryptPasswordEncoder().encode(dto.getClave()));
+            }
+            usuarioService.update(existing.getId(), existing);
+            return ResponseEntity.ok(mapper.toDTO(existing));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\":\"Error al actualizar el perfil.\"}");
         }
     }
 

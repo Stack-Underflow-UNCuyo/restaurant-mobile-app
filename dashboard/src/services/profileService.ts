@@ -21,10 +21,10 @@ export type UsuarioUpdatePayload = {
 };
 
 export const profileService = {
-  getUsuario: (id: string) =>
-    apiClient.get<Usuario>(`/api/v1/usuarios/buscarId/${id}`),
-  updateUsuario: (id: string, data: UsuarioUpdatePayload) =>
-    apiClient.put<Usuario>(`/api/v1/usuarios/${id}`, data),
+  getUsuario: () =>
+    apiClient.get<Usuario>(`/api/v1/usuarios/me`),
+  updateUsuario: (data: UsuarioUpdatePayload) =>
+    apiClient.put<Usuario>(`/api/v1/usuarios/me`, data),
   getPersona: (id: string) =>
     apiClient.get<Persona>(`/api/v1/personas/${id}`),
   updatePersona: (id: string, data: PersonaUpdatePayload) =>

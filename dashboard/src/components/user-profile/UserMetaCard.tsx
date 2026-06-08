@@ -52,7 +52,7 @@ export default function UserMetaCard({ usuario, persona }: Props) {
     if (Object.keys(e).length) { setErrors(e); return; }
     setSaving(true);
     try {
-      await profileService.updateUsuario(usuario.id, {
+      await profileService.updateUsuario({
         email: usuario.email,
         clave: newPassword,
         rol: usuario.rol,

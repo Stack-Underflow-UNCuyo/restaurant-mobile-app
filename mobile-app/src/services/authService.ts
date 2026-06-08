@@ -53,12 +53,12 @@ export async function resolveAuthUser(token: string): Promise<AuthUser> {
   const claims = decodeJwt(token);
   if (!claims) throw new ApiError("Token inválido.", 401);
 
-  const usuario = await apiFetch<UsuarioDto>(`/api/v1/usuarios/${claims.sub}`, { token });
+  const usuario = await apiFetch<UsuarioDto>(`/api/v1/usuarios/me`, { token });
   if (!usuario.personaId) {
     throw new ApiError("Tu cuenta no tiene un empleado asociado.", 403);
   }
 
-  const empleado = await apiFetch<EmpleadoDto>(`/api/v1/empleados/${usuario.personaId}`, { token });
+  const empleado = await apiFetch<EmpleadoDto>(`/api/v1/empleados/me`, { token });
 
   if (empleado.tipoEmpleado !== "MOZO" && empleado.tipoEmpleado !== "COCINERO") {
     throw new ApiError("Esta aplicación es solo para mozos y cocineros.", 403);
