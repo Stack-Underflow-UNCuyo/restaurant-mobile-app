@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { Fonts, Gray, Radius, Spacing, Success, Warning } from "@/constants/theme";
@@ -18,16 +18,16 @@ interface Props {
   items: DetalleComanda[];
   nextEstado?: EstadoDetalleComanda;
   onAction?: (detalle: DetalleComanda, nuevoEstado: EstadoDetalleComanda) => void;
+  width: number;
 }
 
-export function KanbanColumn({ title, items, nextEstado, onAction }: Props) {
+export function KanbanColumn({ title, items, nextEstado, onAction, width }: Props) {
   const theme = useTheme();
-  const { width } = useWindowDimensions();
   const accent = nextEstado ? (COLUMN_ACCENT[nextEstado] ?? Gray[500]) : Success[500];
 
   return (
     <View
-      style={[styles.column, { width: width * 0.3, backgroundColor: theme.backgroundElement }]}
+      style={[styles.column, { width, backgroundColor: theme.backgroundElement }]}
     >
       <View style={[styles.header, { borderBottomColor: accent }]}>
         <ThemedText type="smallBold" style={[styles.title, { color: accent }]}>
@@ -64,7 +64,6 @@ export function KanbanColumn({ title, items, nextEstado, onAction }: Props) {
 
 const styles = StyleSheet.create({
   column: {
-    flex: 1,
     borderRadius: Radius.lg,
     padding: Spacing.two,
     gap: Spacing.one,
