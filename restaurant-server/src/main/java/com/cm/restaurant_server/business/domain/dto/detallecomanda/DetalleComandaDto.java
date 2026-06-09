@@ -4,6 +4,7 @@ import com.cm.restaurant_server.business.domain.dto.BaseDto;
 import com.cm.restaurant_server.business.domain.enumeration.EstadoDetalleComanda;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -23,4 +24,5 @@ public class DetalleComandaDto extends BaseDto {
     private List<String> componentes;
     /** Precio unitario del artículo o menú pedido. */
     private double precio;
+    private LocalDateTime fechaCreacion;
 }
