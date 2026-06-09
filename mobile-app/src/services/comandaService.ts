@@ -51,7 +51,7 @@ export function addDetalleComanda(
     body: JSON.stringify({
       detalleSeccionCartaId,
       cantidad,
-      estadoDetalleComanda: "EN_PROCESO_DE_SOLICITUD",
+      estadoDetalleComanda: "ENVIADO_A_LA_COCINA",
     }),
   });
 }
