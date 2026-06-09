@@ -69,7 +69,12 @@ export default function CocineroKanban() {
               nextEstado="ENTREGADO_PARA_DESPACHAR"
               onAction={moverDetalle}
             />
-            <KanbanColumn title="Listo" items={listo} />
+            <KanbanColumn 
+              title="Listo" 
+              items={listo}
+              nextEstado="ENTREGADO_AL_CLIENTE"
+              onAction={moverDetalle}
+            />
           </ScrollView>
         )}
       </SafeAreaView>
