@@ -18,14 +18,16 @@ export function MenuOptionCard({ onPress }: Props) {
       onPress={onPress}
       style={({ pressed }) => [styles.card, { opacity: pressed ? 0.9 : 1 }]}
     >
-      <View style={styles.star}>
-        <ThemedText style={styles.starText}>★</ThemedText>
+      <View style={styles.top}>
+        <View style={styles.star}>
+          <ThemedText style={styles.starText}>★</ThemedText>
+        </View>
       </View>
-      <View style={styles.texts}>
+      <View style={styles.body}>
         <ThemedText type="small" style={styles.label}>
           VISTA RÁPIDA
         </ThemedText>
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type="smallBold" style={styles.title} numberOfLines={1}>
           Menú
         </ThemedText>
       </View>
@@ -36,11 +38,14 @@ export function MenuOptionCard({ onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    minHeight: 140,
+    overflow: "hidden",
     borderRadius: Radius.lg,
     backgroundColor: Brand[600],
-    padding: Spacing.four,
-    justifyContent: "space-between",
+  },
+  top: {
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
   star: {
     width: 36,
@@ -52,7 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   starText: { color: "#fff", fontSize: 16 },
-  texts: { gap: Spacing.half },
+  body: { gap: Spacing.one + 2, padding: Spacing.three },
   label: { color: Brand[100], letterSpacing: 2, textTransform: "uppercase" },
   title: { color: "#fff" },
 });
