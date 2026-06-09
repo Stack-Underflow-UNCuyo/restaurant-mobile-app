@@ -1,5 +1,5 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -24,6 +24,14 @@ export default function ComandaDetalle() {
   const { comandas, loading, refreshing, error, refresh } = useComandas(mesaId);
 
   const [filtro, setFiltro] = useState<FiltroComanda>("TODAS");
+
+  const mounted = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (!mounted.current) { mounted.current = true; return; }
+      refresh();
+    }, [refresh]),
+  );
 
   function handleAdd() {
     cart.startCart(mesaId, comanda?.id ?? null, numero ?? null);
@@ -93,7 +101,7 @@ export default function ComandaDetalle() {
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
             <Pressable
               style={[styles.pagarBtn, { backgroundColor: theme.brand }]}
-              onPress={() => {}}
+              onPress={() => router.push({ pathname: "/(mozo)/pagar/[mesaId]", params: { mesaId, numero } })}
             >
               <ThemedText type="smallBold" style={{ color: theme.brandText }}>
                 Ir a Pagar

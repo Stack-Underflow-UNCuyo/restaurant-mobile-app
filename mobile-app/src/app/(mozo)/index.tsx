@@ -11,6 +11,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import { ChevronRightIcon } from "@/components/icons";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { TopBar } from "@/components/top-bar";
@@ -138,9 +139,9 @@ export default function MozoHome() {
                   acceso.href && pressed ? { opacity: 0.7 } : null,
                 ]}
               >
-                <ThemedText type="smallBold">{acceso.label}</ThemedText>
+                <ThemedText style={{fontSize: 20, fontWeight:500}}>{acceso.label}</ThemedText>
                 {acceso.href ? (
-                  <ThemedText themeColor="textSecondary">›</ThemedText>
+                  <ChevronRightIcon color={theme.textSecondary} />
                 ) : (
                   <ThemedText type="small" themeColor="textSecondary">
                     Próximamente

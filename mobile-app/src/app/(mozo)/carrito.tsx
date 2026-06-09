@@ -48,7 +48,7 @@ export default function CarritoScreen() {
         const mid = mesaId;
         const num = mesaNumero;
         clearCart();
-        router.replace({
+        router.dismissTo({
           pathname: "/(mozo)/comanda/[mesaId]",
           params: { mesaId: mid!, ...(num ? { numero: num } : {}) },
         });

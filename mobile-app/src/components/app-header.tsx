@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { SymbolView } from "expo-symbols";
 import { Animated, Pressable, StyleSheet, View, type ImageSourcePropType } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -36,7 +37,12 @@ export function AppHeader({ title, subtitle, onBack, logo, onCartPress, cartCoun
             hitSlop={8}
             style={({ pressed }) => [styles.back, { opacity: pressed ? 0.6 : 1 }]}
           >
-            <ThemedText style={[styles.chevron, { color: theme.text }]}>‹</ThemedText>
+            <SymbolView
+              name={{ ios: "chevron.left", android: "chevron_left" }}
+              size={24}
+              tintColor={theme.text}
+              weight="semibold"
+            />
           </Pressable>
         )}
       </View>
@@ -103,7 +109,6 @@ const styles = StyleSheet.create({
   side: { width: 48, alignItems: "flex-start" },
   sideRight: { alignItems: "flex-end" },
   back: { padding: Spacing.one },
-  chevron: { fontSize: 40, lineHeight: 42 },
   texts: { flex: 1, alignItems: "center", gap: Spacing.half },
   centerText: { textAlign: "center" },
   logo: { width: 36, height: 38 },
