@@ -1,7 +1,12 @@
 package com.cm.restaurant_server.business.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -14,4 +19,7 @@ public class Resenia extends Base {
     @ManyToOne
     @JoinColumn(name = "comanda_id")
     private Comanda comanda;
+    private Integer ambiente;
+    private Integer servicio;
+    private Integer comida;
 }

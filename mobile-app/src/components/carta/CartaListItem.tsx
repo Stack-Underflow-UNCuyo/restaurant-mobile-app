@@ -1,6 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet } from "react-native";
 
-import { ChevronRightIcon } from "@/components/icons";
 import { ThemedText } from "@/components/themed-text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -24,7 +24,7 @@ export function CartaListItem({ carta, onPress }: Props) {
       ]}
     >
       <ThemedText type="smallBold">{carta.nombre ?? "Carta"}</ThemedText>
-      <ChevronRightIcon color={theme.textSecondary} />
+      <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
     </Pressable>
   );
 }

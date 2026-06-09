@@ -11,7 +11,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-import { ChevronRightIcon } from "@/components/icons";
+import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { TopBar } from "@/components/top-bar";
@@ -35,26 +35,6 @@ const TRACK_H = 30;
 const KNOB = 24;
 const PAD = 3;
 
-function SunIcon({ color }: { color: string }) {
-  return (
-    <View style={{ width: 14, height: 14 }}>
-      <View style={{ position: "absolute", width: 6, height: 6, borderRadius: 3, backgroundColor: color, top: 4, left: 4 }} />
-      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 0.5, left: 6 }} />
-      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, bottom: 0.5, left: 6 }} />
-      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 6, left: 0.5 }} />
-      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 6, right: 0.5 }} />
-    </View>
-  );
-}
-
-function MoonIcon({ color }: { color: string }) {
-  return (
-    <View style={{ width: 14, height: 14 }}>
-      <View style={{ position: "absolute", width: 14, height: 14, borderRadius: 7, backgroundColor: color }} />
-      <View style={{ position: "absolute", width: 9, height: 9, borderRadius: 4.5, backgroundColor: "#ffffff", top: -0.5, left: 5 }} />
-    </View>
-  );
-}
 
 function ThemeSlider({ isDark, onPress }: { isDark: boolean; onPress: () => void }) {
   const progress = useSharedValue(isDark ? 1 : 0);
@@ -76,7 +56,7 @@ function ThemeSlider({ isDark, onPress }: { isDark: boolean; onPress: () => void
     <Pressable onPress={onPress} hitSlop={8} style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}>
       <Animated.View style={[styles.track, trackStyle]}>
         <Animated.View style={[styles.knob, knobStyle]}>
-          {isDark ? <MoonIcon color={Gray[600]} /> : <SunIcon color={Gray[500]} />}
+          {isDark ? <Ionicons name="moon-outline" size={14} color={Gray[600]} /> : <Ionicons name="sunny-outline" size={14} color={Gray[500]} />}
         </Animated.View>
       </Animated.View>
     </Pressable>
@@ -141,7 +121,7 @@ export default function MozoHome() {
               >
                 <ThemedText style={{fontSize: 20, fontWeight:500}}>{acceso.label}</ThemedText>
                 {acceso.href ? (
-                  <ChevronRightIcon color={theme.textSecondary} />
+                  <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
                 ) : (
                   <ThemedText type="small" themeColor="textSecondary">
                     Próximamente

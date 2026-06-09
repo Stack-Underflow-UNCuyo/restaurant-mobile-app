@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -20,7 +21,7 @@ export function MenuOptionCard({ onPress }: Props) {
     >
       <View style={styles.top}>
         <View style={styles.star}>
-          <ThemedText style={styles.starText}>★</ThemedText>
+          <Ionicons name="star" size={16} color="#fff" />
         </View>
       </View>
       <View style={styles.body}>
@@ -56,7 +57,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  starText: { color: "#fff", fontSize: 16 },
   body: { gap: Spacing.one + 2, padding: Spacing.three },
   label: { color: Brand[100], letterSpacing: 2, textTransform: "uppercase" },
   title: { color: "#fff" },

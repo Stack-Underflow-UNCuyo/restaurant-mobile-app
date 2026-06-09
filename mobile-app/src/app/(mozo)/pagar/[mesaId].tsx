@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -71,7 +72,7 @@ function TipRow({ label, amount, selected, onPress }: TipRowProps) {
             : { backgroundColor: "transparent", borderColor: theme.border },
         ]}
       >
-        {selected && <ThemedText style={styles.checkmark}>✓</ThemedText>}
+        {selected && <Ionicons name="checkmark" size={13} color="#ffffff" />}
       </View>
       <ThemedText type="smallBold" style={styles.tipLabel}>
         {label}
@@ -95,6 +96,7 @@ export default function PagarScreen() {
     ? comanda.detalles.reduce((acc, d) => acc + d.precio * d.cantidad, 0)
     : 0;
   const totalConPropina = Math.round(total * 1.1);
+
 
   return (
     <ThemedView style={styles.container}>
@@ -155,7 +157,7 @@ export default function PagarScreen() {
               />
               <Pressable
                 style={[styles.pagarBtn, { backgroundColor: theme.brand }]}
-                onPress={() => {}}
+                onPress={() => {router.push({ pathname: "/(mozo)/resenia/[mesaId]", params: { mesaId, numero }})}}
               >
                 <ThemedText type="smallBold" style={{ color: theme.brandText }}>
                   Ir a Pagar
@@ -244,11 +246,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-  },
-  checkmark: {
-    fontSize: 13,
-    lineHeight: 15,
-    color: "#ffffff",
   },
   tipLabel: { flex: 1 },
   pagarBtn: {
