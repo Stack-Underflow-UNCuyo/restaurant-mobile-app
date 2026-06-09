@@ -1,14 +1,22 @@
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Appearance, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, {
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { TopBar } from "@/components/top-bar";
-import { Radius, Spacing } from "@/constants/theme";
+import { Gray, Radius, Spacing } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useTheme } from "@/hooks/use-theme";
 import { getEmpresaActiva } from "@/services/empresaService";
 
@@ -21,11 +29,67 @@ const ACCESOS: { label: string; href?: "/(mozo)/mesas" | "/(mozo)/comandas" | "/
   { label: "Ver Cartas", href: "/(mozo)/carta" },
 ];
 
+const TRACK_W = 56;
+const TRACK_H = 30;
+const KNOB = 24;
+const PAD = 3;
+
+function SunIcon({ color }: { color: string }) {
+  return (
+    <View style={{ width: 14, height: 14 }}>
+      <View style={{ position: "absolute", width: 6, height: 6, borderRadius: 3, backgroundColor: color, top: 4, left: 4 }} />
+      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 0.5, left: 6 }} />
+      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, bottom: 0.5, left: 6 }} />
+      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 6, left: 0.5 }} />
+      <View style={{ position: "absolute", width: 2, height: 2, borderRadius: 1, backgroundColor: color, top: 6, right: 0.5 }} />
+    </View>
+  );
+}
+
+function MoonIcon({ color }: { color: string }) {
+  return (
+    <View style={{ width: 14, height: 14 }}>
+      <View style={{ position: "absolute", width: 14, height: 14, borderRadius: 7, backgroundColor: color }} />
+      <View style={{ position: "absolute", width: 9, height: 9, borderRadius: 4.5, backgroundColor: "#ffffff", top: -0.5, left: 5 }} />
+    </View>
+  );
+}
+
+function ThemeSlider({ isDark, onPress }: { isDark: boolean; onPress: () => void }) {
+  const progress = useSharedValue(isDark ? 1 : 0);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    progress.value = withSpring(isDark ? 1 : 0, { damping: 20, stiffness: 250 });
+  }, [isDark]);
+
+  const trackStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(progress.value, [0, 1], [Gray[300], Gray[600]]),
+  }));
+
+  const knobStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: interpolate(progress.value, [0, 1], [TRACK_W - KNOB - PAD, PAD]) }],
+  }));
+
+  return (
+    <Pressable onPress={onPress} hitSlop={8} style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}>
+      <Animated.View style={[styles.track, trackStyle]}>
+        <Animated.View style={[styles.knob, knobStyle]}>
+          {isDark ? <MoonIcon color={Gray[600]} /> : <SunIcon color={Gray[500]} />}
+        </Animated.View>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 /** Landing del mozo: nombre y logo del local, con accesos a sus pantallas. */
 export default function MozoHome() {
   const router = useRouter();
   const theme = useTheme();
   const { user } = useAuth();
+  const colorScheme = useColorScheme() ?? "light";
+  const isDark = colorScheme === "dark";
+  const toggleTheme = () => Appearance.setColorScheme(isDark ? "light" : "dark");
   const nombreUsuario = user?.nombre?.trim() || user?.email || "";
   const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
 
@@ -53,6 +117,7 @@ export default function MozoHome() {
             <ThemedText type="subtitle" themeColor="textSecondary" style={styles.centerText}>
               {nombreUsuario ? `Hola, ${nombreUsuario}` : "Bienvenido"}
             </ThemedText>
+            <ThemeSlider isDark={isDark} onPress={toggleTheme} />
             <Image
               source={logo}
               style={styles.logo}
@@ -112,5 +177,25 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.four,
     borderRadius: Radius.lg,
     borderWidth: 1,
+  },
+  track: {
+    width: TRACK_W,
+    height: TRACK_H,
+    borderRadius: TRACK_H / 2,
+    justifyContent: "center",
+  },
+  knob: {
+    position: "absolute",
+    width: KNOB,
+    height: KNOB,
+    borderRadius: KNOB / 2,
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

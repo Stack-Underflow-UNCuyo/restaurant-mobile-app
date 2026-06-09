@@ -15,6 +15,7 @@ import com.cm.restaurant_server.business.logic.service.ComandaService;
 import com.cm.restaurant_server.business.logic.service.DetalleComandaService;
 import com.cm.restaurant_server.business.logic.service.DetalleSeccionCartaService;
 import com.cm.restaurant_server.business.logic.service.EmpleadoService;
+import com.cm.restaurant_server.business.logic.service.MesaRestauranteService;
 import com.cm.restaurant_server.business.mapper.ComandaRestaurantMapper;
 import com.cm.restaurant_server.business.mapper.DetalleComandaMapper;
 import jakarta.validation.Valid;
@@ -43,12 +44,14 @@ public class ComandaRestaurantController
     private final DetalleSeccionCartaService detalleSeccionCartaService;
     private final ClienteService clienteService;
     private final EmpleadoService empleadoService;
+    private final MesaRestauranteService mesaRestauranteService;
 
     public ComandaRestaurantController(ComandaRestaurantService service, ComandaRestaurantMapper mapper,
             ComandaService comandaService,
             DetalleComandaService detalleComandaService, DetalleComandaMapper detalleComandaMapper,
             DetalleSeccionCartaService detalleSeccionCartaService,
-            ClienteService clienteService, EmpleadoService empleadoService) {
+            ClienteService clienteService, EmpleadoService empleadoService,
+            MesaRestauranteService mesaRestauranteService) {
         super(service, mapper);
         this.comandaService = comandaService;
         this.detalleComandaService = detalleComandaService;
@@ -56,6 +59,7 @@ public class ComandaRestaurantController
         this.detalleSeccionCartaService = detalleSeccionCartaService;
         this.clienteService = clienteService;
         this.empleadoService = empleadoService;
+        this.mesaRestauranteService = mesaRestauranteService;
     }
 
     @Override
@@ -99,6 +103,11 @@ public class ComandaRestaurantController
             entity.setEmpleado(empleadoService.findById(dto.getEmpleadoId()));
         } else {
             entity.setEmpleado(null);
+        }
+        if (dto.getMesaRestauranteId() != null && !dto.getMesaRestauranteId().isBlank()) {
+            entity.setMesaRestaurante(mesaRestauranteService.findById(dto.getMesaRestauranteId()));
+        } else {
+            entity.setMesaRestaurante(null);
         }
     }
 

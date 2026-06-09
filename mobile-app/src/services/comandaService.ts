@@ -1,9 +1,11 @@
 /**
  * Llamadas al backend para las comandas del restaurante.
  * Endpoints (ComandaRestaurantController en /api/v1/comandas-restaurant):
- *  - GET /api/v1/comandas-restaurant            -> todas las comandas
- *  - GET /api/v1/comandas-restaurant/mesa/{id}  -> comandas de una mesa
- *  - GET /api/v1/comandas-restaurant/{id}/detalles -> líneas de pedido de una comanda
+ *  - GET    /api/v1/comandas-restaurant                       -> todas las comandas
+ *  - GET    /api/v1/comandas-restaurant/mesa/{id}             -> comandas de una mesa
+ *  - GET    /api/v1/comandas-restaurant/{id}/detalles         -> líneas de pedido
+ *  - POST   /api/v1/comandas-restaurant                       -> crear comanda nueva
+ *  - POST   /api/v1/comandas-restaurant/{id}/detalles         -> agregar ítem a comanda
  */
 import { apiFetch } from "@/lib/apiClient";
 import type { Comanda, DetalleComanda } from "@/types/comanda";
@@ -25,6 +27,33 @@ export async function getComandasPorMesa(token: string, mesaId: string): Promise
 /** Trae las líneas de pedido (detalles) de una comanda. */
 export function getDetallesComanda(token: string, comandaId: string): Promise<DetalleComanda[]> {
   return apiFetch<DetalleComanda[]>(`${BASE}/${comandaId}/detalles`, { token });
+}
+
+/** Crea una comanda nueva ABIERTA para una mesa. */
+export function createComanda(token: string, mesaId: string): Promise<Comanda> {
+  return apiFetch<Comanda>(BASE, {
+    token,
+    method: "POST",
+    body: JSON.stringify({ mesaRestauranteId: mesaId }),
+  });
+}
+
+/** Agrega un ítem a una comanda existente. */
+export function addDetalleComanda(
+  token: string,
+  comandaId: string,
+  detalleSeccionCartaId: string,
+  cantidad: number,
+): Promise<DetalleComanda> {
+  return apiFetch<DetalleComanda>(`${BASE}/${comandaId}/detalles`, {
+    token,
+    method: "POST",
+    body: JSON.stringify({
+      detalleSeccionCartaId,
+      cantidad,
+      estadoDetalleComanda: "EN_PROCESO_DE_SOLICITUD",
+    }),
+  });
 }
 
 function ordenarPorFecha(comandas: Comanda[]): Comanda[] {

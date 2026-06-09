@@ -9,6 +9,7 @@ import { ComandaFilter, type FiltroComanda } from "@/components/comanda/ComandaF
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Radius, Spacing } from "@/constants/theme";
+import { useCart } from "@/context/CartContext";
 import { useComandas } from "@/hooks/useComandas";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -18,10 +19,16 @@ const logo = require("../../../../assets/images/logo.png");
 export default function ComandaDetalle() {
   const router = useRouter();
   const theme = useTheme();
+  const cart = useCart();
   const { mesaId, numero } = useLocalSearchParams<{ mesaId: string; numero?: string }>();
   const { comandas, loading, refreshing, error, refresh } = useComandas(mesaId);
 
   const [filtro, setFiltro] = useState<FiltroComanda>("TODAS");
+
+  function handleAdd() {
+    cart.startCart(mesaId, comanda?.id ?? null, numero ?? null);
+    router.push("/(mozo)/carta");
+  }
 
   const comanda = comandas[0] ?? null;
 
@@ -63,8 +70,13 @@ export default function ComandaDetalle() {
         ) : !comanda ? (
           <View style={styles.center}>
             <ThemedText type="default" themeColor="textSecondary" style={styles.centerText}>
-              No hay comandas para esta mesa.
+              Esta mesa no tiene comandas aún.
             </ThemedText>
+            <Pressable style={[styles.crearBtn, { backgroundColor: theme.brand }]} onPress={handleAdd}>
+              <ThemedText type="smallBold" style={{ color: theme.brandText }}>
+                + Nueva comanda
+              </ThemedText>
+            </Pressable>
           </View>
         ) : (
           <ScrollView
@@ -73,7 +85,7 @@ export default function ComandaDetalle() {
               <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.brand} />
             }
           >
-            <ComandaDetalleRecibo comanda={comanda} detallesVisibles={detallesVisibles} />
+            <ComandaDetalleRecibo comanda={comanda} detallesVisibles={detallesVisibles} onAdd={handleAdd} />
           </ScrollView>
         )}
 
@@ -106,6 +118,11 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   centerText: { textAlign: "center" },
+  crearBtn: {
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.two + 2,
+    borderRadius: Radius.md,
+  },
   retry: {
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two + 2,

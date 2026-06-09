@@ -8,4 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 public class ComandaRestaurantCreateDto extends ComandaCreateDto {
     private String empleadoId;
+    private String mesaRestauranteId;
 }

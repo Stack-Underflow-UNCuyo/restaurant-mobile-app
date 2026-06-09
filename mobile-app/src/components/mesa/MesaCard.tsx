@@ -2,22 +2,20 @@ import { Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { estadoStyle } from "@/constants/estadoMesa";
-import { Fonts, Radius, Spacing } from "@/constants/theme";
+import { Brand, Fonts, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { Mesa } from "@/types/mesa";
 
 interface Props {
   mesa: Mesa;
-  /** Toque corto: ver las comandas de la mesa. */
   onPress: (mesa: Mesa) => void;
-  /** Toque largo: cambiar el estado de la mesa (abre MesaEstadoSheet). */
   onLongPress: (mesa: Mesa) => void;
-  /** Resalta la tarjeta con un aviso (ej. mesas reservadas a preparar). */
   atencion?: boolean;
+  /** Mostrado en mesas OCUPADA sin comanda abierta: inicia el flujo de nueva comanda. */
+  onCrearComanda?: () => void;
 }
 
-/** Tarjeta de una mesa: barra de estado, número, ubicación y capacidad. */
-export function MesaCard({ mesa, onPress, onLongPress, atencion }: Props) {
+export function MesaCard({ mesa, onPress, onLongPress, atencion, onCrearComanda }: Props) {
   const theme = useTheme();
   const s = estadoStyle(mesa.estadoMesa);
 
@@ -53,6 +51,19 @@ export function MesaCard({ mesa, onPress, onLongPress, atencion }: Props) {
           </ThemedText>
         </View>
       )}
+
+      {onCrearComanda && (
+        <Pressable
+          onPress={onCrearComanda}
+          hitSlop={8}
+          style={({ pressed }) => [
+            styles.crearBtn,
+            { backgroundColor: Brand[500], borderColor: theme.surface, opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <ThemedText style={styles.crearBtnText}>+</ThemedText>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -79,5 +90,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
+  },
+  crearBtn: {
+    position: "absolute",
+    bottom: -10,
+    right: -10,
+    width: 28,
+    height: 28,
+    borderRadius: Radius.full,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  crearBtnText: {
+    fontSize: 16,
+    lineHeight: 18,
+    color: "#ffffff",
+    fontFamily: Fonts.bold,
   },
 });

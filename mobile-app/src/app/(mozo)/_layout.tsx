@@ -1,6 +1,12 @@
 import { Stack } from "expo-router";
 
+import { CartProvider } from "@/context/CartContext";
+
 /** Grupo de rutas del mozo. Acá vivirán las pantallas propias de mozos. */
 export default function MozoLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <CartProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </CartProvider>
+  );
 }

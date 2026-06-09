@@ -7,15 +7,15 @@ import { CartaListItem } from "@/components/carta/CartaListItem";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Radius, Spacing } from "@/constants/theme";
+import { useCart } from "@/context/CartContext";
 import { useCartas } from "@/hooks/useCartas";
 import { useTheme } from "@/hooks/use-theme";
 import type { Carta } from "@/types/carta";
 
-const logo = require("../../../../assets/images/logo.png");
-
 export default function CartasScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const cart = useCart();
   const { cartas, loading, refreshing, error, refresh } = useCartas();
 
   const abrirCarta = (carta: Carta) => {
@@ -29,7 +29,8 @@ export default function CartasScreen() {
           title="Cartas"
           subtitle={loading ? undefined : `${cartas.length} disponibles`}
           onBack={() => router.back()}
-          logo={logo}
+          onCartPress={() => router.push("/(mozo)/carrito")}
+          cartCount={cart.items.length}
         />
 
         {loading ? (

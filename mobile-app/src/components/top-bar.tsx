@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { Pressable, StyleSheet, View, type ImageSourcePropType } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { Fonts, Radius, Spacing } from "@/constants/theme";
+import { Error as ErrorColor, Fonts, Radius, Spacing } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -26,22 +26,23 @@ export function TopBar({ title, logo, showGreeting = true }: Props) {
 
   return (
     <View style={[styles.bar, { borderBottomColor: theme.border }]}>
-      {logo ? <Image source={logo} style={styles.logo} contentFit="contain" /> : null}
-
-      {/* Absolutely centered so it stays in the middle regardless of side elements */}
-      <View style={styles.center} pointerEvents="none">
-        {title ? <ThemedText type="subtitle">{title}</ThemedText> : null}
-        {showGreeting && nombre ? (
-          <ThemedText type="small" themeColor="textSecondary">
-            Hola, {nombre}
-          </ThemedText>
-        ) : null}
+      <View style={styles.left}>
+        {logo ? <Image source={logo} style={styles.logo} contentFit="contain" /> : null}
+        <View style={styles.titles}>
+          {title ? <ThemedText type="subtitle">{title}</ThemedText> : null}
+          {showGreeting && nombre ? (
+            <ThemedText type="small" themeColor="textSecondary">
+              Hola, {nombre}
+            </ThemedText>
+          ) : null}
+        </View>
       </View>
 
       <View style={styles.rightActions}>
         {rolLabel ? (
-          <View style={[styles.chip, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-            <ThemedText type="small" themeColor="textSecondary" style={styles.chipText}>
+          <View style={[styles.chip, { backgroundColor: theme.backgroundElement }]}>
+            <View style={[styles.chipDot, { backgroundColor: theme.textSecondary }]} />
+            <ThemedText style={[styles.actionText, { color: theme.textSecondary }]}>
               {rolLabel}
             </ThemedText>
           </View>
@@ -51,10 +52,10 @@ export function TopBar({ title, logo, showGreeting = true }: Props) {
           onPress={logout}
           style={({ pressed }) => [
             styles.logoutBtn,
-            { borderColor: theme.error, opacity: pressed ? 0.7 : 1 },
+            { backgroundColor: ErrorColor[50], borderColor: ErrorColor[500], opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <ThemedText type="smallBold" style={{ color: theme.error }}>
+          <ThemedText style={[styles.actionText, { color: ErrorColor[600] }]}>
             Salir
           </ThemedText>
         </Pressable>
@@ -67,31 +68,36 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: Spacing.two,
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.three,
     borderBottomWidth: 1,
   },
-  logo: { width: 36, height: 38 },
-  center: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+  left: {
+    flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.half,
+    gap: Spacing.two,
+    flex: 1,
+    minWidth: 0,
   },
-  rightActions: { flexDirection: "row", alignItems: "center", gap: Spacing.two, marginLeft: "auto" },
+  logo: { width: 36, height: 38 },
+  titles: { flexShrink: 1, gap: Spacing.half },
+  rightActions: { flexDirection: "row", alignItems: "center", gap: Spacing.two },
   chip: {
-    paddingHorizontal: Spacing.two,
-    paddingVertical: Spacing.half,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
+    paddingHorizontal: Spacing.two + 2,
+    paddingVertical: Spacing.one + 2,
     borderRadius: Radius.full,
-    borderWidth: 1,
   },
-  chipText: { fontFamily: Fonts.medium },
+  chipDot: { width: 6, height: 6, borderRadius: Radius.full },
   logoutBtn: {
     borderWidth: 1,
-    borderRadius: Radius.md,
+    borderRadius: Radius.full,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
   },
+  actionText: { fontFamily: Fonts.semibold, fontSize: 13, lineHeight: 18 },
 });

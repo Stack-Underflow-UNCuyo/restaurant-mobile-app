@@ -9,11 +9,11 @@ import { SeccionCard } from "@/components/carta/SeccionCard";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Radius, Spacing } from "@/constants/theme";
+import { useCart } from "@/context/CartContext";
 import { useCartaDetalle } from "@/hooks/useCartaDetalle";
 import { useTheme } from "@/hooks/use-theme";
 import type { SeccionCarta } from "@/types/carta";
 
-const logo = require("../../../../../assets/images/logo.png");
 const COLUMNS = 2;
 
 type Celda = { tipo: "menu" } | { tipo: "seccion"; seccion: SeccionCarta };
@@ -21,6 +21,7 @@ type Celda = { tipo: "menu" } | { tipo: "seccion"; seccion: SeccionCarta };
 export default function CartaDetalleScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const cart = useCart();
   const { cartaId } = useLocalSearchParams<{ cartaId: string }>();
   const { carta, loading, refreshing, error, refresh } = useCartaDetalle(cartaId);
 
@@ -57,7 +58,12 @@ export default function CartaDetalleScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-        <AppHeader title={carta?.nombre ?? "Carta"} onBack={() => router.back()} logo={logo} />
+        <AppHeader
+          title={carta?.nombre ?? "Carta"}
+          onBack={() => router.back()}
+          onCartPress={() => router.push("/(mozo)/carrito")}
+          cartCount={cart.items.length}
+        />
 
         {loading ? (
           <View style={styles.center}>

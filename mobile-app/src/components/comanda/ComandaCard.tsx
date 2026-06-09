@@ -1,8 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { EstadoDetalleBadge } from "@/components/comanda/EstadoDetalleBadge";
-import { estadoDetalleMasAvanzado } from "@/constants/estadoComanda";
+import { estadoComandaStyle } from "@/constants/estadoComanda";
 import { Brand, Fonts, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { ComandaConDetalles } from "@/hooks/useComandas";
@@ -23,10 +22,10 @@ function formatMonto(monto: number): string {
   return `$${Math.round(monto)}`;
 }
 
-/** Tarjeta de una comanda: número, hora, líneas de pedido y estado de cocina. */
+/** Tarjeta de una comanda: número, hora, líneas de pedido y estado de comanda. */
 export function ComandaCard({ comanda, numero }: Props) {
   const theme = useTheme();
-  const estado = estadoDetalleMasAvanzado(comanda.detalles.map((d) => d.estadoDetalleComanda));
+  const s = estadoComandaStyle(comanda.estadoComanda);
 
   return (
     <View
@@ -66,7 +65,12 @@ export function ComandaCard({ comanda, numero }: Props) {
         <ThemedText type="small" themeColor="textSecondary" style={styles.idText} numberOfLines={1}>
           #{comanda.id.slice(0, 8).toUpperCase()}
         </ThemedText>
-        {estado && <EstadoDetalleBadge estado={estado} />}
+        <View style={[styles.badge, { backgroundColor: s.bg }]}>
+          <View style={[styles.badgeDot, { backgroundColor: s.dot }]} />
+          <ThemedText type="small" style={[styles.badgeLabel, { color: s.fg }]}>
+            {s.label}
+          </ThemedText>
+        </View>
       </View>
     </View>
   );
@@ -90,4 +94,15 @@ const styles = StyleSheet.create({
   itemNombre: { flex: 1, fontFamily: Fonts.medium },
   footer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: Spacing.two },
   idText: { fontSize: 11, lineHeight: 16, fontFamily: Fonts.regular },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    gap: Spacing.one + 2,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.half + 2,
+    borderRadius: Radius.full,
+  },
+  badgeDot: { width: 7, height: 7, borderRadius: Radius.full },
+  badgeLabel: { fontSize: 12, lineHeight: 16 },
 });

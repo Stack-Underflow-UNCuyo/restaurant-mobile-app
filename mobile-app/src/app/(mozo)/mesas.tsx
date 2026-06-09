@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -11,8 +11,11 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { requiereAtencion } from "@/constants/estadoMesa";
 import { Radius, Spacing } from "@/constants/theme";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { useMesas } from "@/hooks/useMesas";
 import { useTheme } from "@/hooks/use-theme";
+import { getComandas } from "@/services/comandaService";
 import type { Mesa } from "@/types/mesa";
 
 const logo = require("../../../assets/images/logo.png");
@@ -21,10 +24,28 @@ const COLUMNS = 2;
 export default function MesasDashboard() {
   const router = useRouter();
   const theme = useTheme();
+  const { token } = useAuth();
+  const cart = useCart();
   const { mesas, loading, refreshing, error, refresh, cambiarEstado } = useMesas();
 
   const [filtro, setFiltro] = useState<FiltroMesa>("TODAS");
   const [mesaSel, setMesaSel] = useState<Mesa | null>(null);
+  // IDs de mesas OCUPADA que ya tienen al menos una comanda abierta.
+  const [mesasConComanda, setMesasConComanda] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!token) return;
+    getComandas(token)
+      .then((cs) => {
+        const ids = new Set(
+          cs
+            .filter((c) => c.estadoComanda === "ABIERTA" && c.mesaRestauranteId)
+            .map((c) => c.mesaRestauranteId as string),
+        );
+        setMesasConComanda(ids);
+      })
+      .catch(() => {});
+  }, [token]);
 
   const verComandas = (mesa: Mesa) => {
     router.push({
@@ -33,21 +54,30 @@ export default function MesasDashboard() {
     });
   };
 
+  const handlePress = (mesa: Mesa) => {
+    if (mesa.estadoMesa === "OCUPADA") {
+      verComandas(mesa);
+    } else {
+      setMesaSel(mesa);
+    }
+  };
+
+  const handleCrearComanda = (mesa: Mesa) => {
+    cart.startCart(mesa.id, null, String(mesa.identificadorMesa));
+    router.push("/(mozo)/carta");
+  };
+
   const visibles = useMemo(
     () => (filtro === "TODAS" ? mesas : mesas.filter((m) => m.estadoMesa === filtro)),
     [mesas, filtro],
   );
 
-  // Agrupamos de a COLUMNS para que cada tarjeta conserve su tamaño real:
-  // con numColumns + flex:1, la última fila incompleta estira su única
-  // tarjeta a todo el ancho. Acá completamos esa fila con un relleno invisible.
   const filas = useMemo(() => {
     const grupos: Mesa[][] = [];
     for (let i = 0; i < visibles.length; i += COLUMNS) grupos.push(visibles.slice(i, i + COLUMNS));
     return grupos;
   }, [visibles]);
 
-  // Mantener sincronizada la mesa abierta en el sheet con la lista (tras refresh).
   const mesaActual = mesaSel ? (mesas.find((m) => m.id === mesaSel.id) ?? mesaSel) : null;
 
   return (
@@ -91,9 +121,14 @@ export default function MesasDashboard() {
                   <MesaCard
                     key={mesa.id}
                     mesa={mesa}
-                    onPress={verComandas}
+                    onPress={handlePress}
                     onLongPress={setMesaSel}
                     atencion={requiereAtencion(mesa.estadoMesa)}
+                    onCrearComanda={
+                      mesa.estadoMesa === "OCUPADA" && !mesasConComanda.has(mesa.id)
+                        ? () => handleCrearComanda(mesa)
+                        : undefined
+                    }
                   />
                 ))}
                 {fila.length < COLUMNS && <View style={styles.relleno} />}

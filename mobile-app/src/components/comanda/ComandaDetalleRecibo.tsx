@@ -12,6 +12,8 @@ interface Props {
   comanda: ComandaConDetalles;
   /** Detalles ya filtrados por el chip activo. */
   detallesVisibles: DetalleComanda[];
+  /** Navega a la carta para agregar nuevos ítems a la comanda. */
+  onAdd?: () => void;
 }
 
 function formatMonto(monto: number): string {
@@ -24,7 +26,7 @@ function DashedSeparator() {
 }
 
 /** Tarjeta de recibo para una comanda: cada DetalleComanda como fila con punto de color. */
-export function ComandaDetalleRecibo({ comanda, detallesVisibles }: Props) {
+export function ComandaDetalleRecibo({ comanda, detallesVisibles, onAdd }: Props) {
   const theme = useTheme();
 
   const total = comanda.detalles.reduce(
@@ -67,7 +69,7 @@ export function ComandaDetalleRecibo({ comanda, detallesVisibles }: Props) {
         )}
       </View>
 
-      <Pressable style={[styles.addButton, { borderColor: Gray[400] }]}>
+      <Pressable style={[styles.addButton, { borderColor: Gray[400] }]} onPress={onAdd}>
         <ThemedText type="smallBold" themeColor="textSecondary">
           +
         </ThemedText>
