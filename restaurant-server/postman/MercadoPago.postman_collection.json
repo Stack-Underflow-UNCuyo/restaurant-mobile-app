@@ -1,0 +1,179 @@
+{
+  "info": {
+    "name": "Restaurant - Mercado Pago (PASO 1)",
+    "description": "Setup de Mercado Pago (PASO 1): login admin, crear sucursal y caja, y listar lo persistido. El token y el id de la sucursal se capturan solos (variables de colección 'token' y 'sucursalId').",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8081", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "sucursalId", "value": "", "type": "string" },
+    { "key": "orderId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1) Login admin",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Guarda el accessToken en la variable de coleccion 'token'",
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set(\"token\", data.accessToken);",
+              "pm.test(\"accessToken recibido\", function () {",
+              "  pm.expect(data.accessToken).to.be.a(\"string\").and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@restaurant.com\",\n  \"clave\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "2) Crear sucursal",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Guarda el id (de nuestra base) en la variable 'sucursalId' para el siguiente request",
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set(\"sucursalId\", data.id);",
+              "pm.test(\"sucursal creada con mpStoreId\", function () {",
+              "  pm.expect(data.mpStoreId).to.not.be.null;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Sucursal Principal\",\n  \"externalId\": \"SUC001\",\n  \"streetName\": \"Av. San Martin\",\n  \"streetNumber\": \"1234\",\n  \"cityName\": \"Mendoza\",\n  \"stateName\": \"Mendoza\",\n  \"latitude\": -32.889458,\n  \"longitude\": -68.845839,\n  \"referencia\": \"Local del restaurante\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/sucursal",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "sucursal"]
+        }
+      }
+    },
+    {
+      "name": "3) Crear caja",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Caja 1\",\n  \"externalId\": \"SUC001POS001\",\n  \"sucursalId\": \"{{sucursalId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/caja",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "caja"]
+        }
+      }
+    },
+    {
+      "name": "4) Listar sucursales",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/sucursales",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "sucursales"]
+        }
+      }
+    },
+    {
+      "name": "5) Listar cajas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/cajas",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "cajas"]
+        }
+      }
+    },
+    {
+      "name": "6) Sync desde MP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/sync",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "sync"]
+        },
+        "description": "Trae de Mercado Pago las sucursales/cajas existentes y las repuebla en la DB (upsert por externalId). Util tras borrar la base local."
+      }
+    },
+    {
+      "name": "7) Crear order (QR dinamico)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set(\"orderId\", data.orderId);",
+              "pm.test(\"order creada con qrData\", function () {",
+              "  pm.expect(data.qrData).to.be.a(\"string\").and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 1500,\n  \"description\": \"Mesa 5\",\n  \"comandaId\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/mercadopago/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "mercadopago", "orders"]
+        },
+        "description": "Crea una order de cobro con QR dinamico. Devuelve qrData (EMVCo) para renderizar como QR. cajaExternalId es opcional si hay una sola caja."
+      }
+    }
+  ]
+}

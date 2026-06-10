@@ -81,6 +81,11 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/empresa/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/empresa/**").hasRole("ADMIN")
 
+                        // Mercado Pago: la creación de sucursal/caja es setup de admin.
+                        // Los GET (y los futuros endpoints de cobro del mozo) quedan
+                        // accesibles para cualquier usuario autenticado (PERSONAL).
+                        .requestMatchers(HttpMethod.POST, "/api/v1/mercadopago/sucursal", "/api/v1/mercadopago/caja", "/api/v1/mercadopago/sync").hasRole("ADMIN")
+
                         // ── Everything else: any logged-in user ──────────────────────────
                         .anyRequest().authenticated());
         return http.build();

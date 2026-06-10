@@ -11,12 +11,17 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/app-header";
+import { ChevronRightIcon } from "@/components/icons";
+import { MedioPagoModal } from "@/components/pagar/MedioPagoModal";
+import { PromocionSheet } from "@/components/pagar/PromocionSheet";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Gray, Radius, Spacing } from "@/constants/theme";
 import { useComandas } from "@/hooks/useComandas";
+import { usePromociones } from "@/hooks/usePromociones";
 import { useTheme } from "@/hooks/use-theme";
 import type { DetalleComanda } from "@/types/comanda";
+import type { Promocion } from "@/types/promocion";
 
 function formatMonto(monto: number): string {
   return `$${Math.round(monto).toLocaleString("es-AR")}`;
@@ -36,13 +41,18 @@ function DetalleRow({ detalle }: { detalle: DetalleComanda }) {
         <ThemedText type="smallBold" numberOfLines={2}>
           {detalle.nombre ?? "Pedido"}
         </ThemedText>
-        <ThemedText type="small" style={{ color: theme.brand }}>
-          {formatMonto(detalle.precio)}
+        <ThemedText type="small" themeColor="textSecondary">
+          {formatMonto(detalle.precio)} c/u
         </ThemedText>
       </View>
-      <View style={[styles.qtyBadge, { backgroundColor: Gray[200] }]}>
-        <ThemedText type="smallBold" themeColor="textSecondary">
-          {detalle.cantidad}
+      <View style={styles.itemRight}>
+        <View style={[styles.qtyBadge, { backgroundColor: Gray[200] }]}>
+          <ThemedText type="smallBold" themeColor="textSecondary">
+            ×{detalle.cantidad}
+          </ThemedText>
+        </View>
+        <ThemedText type="smallBold" style={{ color: theme.brand }}>
+          {formatMonto(detalle.precio * detalle.cantidad)}
         </ThemedText>
       </View>
     </View>
@@ -87,15 +97,24 @@ export default function PagarScreen() {
   const theme = useTheme();
   const { mesaId, numero } = useLocalSearchParams<{ mesaId: string; numero?: string }>();
   const { comandas, loading, error, refresh } = useComandas(mesaId);
+  const { promociones } = usePromociones();
 
   const [conPropina, setConPropina] = useState(false);
+  const [promoSeleccionada, setPromoSeleccionada] = useState<Promocion | null>(null);
+  const [promoSheetOpen, setPromoSheetOpen] = useState(false);
+  const [pagoOpen, setPagoOpen] = useState(false);
 
   const comanda = comandas[0] ?? null;
 
-  const total = comanda
+  // Subtotal (sin propina ni descuentos).
+  const subtotal = comanda
     ? comanda.detalles.reduce((acc, d) => acc + d.precio * d.cantidad, 0)
     : 0;
-  const totalConPropina = Math.round(total * 1.1);
+  // Descuento por promoción: misma fórmula que el dashboard (FacturaTable).
+  const porcentaje = promoSeleccionada?.porcentajeDescuento ?? 0;
+  const descuento = (subtotal * porcentaje) / 100;
+  const totalConDescuento = subtotal - descuento;
+  const totalConPropina = Math.round(totalConDescuento * 1.1);
 
 
   return (
@@ -143,9 +162,50 @@ export default function PagarScreen() {
             </ScrollView>
 
             <View style={[styles.footer, { borderTopColor: theme.border }]}>
+              <View style={styles.lineRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Subtotal
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {formatMonto(subtotal)}
+                </ThemedText>
+              </View>
+
+              <Pressable
+                style={({ pressed }) => [styles.promoSelector, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setPromoSheetOpen(true)}
+                hitSlop={6}
+              >
+                <View style={styles.promoSelectorText}>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Promoción
+                  </ThemedText>
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {promoSeleccionada
+                      ? promoSeleccionada.descripcion ||
+                        `${promoSeleccionada.porcentajeDescuento}%`
+                      : "Sin promoción"}
+                  </ThemedText>
+                </View>
+                <ChevronRightIcon color={theme.textSecondary} />
+              </Pressable>
+
+              {promoSeleccionada && (
+                <View style={styles.lineRow}>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Descuento ({porcentaje}%)
+                  </ThemedText>
+                  <ThemedText type="small" themeColor="error">
+                    -{formatMonto(descuento)}
+                  </ThemedText>
+                </View>
+              )}
+
+              <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
               <TipRow
                 label="Total"
-                amount={formatMonto(total)}
+                amount={formatMonto(totalConDescuento)}
                 selected={!conPropina}
                 onPress={() => setConPropina(false)}
               />
@@ -157,13 +217,33 @@ export default function PagarScreen() {
               />
               <Pressable
                 style={[styles.pagarBtn, { backgroundColor: theme.brand }]}
-                onPress={() => {router.push({ pathname: "/(mozo)/resenia/[mesaId]", params: { mesaId, numero }})}}
+                onPress={() => setPagoOpen(true)}
               >
                 <ThemedText type="smallBold" style={{ color: theme.brandText }}>
                   Ir a Pagar
                 </ThemedText>
               </Pressable>
             </View>
+
+            <PromocionSheet
+              visible={promoSheetOpen}
+              promociones={promociones}
+              seleccionada={promoSeleccionada}
+              onSelect={setPromoSeleccionada}
+              onClose={() => setPromoSheetOpen(false)}
+            />
+            <MedioPagoModal
+              visible={pagoOpen}
+              onClose={() => setPagoOpen(false)}
+              amount={conPropina ? totalConPropina : totalConDescuento}
+              comandaId={comanda?.id}
+              promocionId={promoSeleccionada?.id}
+              descripcion={numero ? `Mesa ${numero}` : undefined}
+              onPagoExitoso={() => {
+                setPagoOpen(false);
+                router.back();
+              }}
+            />
           </>
         )}
       </SafeAreaView>
@@ -204,6 +284,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   info: { flex: 1, gap: Spacing.one },
+  itemRight: { alignItems: "flex-end", gap: Spacing.one, flexShrink: 0 },
   qtyBadge: {
     minWidth: 28,
     height: 28,
@@ -231,6 +312,23 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     borderTopWidth: 1,
     gap: Spacing.two,
+  },
+  lineRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  promoSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+  promoSelectorText: { flexShrink: 1, gap: Spacing.half },
+  divider: {
+    height: 1,
+    marginVertical: Spacing.one,
   },
   tipRow: {
     flexDirection: "row",

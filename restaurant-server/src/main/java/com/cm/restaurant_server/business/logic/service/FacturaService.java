@@ -3,6 +3,7 @@ package com.cm.restaurant_server.business.logic.service;
 import com.cm.restaurant_server.business.domain.dto.factura.FacturaPreviewDto;
 import com.cm.restaurant_server.business.domain.dto.factura.GenerarFacturaDto;
 import com.cm.restaurant_server.business.domain.dto.factura.LineaFacturaPreviewDto;
+import com.cm.restaurant_server.business.domain.entity.ComandaRestaurant;
 import com.cm.restaurant_server.business.domain.entity.DetalleComanda;
 import com.cm.restaurant_server.business.domain.entity.DetalleFactura;
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCarta;
@@ -10,12 +11,18 @@ import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCartaArticu
 import com.cm.restaurant_server.business.domain.entity.DetalleSeccionCartaMenu;
 import com.cm.restaurant_server.business.domain.entity.Factura;
 import com.cm.restaurant_server.business.domain.entity.FormaDePago;
+import com.cm.restaurant_server.business.domain.entity.MesaRestaurante;
 import com.cm.restaurant_server.business.domain.entity.Promocion;
+import com.cm.restaurant_server.business.domain.enumeration.EstadoComanda;
 import com.cm.restaurant_server.business.domain.enumeration.EstadoFactura;
+import com.cm.restaurant_server.business.domain.enumeration.EstadoMesa;
+import com.cm.restaurant_server.business.domain.enumeration.TipoPago;
 import com.cm.restaurant_server.business.repository.FacturaRepository;
 
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +35,21 @@ public class FacturaService extends BaseService<Factura> {
     private final DetalleSeccionCartaService detalleSeccionCartaService;
     private final FormaDePagoService formaDePagoService;
     private final PromocionService promocionService;
+    private final ComandaRestaurantService comandaRestaurantService;
+    private final MesaRestauranteService mesaRestauranteService;
 
     public FacturaService(FacturaRepository repository, DetalleFacturaService detalleFacturaService,
             ComandaService comandaService, DetalleSeccionCartaService detalleSeccionCartaService,
-            FormaDePagoService formaDePagoService, PromocionService promocionService) {
+            FormaDePagoService formaDePagoService, PromocionService promocionService,
+            ComandaRestaurantService comandaRestaurantService, MesaRestauranteService mesaRestauranteService) {
         super(repository);
         this.detalleFacturaService = detalleFacturaService;
         this.comandaService = comandaService;
         this.detalleSeccionCartaService = detalleSeccionCartaService;
         this.formaDePagoService = formaDePagoService;
         this.promocionService = promocionService;
+        this.comandaRestaurantService = comandaRestaurantService;
+        this.mesaRestauranteService = mesaRestauranteService;
     }
 
     @Override
@@ -155,6 +167,47 @@ public class FacturaService extends BaseService<Factura> {
         double total = subtotalGeneral - (subtotalGeneral * porcentaje / 100.0);
         guardada.setTotalPagado(total);
         return this.update(guardada.getId(), guardada);
+    }
+
+    /** True si la comanda ya tiene una factura generada. */
+    public boolean comandaYaFacturada(String comandaId) {
+        return detalleFacturaService.comandaYaFacturada(comandaId);
+    }
+
+    /**
+     * Genera una factura PAGADA desde la comanda con la forma de pago indicada
+     * y, al guardarla, finaliza la comanda y libera la mesa. Es el camino usado
+     * por el flujo de pago del mozo (Efectivo y Mercado Pago).
+     */
+    @Transactional
+    public Factura generarFacturaPagada(String comandaId, TipoPago tipoPago, String promocionId) throws Exception {
+        FormaDePago formaDePago = formaDePagoService.buscarPorTipoPago(tipoPago);
+        GenerarFacturaDto dto = new GenerarFacturaDto();
+        dto.setComandaId(comandaId);
+        dto.setFormaDePagoId(formaDePago.getId());
+        dto.setPromocionId(promocionId);
+        dto.setFechaFactura(LocalDate.now());
+        dto.setEstado(EstadoFactura.PAGADA);
+
+        Factura factura = generarDesdeComanda(dto);
+        finalizarComandaYLiberarMesa(comandaId);
+        return factura;
+    }
+
+    /** Marca la comanda como FINALIZADA y libera la mesa asociada (LIBRE). */
+    @Transactional
+    public void finalizarComandaYLiberarMesa(String comandaId) throws Exception {
+        ComandaRestaurant comanda = comandaRestaurantService.findById(comandaId);
+        if (comanda.getEstadoComanda() != EstadoComanda.FINALIZADA) {
+            comanda.setEstadoComanda(EstadoComanda.FINALIZADA);
+            comanda.setFechaEntregaComanda(LocalDateTime.now());
+            comandaRestaurantService.update(comanda.getId(), comanda);
+        }
+        MesaRestaurante mesa = comanda.getMesaRestaurante();
+        if (mesa != null && mesa.getEstadoMesa() != EstadoMesa.LIBRE) {
+            mesa.setEstadoMesa(EstadoMesa.LIBRE);
+            mesaRestauranteService.update(mesa.getId(), mesa);
+        }
     }
 
     private List<LineaFacturaPreviewDto> construirLineas(String comandaId) throws Exception {
