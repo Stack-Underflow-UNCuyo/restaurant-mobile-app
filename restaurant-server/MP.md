@@ -160,6 +160,34 @@ Al detectar el pago (o tras el cobro en efectivo), la app vuelve a la lista de m
 
 ---
 
+## PASO 5 — Flujo post-pago: opción de reseña
+
+Apenas el cobro se concreta (factura generada + efectos del PASO 4 ya aplicados:
+comanda `FINALIZADA` + mesa `LIBRE`), la app le pregunta al mozo si el cliente
+desea dejar una reseña. Es **común a ambos medios de pago**, porque vive en la
+única pantalla de éxito del popup, que solo se muestra tras el éxito del backend
+(Efectivo tras `cobrar`; Mercado Pago cuando el polling detecta el pago).
+
+- UI: pantalla de éxito de `src/components/pagar/MedioPagoModal.tsx` (estado
+  `pagado === true`). Bajo el "✅ Pago registrado" muestra la pregunta
+  **"¿El cliente desea dejar una reseña?"** con dos acciones:
+  - **Sí, dejar reseña** → callback `onDejarResenia`.
+  - **No, gracias** → callback `onOmitirResenia`.
+- Navegación (la maneja la pantalla padre `src/app/(mozo)/pagar/[mesaId].tsx`,
+  que tiene `mesaId` y `numero`):
+  - **Sí** → `router.replace` a `/(mozo)/resenia/[mesaId]` pasando `mesaId` (y
+    `numero` para el subtítulo "Mesa X"). Al enviar u omitir la reseña, esa
+    pantalla vuelve a `/(mozo)/mesas`.
+  - **No** → `router.replace` a `/(mozo)/mesas`.
+- Se usa `router.replace` (no `push`) para que el botón atrás no regrese a la
+  pantalla de Pagar de una mesa ya cobrada y liberada.
+
+> La pantalla de reseña (`src/app/(mozo)/resenia/[mesaId].tsx`) ya existía; este
+> flujo es su primer punto de entrada. Si las rutas tipadas de expo-router marcan
+> error en el `pathname`, se regeneran solo al levantar la app (`npm start`).
+
+---
+
 ## ▶️ Cómo probarlo
 
 ### 0) Requisitos
