@@ -1,5 +1,6 @@
 package com.cm.restaurant_server.controllers;
 
+import com.cm.restaurant_server.business.domain.dto.factura.CobrarFacturaDto;
 import com.cm.restaurant_server.business.domain.dto.factura.FacturaCreateDto;
 import com.cm.restaurant_server.business.domain.dto.factura.FacturaDto;
 import com.cm.restaurant_server.business.domain.dto.factura.FacturaPreviewDto;
@@ -59,5 +60,12 @@ public class FacturaController extends BaseController<Factura, FacturaDto, Factu
     public ResponseEntity<FacturaDto> generarDesdeComanda(@Valid @RequestBody GenerarFacturaDto dto) throws Exception {
         Factura generada = facturaService.generarDesdeComanda(dto);
         return ResponseEntity.ok(mapper.toDTO(generada));
+    }
+
+    // Cobra una comanda: genera la factura PAGADA, finaliza la comanda y libera la mesa.
+    @PostMapping("/cobrar")
+    public ResponseEntity<FacturaDto> cobrar(@RequestBody CobrarFacturaDto dto) throws Exception {
+        Factura factura = facturaService.generarFacturaPagada(dto.getComandaId(), dto.getTipoPago(), dto.getPromocionId());
+        return ResponseEntity.ok(mapper.toDTO(factura));
     }
 }
