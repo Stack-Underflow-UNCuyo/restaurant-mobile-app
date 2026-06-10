@@ -115,8 +115,8 @@ export default function ReseniaScreen() {
     
     const resenia : Resenia = {
       ambiente: ratings["Ambiente"]!,
-      servicio: ratings["Comida"]!,
-      comida: ratings["Servicio"]!,
+      servicio: ratings["Servicio"]!,
+      comida: ratings["Comida"]!,
       observacion: observacion || undefined,
       comandaId: comandaId
     }
