@@ -11,4 +11,7 @@ public class ReseniaDto extends BaseDto {
     private String observacion;
     private String fechaResenia;
     private String comandaId;
+    private Integer ambiente;
+    private Integer servicio;
+    private Integer comida;
 }
