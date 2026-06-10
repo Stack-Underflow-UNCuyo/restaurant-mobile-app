@@ -9,6 +9,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments }
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 import { Brand } from "@/constants/theme";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
@@ -94,6 +95,7 @@ export default function RootLayout() {
         <AuthGate />
         <StatusBar style="auto" />
       </AuthProvider>
+      <Toast />
     </ThemeProvider>
   );
 }

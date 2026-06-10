@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Toast from "react-native-toast-message";
 
 import { useAuth } from "@/context/AuthContext";
 import { getComandas, getDetallesComanda } from "@/services/comandaService";
 import { updateEstadoDetalle } from "@/services/detalleComandaService";
 import type { DetalleComanda, EstadoDetalleComanda } from "@/types/comanda";
+
+const ESTADO_LABEL: Partial<Record<EstadoDetalleComanda, string>> = {
+  COCINERO_ASIGNADO: "Pedido tomado",
+  ENTREGADO_PARA_DESPACHAR: "Pedido listo para despachar",
+  ENTREGADO_AL_CLIENTE: "Pedido entregado al cliente",
+};
 
 const KANBAN_STATES: EstadoDetalleComanda[] = [
   "ENVIADO_A_LA_COCINA",
@@ -71,6 +78,11 @@ export function useKanban(): UseKanbanResult {
       setDetalles((prev) =>
         prev.map((d) => (d.id === detalle.id ? { ...d, estadoDetalleComanda: nuevoEstado } : d)),
       );
+      Toast.show({
+        type: "success",
+        text1: ESTADO_LABEL[nuevoEstado] ?? "Estado actualizado",
+        visibilityTime: 2500,
+      });
       updateEstadoDetalle(token, detalle.comandaId, detalle.id, {
         cantidad: detalle.cantidad,
         estadoDetalleComanda: nuevoEstado,
@@ -83,6 +95,12 @@ export function useKanban(): UseKanbanResult {
             d.id === detalle.id ? { ...d, estadoDetalleComanda: detalle.estadoDetalleComanda } : d,
           ),
         );
+        Toast.show({
+          type: "error",
+          text1: "No se pudo actualizar",
+          text2: "El pedido volvió a su estado anterior",
+          visibilityTime: 3000,
+        });
       });
     },
     [token],

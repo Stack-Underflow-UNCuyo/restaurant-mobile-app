@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -81,7 +82,7 @@ function TipRow({ label, amount, selected, onPress }: TipRowProps) {
             : { backgroundColor: "transparent", borderColor: theme.border },
         ]}
       >
-        {selected && <ThemedText style={styles.checkmark}>✓</ThemedText>}
+        {selected && <Ionicons name="checkmark" size={13} color="#ffffff" />}
       </View>
       <ThemedText type="smallBold" style={styles.tipLabel}>
         {label}
@@ -114,6 +115,7 @@ export default function PagarScreen() {
   const descuento = (subtotal * porcentaje) / 100;
   const totalConDescuento = subtotal - descuento;
   const totalConPropina = Math.round(totalConDescuento * 1.1);
+
 
   return (
     <ThemedView style={styles.container}>
@@ -342,11 +344,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-  },
-  checkmark: {
-    fontSize: 13,
-    lineHeight: 15,
-    color: "#ffffff",
   },
   tipLabel: { flex: 1 },
   pagarBtn: {

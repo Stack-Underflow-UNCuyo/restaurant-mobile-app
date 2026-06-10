@@ -71,6 +71,15 @@ export interface DetalleSeccionCartaArticuloIndividual {
   imagenUrl?: string;
 }
 
+export interface Resenia {
+  ambiente: number;
+  servicio: number;
+  comida: number;
+  observacion?: string;
+  comandaId: string;
+}
+
+
 // La API no incluye un campo discriminador: se distingue por la presencia
 // de "menu" vs "articulo" en el JSON (ver isDetalleMenu/isDetalleArticulo).
 export type DetalleSeccionCartaItem = DetalleSeccionCartaArticuloIndividual | DetalleSeccionCartaMenu;

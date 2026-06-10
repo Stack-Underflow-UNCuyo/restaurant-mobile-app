@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,10 +19,18 @@ import { useTheme } from "@/hooks/use-theme";
 
 const logo = require("../../../assets/images/logo.png");
 
+const COLUMN_MIN_WIDTH = 200;
+
 export default function CocineroKanban() {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
   const { pendiente, enProceso, listo, loading, refreshing, error, refresh, moverDetalle } =
     useKanban();
+
+  const columnWidth = Math.max(
+    COLUMN_MIN_WIDTH,
+    (width - Spacing.three * 2 - Spacing.two * 2) / 3,
+  );
 
   return (
     <ThemedView style={styles.container}>
@@ -62,14 +71,22 @@ export default function CocineroKanban() {
               items={pendiente}
               nextEstado="COCINERO_ASIGNADO"
               onAction={moverDetalle}
+              width={columnWidth}
             />
             <KanbanColumn
               title="En proceso"
               items={enProceso}
               nextEstado="ENTREGADO_PARA_DESPACHAR"
               onAction={moverDetalle}
+              width={columnWidth}
             />
-            <KanbanColumn title="Listo" items={listo} />
+            <KanbanColumn
+              title="Listo"
+              items={listo}
+              nextEstado="ENTREGADO_AL_CLIENTE"
+              onAction={moverDetalle}
+              width={columnWidth}
+            />
           </ScrollView>
         )}
       </SafeAreaView>
@@ -82,7 +99,6 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   board: { flex: 1 },
   kanban: {
-    flexGrow: 1,
     padding: Spacing.three,
     gap: Spacing.two,
     alignItems: "stretch",

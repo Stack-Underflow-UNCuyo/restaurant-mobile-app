@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { Brand, Fonts, Gray, Radius, Spacing, Success } from "@/constants/theme";
+import { Brand, Fonts, Gray, Radius, Spacing, Success, Warning } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { DetalleComanda, EstadoDetalleComanda } from "@/types/comanda";
 
@@ -15,11 +15,27 @@ interface Props {
 const ACTION_LABEL: Partial<Record<EstadoDetalleComanda, string>> = {
   COCINERO_ASIGNADO: "Tomar",
   ENTREGADO_PARA_DESPACHAR: "Listo",
+  ENTREGADO_AL_CLIENTE: "Entregado",
+};
+
+function elapsedTime(iso: string | null): string {
+  if (!iso) return "";
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60) return `${diff}s`;
+  const mins = Math.floor(diff / 60);
+  if (mins < 60) return `${mins}m`;
+  return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+}
+
+const BUTTON_COLORS: Partial<Record<EstadoDetalleComanda, string>> = {
+  COCINERO_ASIGNADO: Gray[500],
+  ENTREGADO_PARA_DESPACHAR: Warning[500],
+  ENTREGADO_AL_CLIENTE: Success[500]
 };
 
 export function DetalleComandaCard({ detalle, nextEstado, onAction }: Props) {
   const theme = useTheme();
-  const btnColor = nextEstado === "ENTREGADO_PARA_DESPACHAR" ? Success[500] : Brand[500];
+  const btnColor = nextEstado ? BUTTON_COLORS[nextEstado] ?? Brand[500] : Brand[500];
 
   return (
     <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -56,10 +72,17 @@ export function DetalleComandaCard({ detalle, nextEstado, onAction }: Props) {
         </View>
       ) : null}
 
-      {/* Comanda reference */}
-      <ThemedText type="small" themeColor="textSecondary">
-        #{detalle.comandaId.slice(-6).toUpperCase()}
-      </ThemedText>
+      {/* Comanda reference + elapsed time */}
+      <View style={styles.meta}>
+        <ThemedText type="small" themeColor="textSecondary">
+          #{detalle.comandaId.slice(-6).toUpperCase()}
+        </ThemedText>
+        {(
+          <ThemedText type="small" themeColor="textSecondary">
+            {elapsedTime(detalle.fechaCreacion)}
+          </ThemedText>
+        )}
+      </View>
 
       {nextEstado && onAction && (
         <Pressable
@@ -104,6 +127,7 @@ const styles = StyleSheet.create({
   componenteRow: { flexDirection: "row", alignItems: "center", gap: Spacing.one + 2 },
   dot: { width: 4, height: 4, borderRadius: Radius.full },
   componenteText: { flex: 1 },
+  meta: { flexDirection: "row", justifyContent: "space-between" },
   btn: {
     borderRadius: Radius.md,
     paddingVertical: Spacing.two,

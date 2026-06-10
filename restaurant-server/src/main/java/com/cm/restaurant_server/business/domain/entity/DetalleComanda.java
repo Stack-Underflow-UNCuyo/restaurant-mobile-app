@@ -3,6 +3,9 @@ package com.cm.restaurant_server.business.domain.entity;
 import com.cm.restaurant_server.business.domain.enumeration.EstadoDetalleComanda;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -13,6 +16,9 @@ public class DetalleComanda extends Base {
     private int cantidad;
     @Enumerated(EnumType.STRING)
     private EstadoDetalleComanda estadoDetalleComanda;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime fechaCreacion;
     @ManyToOne
     private Comanda comanda;
     @ManyToOne

@@ -41,4 +41,5 @@ export interface DetalleComanda {
   componentes: string[] | null;
   /** Precio unitario del artículo o menú pedido. */
   precio: number;
+  fechaCreacion: string | null;
 }
