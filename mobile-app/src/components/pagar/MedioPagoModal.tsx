@@ -31,8 +31,10 @@ interface Props {
   comandaId?: string;
   promocionId?: string;
   descripcion?: string;
-  /** Se llama cuando el cobro se concretó (factura generada). */
-  onPagoExitoso?: () => void;
+  /** El cobro se concretó y el mozo eligió dejar una reseña. */
+  onDejarResenia: () => void;
+  /** El cobro se concretó y el mozo no quiere dejar una reseña. */
+  onOmitirResenia: () => void;
 }
 
 /**
@@ -47,7 +49,8 @@ export function MedioPagoModal({
   comandaId,
   promocionId,
   descripcion,
-  onPagoExitoso,
+  onDejarResenia,
+  onOmitirResenia,
 }: Props) {
   const theme = useTheme();
   const { token } = useAuth();
@@ -102,11 +105,6 @@ export function MedioPagoModal({
     }
   }
 
-  function finalizar() {
-    if (onPagoExitoso) onPagoExitoso();
-    else onClose();
-  }
-
   return (
     <Modal
       visible={visible}
@@ -131,12 +129,20 @@ export function MedioPagoModal({
                 <ThemedText type="small" themeColor="textSecondary" style={styles.qrHint}>
                   Se generó la factura por {formatMonto(amount)} y la mesa quedó libre.
                 </ThemedText>
+                <ThemedText type="smallBold" style={styles.reseniaPregunta}>
+                  ¿El cliente desea dejar una reseña?
+                </ThemedText>
                 <Pressable
                   style={[styles.confirmBtn, { backgroundColor: theme.brand }]}
-                  onPress={finalizar}
+                  onPress={onDejarResenia}
                 >
                   <ThemedText type="smallBold" style={{ color: theme.brandText }}>
-                    Listo
+                    Sí, dejar reseña
+                  </ThemedText>
+                </Pressable>
+                <Pressable style={styles.skipBtn} onPress={onOmitirResenia}>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    No, gracias
                   </ThemedText>
                 </Pressable>
               </View>
@@ -322,6 +328,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: Spacing.four,
     paddingHorizontal: Spacing.three,
+  },
+  reseniaPregunta: {
+    textAlign: "center",
+  },
+  skipBtn: {
+    alignItems: "center",
+    paddingVertical: Spacing.three,
+    marginTop: Spacing.one,
   },
   qrBox: {
     backgroundColor: "#ffffff",

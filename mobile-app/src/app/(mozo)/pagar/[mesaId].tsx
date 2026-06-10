@@ -11,7 +11,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/app-header";
-import { ChevronRightIcon } from "@/components/icons";
 import { MedioPagoModal } from "@/components/pagar/MedioPagoModal";
 import { PromocionSheet } from "@/components/pagar/PromocionSheet";
 import { ThemedText } from "@/components/themed-text";
@@ -187,7 +186,7 @@ export default function PagarScreen() {
                       : "Sin promoción"}
                   </ThemedText>
                 </View>
-                <ChevronRightIcon color={theme.textSecondary} />
+                <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
               </Pressable>
 
               {promoSeleccionada && (
@@ -239,9 +238,16 @@ export default function PagarScreen() {
               comandaId={comanda?.id}
               promocionId={promoSeleccionada?.id}
               descripcion={numero ? `Mesa ${numero}` : undefined}
-              onPagoExitoso={() => {
+              onDejarResenia={() => {
                 setPagoOpen(false);
-                router.back();
+                router.replace({
+                  pathname: "/(mozo)/resenia/[mesaId]",
+                  params: { mesaId, ...(numero ? { numero } : {}) },
+                });
+              }}
+              onOmitirResenia={() => {
+                setPagoOpen(false);
+                router.replace("/(mozo)/mesas");
               }}
             />
           </>
