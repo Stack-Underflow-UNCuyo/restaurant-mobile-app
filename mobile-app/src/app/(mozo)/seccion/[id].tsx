@@ -11,17 +11,17 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { ArticuloDetailCard } from "@/components/carta/ArticuloDetailCard";
-import { ComboDetailCard } from "@/components/carta/ComboDetailCard";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Brand, Fonts, Radius, Spacing } from "@/constants/theme";
-import { useCart } from "@/context/CartContext";
-import { useSeccionDetalle } from "@/hooks/useSeccionDetalle";
-import { useTheme } from "@/hooks/use-theme";
-import { isDetalleArticulo, isDetalleMenu } from "@/types/carta";
-import type { Categoria, DetalleSeccionCartaItem } from "@/types/carta";
+import { AppHeader } from "@/views/components/app-header";
+import { ArticuloDetailCard } from "@/views/components/carta/ArticuloDetailCard";
+import { ComboDetailCard } from "@/views/components/carta/ComboDetailCard";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Brand, Fonts, Radius, Spacing } from "@/views/constants/theme";
+import { useCart } from "@/controllers/context/CartContext";
+import { useSeccionDetalle } from "@/controllers/hooks/useSeccionDetalle";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import { isDetalleArticulo, isDetalleMenu } from "@/models/types/carta";
+import type { Categoria, DetalleSeccionCartaItem } from "@/models/types/carta";
 
 const COLUMNS = 2;
 const FEATURED_COUNT = 2;

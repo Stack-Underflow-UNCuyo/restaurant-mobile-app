@@ -3,14 +3,14 @@ import { useMemo } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { SeccionPreviewRow } from "@/components/carta/SeccionPreviewRow";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Radius, Spacing } from "@/constants/theme";
-import { useCartaDetalle } from "@/hooks/useCartaDetalle";
-import { useTheme } from "@/hooks/use-theme";
-import type { SeccionCarta } from "@/types/carta";
+import { AppHeader } from "@/views/components/app-header";
+import { SeccionPreviewRow } from "@/views/components/carta/SeccionPreviewRow";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Radius, Spacing } from "@/views/constants/theme";
+import { useCartaDetalle } from "@/controllers/hooks/useCartaDetalle";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import type { SeccionCarta } from "@/models/types/carta";
 
 const logo = require("../../../../../assets/images/logo.png");
 const MAX_PREVIEW_SECCIONES = 4;

@@ -9,13 +9,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { KanbanColumn } from "@/components/cocinero/KanbanColumn";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { TopBar } from "@/components/top-bar";
-import { Radius, Spacing } from "@/constants/theme";
-import { useKanban } from "@/hooks/useKanban";
-import { useTheme } from "@/hooks/use-theme";
+import { KanbanColumn } from "@/views/components/cocinero/KanbanColumn";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { TopBar } from "@/views/components/top-bar";
+import { Radius, Spacing } from "@/views/constants/theme";
+import { useKanban } from "@/controllers/hooks/useKanban";
+import { useTheme } from "@/controllers/hooks/use-theme";
 
 const logo = require("../../../assets/images/logo.png");
 

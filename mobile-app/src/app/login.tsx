@@ -11,13 +11,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts, Radius, Spacing } from "@/constants/theme";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Fonts, Radius, Spacing } from "@/views/constants/theme";
 
 const logo = require("../../assets/images/logo.png");
-import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/controllers/context/AuthContext";
+import { useTheme } from "@/controllers/hooks/use-theme";
 
 export default function LoginScreen() {
   const { login } = useAuth();

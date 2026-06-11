@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-import { CartProvider } from "@/context/CartContext";
+import { CartProvider } from "@/controllers/context/CartContext";
 
 /** Grupo de rutas del mozo. Acá vivirán las pantallas propias de mozos. */
 export default function MozoLayout() {

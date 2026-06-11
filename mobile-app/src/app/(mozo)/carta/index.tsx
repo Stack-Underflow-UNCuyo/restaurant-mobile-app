@@ -3,15 +3,15 @@ import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { CartaListItem } from "@/components/carta/CartaListItem";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Radius, Spacing } from "@/constants/theme";
-import { useCart } from "@/context/CartContext";
-import { useCartas } from "@/hooks/useCartas";
-import { useTheme } from "@/hooks/use-theme";
-import type { Carta } from "@/types/carta";
+import { AppHeader } from "@/views/components/app-header";
+import { CartaListItem } from "@/views/components/carta/CartaListItem";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Radius, Spacing } from "@/views/constants/theme";
+import { useCart } from "@/controllers/context/CartContext";
+import { useCartas } from "@/controllers/hooks/useCartas";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import type { Carta } from "@/models/types/carta";
 
 const logo = require("../../../../assets/images/logo.png");
 

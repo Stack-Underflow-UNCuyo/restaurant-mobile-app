@@ -4,8 +4,8 @@
  * base de la API para poder mostrarlas (espejo de resolveImagenUrl en
  * carta-web/src/lib/images.ts).
  */
-import { API_URL } from "@/constants/config";
-import type { Categoria } from "@/types/carta";
+import { API_URL } from "@/views/constants/config";
+import type { Categoria } from "@/models/types/carta";
 
 export function resolveImagenUrl(imagenUrl?: string): string | undefined {
   if (!imagenUrl) return undefined;

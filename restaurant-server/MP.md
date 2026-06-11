@@ -72,9 +72,9 @@ mercado-pago.user-id=${MP_USER_ID:3462667386}
 - Controllers: `MercadoPagoController` (`/api/v1/mercadopago`), `FacturaController` (`/api/v1/facturas`).
 
 **App móvil (`mobile-app`)**
-- Tipos: `src/types/orden.ts` (`OrdenMP`, `EstadoOrden`).
-- Servicios: `src/services/mercadoPagoService.ts` (`crearOrden`, `confirmarPago`), `src/services/facturaService.ts` (`cobrar`).
-- UI: `src/components/pagar/MedioPagoModal.tsx` (selección de medio de pago, QR, polling, éxito) y la pantalla `src/app/(mozo)/pagar/[mesaId].tsx`.
+- Tipos: `src/models/types/orden.ts` (`OrdenMP`, `EstadoOrden`).
+- Servicios: `src/models/services/mercadoPagoService.ts` (`crearOrden`, `confirmarPago`), `src/models/services/facturaService.ts` (`cobrar`).
+- UI: `src/views/components/pagar/MedioPagoModal.tsx` (selección de medio de pago, QR, polling, éxito) y la pantalla `src/app/(mozo)/pagar/[mesaId].tsx`.
 - Dependencias agregadas: `react-native-svg` y `react-native-qrcode-svg` (para dibujar el QR).
 
 ---
@@ -131,7 +131,7 @@ Por cada cobro con Mercado Pago se crea una *order*. Usamos **modelo dinámico**
 
 En la pantalla **Pagar**, el mozo elige el total (con o sin propina), toca **Ir a Pagar** y elige **Mercado Pago** → **Generar QR de cobro**.
 
-- La app llama a `POST /api/v1/mercadopago/orders` (`src/services/mercadoPagoService.ts`).
+- La app llama a `POST /api/v1/mercadopago/orders` (`src/models/services/mercadoPagoService.ts`).
 - Renderiza el `qrData` con `<QRCode value={qrData} />` (`react-native-qrcode-svg`) en `MedioPagoModal.tsx`.
 - El cliente escanea ese QR con la app de Mercado Pago.
 
@@ -168,7 +168,7 @@ desea dejar una reseña. Es **común a ambos medios de pago**, porque vive en la
 única pantalla de éxito del popup, que solo se muestra tras el éxito del backend
 (Efectivo tras `cobrar`; Mercado Pago cuando el polling detecta el pago).
 
-- UI: pantalla de éxito de `src/components/pagar/MedioPagoModal.tsx` (estado
+- UI: pantalla de éxito de `src/views/components/pagar/MedioPagoModal.tsx` (estado
   `pagado === true`). Bajo el "✅ Pago registrado" muestra la pregunta
   **"¿El cliente desea dejar una reseña?"** con dos acciones:
   - **Sí, dejar reseña** → callback `onDejarResenia`.

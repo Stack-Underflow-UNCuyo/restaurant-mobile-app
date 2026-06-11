@@ -1,0 +1,42 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet } from "react-native";
+
+import { ThemedText } from "@/views/components/themed-text";
+import { Radius, Spacing } from "@/views/constants/theme";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import type { Carta } from "@/models/types/carta";
+
+interface Props {
+  carta: Carta;
+  onPress: (carta: Carta) => void;
+}
+
+/** Fila de una carta en el listado — mismo estilo que los accesos del home del mozo. */
+export function CartaListItem({ carta, onPress }: Props) {
+  const theme = useTheme();
+
+  return (
+    <Pressable
+      onPress={() => onPress(carta)}
+      style={({ pressed }) => [
+        styles.row,
+        { backgroundColor: theme.surface, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+      ]}
+    >
+      <ThemedText style={{ fontSize: 20, fontWeight: "500" }}>{carta.nombre ?? "Carta"}</ThemedText>
+      <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.four,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+  },
+});
