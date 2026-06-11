@@ -1,9 +1,11 @@
 /**
- * Estado de la lista de cartas: carga, error y refresh.
- * Todos los setState se ejecutan dentro de callbacks asíncronos (.then/.catch)
- * para cumplir con react-hooks/set-state-in-effect.
+ * Estado de la lista de cartas. Internamente usa React Query (cache +
+ * persistencia en AsyncStorage), así la carta se ve al instante desde cache y
+ * sobrevive a reinicios / cortes de internet. La firma pública se mantiene
+ * igual que antes para no tocar las pantallas que la consumen. Ver `cache.md`.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { getCartas } from "@/services/cartaService";
 import type { Carta } from "@/types/carta";
@@ -17,39 +19,20 @@ interface UseCartasResult {
 }
 
 export function useCartas(): UseCartasResult {
-  const [cartas, setCartas] = useState<Carta[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshId, setRefreshId] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    getCartas()
-      .then((data) => {
-        if (!cancelled) {
-          setCartas(data);
-          setError(null);
-          setLoading(false);
-          setRefreshing(false);
-        }
-      })
-      .catch((e) => {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : "No se pudieron cargar las cartas.");
-          setLoading(false);
-          setRefreshing(false);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshId]);
+  const { data, isPending, isFetching, error, refetch } = useQuery({
+    queryKey: ["cartas"],
+    queryFn: getCartas,
+  });
 
   const refresh = useCallback(() => {
-    setRefreshing(true);
-    setRefreshId((id) => id + 1);
-  }, []);
+    refetch();
+  }, [refetch]);
 
-  return { cartas, loading, refreshing, error, refresh };
+  return {
+    cartas: data ?? [],
+    loading: isPending,
+    refreshing: isFetching && !isPending,
+    error: error instanceof Error ? error.message : null,
+    refresh,
+  };
 }

@@ -10,11 +10,13 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Toast from "react-native-toast-message";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { Brand } from "@/constants/theme";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useTheme } from "@/hooks/use-theme";
+import { asyncStoragePersister, CACHE_MAX_AGE, queryClient } from "@/lib/queryClient";
 
 export const unstable_settings = {
   anchor: "index",
@@ -90,12 +92,17 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <AuthGate />
-        <StatusBar style="auto" />
-      </AuthProvider>
-      <Toast />
-    </ThemeProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister, maxAge: CACHE_MAX_AGE }}
+    >
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <AuthProvider>
+          <AuthGate />
+          <StatusBar style="auto" />
+        </AuthProvider>
+        <Toast />
+      </ThemeProvider>
+    </PersistQueryClientProvider>
   );
 }
