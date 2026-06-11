@@ -22,12 +22,14 @@ public class DetalleMenu extends Base {
     private List<DetalleMenuArticulo> articulos;
 
     public Articulo getArticulo() {
-        if (articulos == null || articulos.isEmpty()) return null;
+        if (articulos == null || articulos.isEmpty())
+            return null;
         return articulos.get(0).getArticulo();
     }
 
     public double getArticuloCantidad() {
-        if (articulos == null || articulos.isEmpty()) return 0;
+        if (articulos == null || articulos.isEmpty())
+            return 0;
         return articulos.get(0).getCantidad();
     }
 }
