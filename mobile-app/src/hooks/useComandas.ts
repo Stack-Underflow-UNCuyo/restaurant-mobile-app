@@ -4,9 +4,11 @@
  * expone el pull-to-refresh. Espejo de useMesas.
  */
 import { useCallback, useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 
 import { useAuth } from "@/context/AuthContext";
 import { getComandas, getComandasPorMesa, getDetallesComanda } from "@/services/comandaService";
+import { updateEstadoDetalle } from "@/services/detalleComandaService";
 import type { Comanda, DetalleComanda } from "@/types/comanda";
 
 export interface ComandaConDetalles extends Comanda {
@@ -19,6 +21,7 @@ interface UseComandasResult {
   refreshing: boolean;
   error: string | null;
   refresh: () => void;
+  despacharDetalle: (detalle: DetalleComanda) => void;
 }
 
 /** Si se pasa mesaId, trae solo las comandas de esa mesa; si no, todas. */
@@ -62,5 +65,38 @@ export function useComandas(mesaId?: string | null): UseComandasResult {
     cargar("refresh");
   }, [cargar]);
 
-  return { comandas, loading, refreshing, error, refresh };
+  const despacharDetalle = useCallback(
+    (detalle: DetalleComanda) => {
+      if (!token) return;
+      const nuevoEstado = "ENTREGADO_AL_CLIENTE" as const;
+      setComandas((prev) =>
+        prev.map((c) => ({
+          ...c,
+          detalles: c.detalles.map((d) =>
+            d.id === detalle.id ? { ...d, estadoDetalleComanda: nuevoEstado } : d,
+          ),
+        })),
+      );
+      Toast.show({ type: "success", text1: "Ítem entregado al cliente", visibilityTime: 2000 });
+      updateEstadoDetalle(token, detalle.comandaId, detalle.id, {
+        cantidad: detalle.cantidad,
+        estadoDetalleComanda: nuevoEstado,
+        comandaId: detalle.comandaId,
+        detalleSeccionCartaId: detalle.detalleSeccionCartaId,
+      }).catch(() => {
+        setComandas((prev) =>
+          prev.map((c) => ({
+            ...c,
+            detalles: c.detalles.map((d) =>
+              d.id === detalle.id ? { ...d, estadoDetalleComanda: detalle.estadoDetalleComanda } : d,
+            ),
+          })),
+        );
+        Toast.show({ type: "error", text1: "No se pudo actualizar el ítem", visibilityTime: 3000 });
+      });
+    },
+    [token],
+  );
+
+  return { comandas, loading, refreshing, error, refresh, despacharDetalle };
 }

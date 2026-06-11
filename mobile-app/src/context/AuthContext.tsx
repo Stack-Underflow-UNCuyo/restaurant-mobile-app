@@ -5,6 +5,7 @@
  * Uso: const { user, token, login, logout } = useAuth();
  */
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { clearToken, getToken, saveToken } from "@/lib/tokenStorage";
 import * as authService from "@/services/authService";
@@ -22,6 +23,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await clearToken();
     setToken(null);
     setUser(null);
-  }, []);
+    // Borra el cache persistido para no dejar datos del usuario anterior.
+    queryClient.clear();
+  }, [queryClient]);
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout }}>

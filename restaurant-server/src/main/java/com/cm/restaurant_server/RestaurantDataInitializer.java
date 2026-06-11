@@ -32,6 +32,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
     private final CartaRepository cartaRepo;
     private final ComandaRestaurantRepository comandaRestaurantRepo;
     private final DetalleComandaRepository detalleComandaRepo;
+    private final SucursalRepository sucursalRepo;
+    private final CajaRepository cajaRepo;
     private final PasswordEncoder passwordEncoder;
 
     public RestaurantDataInitializer(
@@ -49,6 +51,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             CartaRepository cartaRepo,
             ComandaRestaurantRepository comandaRestaurantRepo,
             DetalleComandaRepository detalleComandaRepo,
+            SucursalRepository sucursalRepo,
+            CajaRepository cajaRepo,
             PasswordEncoder passwordEncoder) {
         this.unidadDeMedidaRepo = unidadDeMedidaRepo;
         this.categoriaRepo = categoriaRepo;
@@ -64,6 +68,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         this.cartaRepo = cartaRepo;
         this.comandaRestaurantRepo = comandaRestaurantRepo;
         this.detalleComandaRepo = detalleComandaRepo;
+        this.sucursalRepo = sucursalRepo;
+        this.cajaRepo = cajaRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -80,6 +86,7 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         Map<TipoEmpleado, Empleado> empleados = crearEmpleados();
         Map<String, DetalleSeccionCarta> itemsCarta = crearCartaCompleta(categorias, articulos);
         crearComandas(mesas, empleados, itemsCarta);
+        crearMercadoPago();
     }
 
     private Map<String, UnidadDeMedida> crearUnidadesDeMedida() {
@@ -362,6 +369,27 @@ public class RestaurantDataInitializer implements CommandLineRunner {
         menu.setDetallesMenu(detallesMenu);
 
         return menuRepo.save(menu);
+    }
+
+    private void crearMercadoPago() {
+        Sucursal sucursal = new Sucursal();
+        sucursal.setNombre("Sucursal Principal");
+        sucursal.setExternalId("SUC001");
+        sucursal.setAddressLine("Av. San Martin 1234, Mendoza, Mendoza");
+        sucursal.setLatitude(-32.889458);
+        sucursal.setLongitude(-68.845839);
+        sucursal.setReferencia("Local del restaurante");
+        sucursal = sucursalRepo.save(sucursal);
+
+        Caja caja = new Caja();
+        caja.setNombre("Caja 1");
+        caja.setExternalId("SUC001POS001");
+        caja.setExternalStoreId("SUC001");
+        caja.setCategory(621102L);
+        caja.setFixedAmount(false);
+        caja.setStatus("active");
+        caja.setSucursal(sucursal);
+        cajaRepo.save(caja);
     }
 
     private record DetalleComandaSeed(String item, int cantidad, EstadoDetalleComanda estado) {

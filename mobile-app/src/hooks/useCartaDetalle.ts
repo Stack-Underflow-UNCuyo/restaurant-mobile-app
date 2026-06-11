@@ -1,8 +1,12 @@
 /**
- * Estado del detalle de una carta (con sus secciones): carga, error y refresh.
- * Lo usan la pantalla de secciones y la vista previa del menú.
+ * Estado del detalle de una carta (con sus secciones: entradas, platos
+ * principales, etc.). Lo usan la pantalla de secciones y la vista previa del
+ * menú. Internamente usa React Query (cache + persistencia en AsyncStorage),
+ * con una key por carta: cada carta abierta queda cacheada y se ve offline.
+ * La firma pública se mantiene igual. Ver `cache.md`.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { getCartaById } from "@/services/cartaService";
 import type { Carta } from "@/types/carta";
@@ -16,40 +20,21 @@ interface UseCartaDetalleResult {
 }
 
 export function useCartaDetalle(cartaId: string | undefined): UseCartaDetalleResult {
-  const [carta, setCarta] = useState<Carta | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshId, setRefreshId] = useState(0);
-
-  useEffect(() => {
-    if (!cartaId) return;
-    let cancelled = false;
-    getCartaById(cartaId)
-      .then((data) => {
-        if (!cancelled) {
-          setCarta(data);
-          setError(null);
-          setLoading(false);
-          setRefreshing(false);
-        }
-      })
-      .catch((e) => {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : "No se pudo cargar la carta.");
-          setLoading(false);
-          setRefreshing(false);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [cartaId, refreshId]);
+  const { data, isPending, isFetching, error, refetch } = useQuery({
+    queryKey: ["carta", cartaId],
+    queryFn: () => getCartaById(cartaId!),
+    enabled: !!cartaId,
+  });
 
   const refresh = useCallback(() => {
-    setRefreshing(true);
-    setRefreshId((id) => id + 1);
-  }, []);
+    refetch();
+  }, [refetch]);
 
-  return { carta, loading, refreshing, error, refresh };
+  return {
+    carta: data ?? null,
+    loading: isPending,
+    refreshing: isFetching && !isPending,
+    error: error instanceof Error ? error.message : null,
+    refresh,
+  };
 }
