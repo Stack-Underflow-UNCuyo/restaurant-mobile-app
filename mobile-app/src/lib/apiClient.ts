@@ -3,7 +3,7 @@
  * un token y normaliza los errores que devuelve el backend Spring.
  * Toda llamada al backend debe pasar por acá — nada de fetch suelto en pantallas.
  */
-import { API_URL } from "@/constants/config";
+import { API_URL } from "@/views/constants/config";
 
 export class ApiError extends Error {
   status: number;

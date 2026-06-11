@@ -4,15 +4,15 @@ import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts, Gray, Radius, Spacing } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
-import { createResenia } from "@/services/reseniaService";
-import { useAuth } from "@/context/AuthContext";
-import { useComandas } from "@/hooks/useComandas";
-import { Resenia } from "@/types/carta";
+import { AppHeader } from "@/views/components/app-header";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Fonts, Gray, Radius, Spacing } from "@/views/constants/theme";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import { createResenia } from "@/models/services/reseniaService";
+import { useAuth } from "@/controllers/context/AuthContext";
+import { useComandas } from "@/controllers/hooks/useComandas";
+import { Resenia } from "@/models/types/carta";
 
 const logo = require("../../../../assets/images/logo.png");
 

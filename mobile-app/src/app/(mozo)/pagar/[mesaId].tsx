@@ -10,17 +10,17 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { MedioPagoModal } from "@/components/pagar/MedioPagoModal";
-import { PromocionSheet } from "@/components/pagar/PromocionSheet";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Gray, Radius, Spacing } from "@/constants/theme";
-import { useComandas } from "@/hooks/useComandas";
-import { usePromociones } from "@/hooks/usePromociones";
-import { useTheme } from "@/hooks/use-theme";
-import type { DetalleComanda } from "@/types/comanda";
-import type { Promocion } from "@/types/promocion";
+import { AppHeader } from "@/views/components/app-header";
+import { MedioPagoModal } from "@/views/components/pagar/MedioPagoModal";
+import { PromocionSheet } from "@/views/components/pagar/PromocionSheet";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Gray, Radius, Spacing } from "@/views/constants/theme";
+import { useComandas } from "@/controllers/hooks/useComandas";
+import { usePromociones } from "@/controllers/hooks/usePromociones";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import type { DetalleComanda } from "@/models/types/comanda";
+import type { Promocion } from "@/models/types/promocion";
 
 function formatMonto(monto: number): string {
   return `$${Math.round(monto).toLocaleString("es-AR")}`;

@@ -48,8 +48,8 @@ AsyncStorage usa `localStorage` en web, igual que hace `tokenStorage` con el JWT
 |------|---------|----------|
 | Client + persister | [`src/lib/queryClient.ts`](src/lib/queryClient.ts) | Crea el `QueryClient` (con los defaults de cache) y el `asyncStoragePersister`. |
 | Provider | [`src/app/_layout.tsx`](src/app/_layout.tsx) | Envuelve toda la app en `PersistQueryClientProvider`, conectando el client con el persister. |
-| Hooks de datos | [`src/hooks/useCartas.ts`](src/hooks/useCartas.ts), [`src/hooks/useCartaDetalle.ts`](src/hooks/useCartaDetalle.ts) | Usan `useQuery` por dentro, pero **mantienen la misma firma pública** de antes. |
-| Limpieza | [`src/context/AuthContext.tsx`](src/context/AuthContext.tsx) | En `logout()` llama `queryClient.clear()` para no dejar datos del usuario anterior. |
+| Hooks de datos | [`src/controllers/hooks/useCartas.ts`](src/controllers/hooks/useCartas.ts), [`src/controllers/hooks/useCartaDetalle.ts`](src/controllers/hooks/useCartaDetalle.ts) | Usan `useQuery` por dentro, pero **mantienen la misma firma pública** de antes. |
+| Limpieza | [`src/controllers/context/AuthContext.tsx`](src/controllers/context/AuthContext.tsx) | En `logout()` llama `queryClient.clear()` para no dejar datos del usuario anterior. |
 
 ### Defaults del cache (`queryClient.ts`)
 

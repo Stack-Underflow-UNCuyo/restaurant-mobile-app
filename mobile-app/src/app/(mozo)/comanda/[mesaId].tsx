@@ -3,15 +3,15 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { ComandaDetalleRecibo } from "@/components/comanda/ComandaDetalleRecibo";
-import { ComandaFilter, type FiltroComanda } from "@/components/comanda/ComandaFilter";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Radius, Spacing } from "@/constants/theme";
-import { useCart } from "@/context/CartContext";
-import { useComandas } from "@/hooks/useComandas";
-import { useTheme } from "@/hooks/use-theme";
+import { AppHeader } from "@/views/components/app-header";
+import { ComandaDetalleRecibo } from "@/views/components/comanda/ComandaDetalleRecibo";
+import { ComandaFilter, type FiltroComanda } from "@/views/components/comanda/ComandaFilter";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Radius, Spacing } from "@/views/constants/theme";
+import { useCart } from "@/controllers/context/CartContext";
+import { useComandas } from "@/controllers/hooks/useComandas";
+import { useTheme } from "@/controllers/hooks/use-theme";
 
 const logo = require("../../../../assets/images/logo.png");
 

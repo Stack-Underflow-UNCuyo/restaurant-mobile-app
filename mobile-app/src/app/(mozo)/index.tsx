@@ -12,14 +12,14 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Ionicons } from "@expo/vector-icons";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { TopBar } from "@/components/top-bar";
-import { Gray, Radius, Spacing } from "@/constants/theme";
-import { useAuth } from "@/context/AuthContext";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useTheme } from "@/hooks/use-theme";
-import { getEmpresaActiva } from "@/services/empresaService";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { TopBar } from "@/views/components/top-bar";
+import { Gray, Radius, Spacing } from "@/views/constants/theme";
+import { useAuth } from "@/controllers/context/AuthContext";
+import { useColorScheme } from "@/controllers/hooks/use-color-scheme";
+import { useTheme } from "@/controllers/hooks/use-theme";
+import { getEmpresaActiva } from "@/models/services/empresaService";
 
 const logo = require("../../../assets/images/logo.png");
 const NOMBRE_POR_DEFECTO = "Aromas de Viña";

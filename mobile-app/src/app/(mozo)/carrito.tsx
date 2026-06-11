@@ -3,15 +3,15 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppHeader } from "@/components/app-header";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Gray, Radius, Spacing } from "@/constants/theme";
-import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/context/CartContext";
-import { useTheme } from "@/hooks/use-theme";
+import { AppHeader } from "@/views/components/app-header";
+import { ThemedText } from "@/views/components/themed-text";
+import { ThemedView } from "@/views/components/themed-view";
+import { Gray, Radius, Spacing } from "@/views/constants/theme";
+import { useAuth } from "@/controllers/context/AuthContext";
+import { useCart } from "@/controllers/context/CartContext";
+import { useTheme } from "@/controllers/hooks/use-theme";
 import { formatPrice } from "@/lib/format";
-import { addDetalleComanda, createComanda } from "@/services/comandaService";
+import { addDetalleComanda, createComanda } from "@/models/services/comandaService";
 
 function formatMonto(monto: number): string {
   return `$${Math.round(monto).toLocaleString("es-AR")}`;

@@ -12,10 +12,10 @@ import { ActivityIndicator, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
-import { Brand } from "@/constants/theme";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useTheme } from "@/hooks/use-theme";
+import { Brand } from "@/views/constants/theme";
+import { AuthProvider, useAuth } from "@/controllers/context/AuthContext";
+import { useColorScheme } from "@/controllers/hooks/use-color-scheme";
+import { useTheme } from "@/controllers/hooks/use-theme";
 import { asyncStoragePersister, CACHE_MAX_AGE, queryClient } from "@/lib/queryClient";
 
 export const unstable_settings = {
