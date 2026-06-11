@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, View } from "react-native";
 
+import { Ionicons } from "@/components/icons";
 import { ThemedText } from "@/components/themed-text";
 import { estadoDetalleStyle } from "@/constants/estadoComanda";
-import { Fonts, Gray, Radius, Spacing } from "@/constants/theme";
+import { Fonts, Gray, Radius, Spacing, Success } from "@/constants/theme";
 import { formatHora } from "@/lib/format";
 import { useTheme } from "@/hooks/use-theme";
 import type { ComandaConDetalles } from "@/hooks/useComandas";
@@ -14,6 +15,8 @@ interface Props {
   detallesVisibles: DetalleComanda[];
   /** Navega a la carta para agregar nuevos ítems a la comanda. */
   onAdd?: () => void;
+  /** Cambia el estado de un ítem ENTREGADO_PARA_DESPACHAR a ENTREGADO_AL_CLIENTE. */
+  onDespachar?: (detalle: DetalleComanda) => void;
 }
 
 function formatMonto(monto: number): string {
@@ -81,7 +84,7 @@ function JaggedBorder({ surfaceColor, bgColor, borderColor }: { surfaceColor: st
 }
 
 /** Tarjeta de recibo para una comanda: cada DetalleComanda como fila con punto de color. */
-export function ComandaDetalleRecibo({ comanda, detallesVisibles, onAdd }: Props) {
+export function ComandaDetalleRecibo({ comanda, detallesVisibles, onAdd, onDespachar }: Props) {
   const theme = useTheme();
 
   const total = comanda.detalles.reduce(
@@ -125,18 +128,37 @@ export function ComandaDetalleRecibo({ comanda, detallesVisibles, onAdd }: Props
 
         <View style={styles.items}>
           {detallesVisibles.map((detalle) => {
-            const dot = estadoDetalleStyle(detalle.estadoDetalleComanda).dot;
+            const { dot } = estadoDetalleStyle(detalle.estadoDetalleComanda);
+            const esDespachar = detalle.estadoDetalleComanda === "ENTREGADO_PARA_DESPACHAR";
             return (
-              <View key={detalle.id} style={styles.fila}>
+              <Pressable
+                key={detalle.id}
+                onPress={esDespachar && onDespachar ? () => onDespachar(detalle) : undefined}
+                style={({ pressed }) => [
+                  styles.fila,
+                  esDespachar && styles.filaDespachar,
+                  esDespachar && pressed && styles.filaDespacharPressed,
+                ]}
+              >
                 <View style={[styles.dot, { backgroundColor: dot }]} />
                 <ThemedText type="small" style={styles.nombre} numberOfLines={1}>
-                  {detalle.nombre ?? "Pedido"} x{detalle.cantidad}
+                  {detalle.nombre ?? "Pedido"}
                 </ThemedText>
+                {detalle.cantidad > 1 && (
+                  <View style={[styles.cantBadge, { backgroundColor: Success[50] }]}>
+                    <ThemedText style={[styles.cantText, { color: Success[600] }]}>
+                      ×{detalle.cantidad}
+                    </ThemedText>
+                  </View>
+                )}
                 <View style={styles.guiones} />
                 <ThemedText style={{fontSize: 16, fontWeight: 500}} themeColor="textSecondary">
                   {formatMonto(detalle.precio * detalle.cantidad)}
                 </ThemedText>
-              </View>
+                {esDespachar && onDespachar && (
+                  <Ionicons name="checkmark-circle-outline" size={22} color={Success[500]} />
+                )}
+              </Pressable>
             );
           })}
 
@@ -227,9 +249,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.two,
     marginVertical: 4,
+    borderRadius: Radius.md,
+    paddingVertical: 2,
+    paddingHorizontal: 2,
+  },
+  filaDespachar: {
+    backgroundColor: Success[50],
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.two,
+  },
+  filaDespacharPressed: {
+    opacity: 0.6,
   },
   dot: { width: 11, height: 11, borderRadius: Radius.full, flexShrink: 0 },
   nombre: { fontFamily: Fonts.regular, flexShrink: 1, fontSize: 16 },
+  cantBadge: {
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.one + 2,
+    paddingVertical: 1,
+    flexShrink: 0,
+  },
+  cantText: { fontSize: 12, fontFamily: Fonts.bold },
   guiones: {
     flex: 1,
     borderBottomWidth: 1.5,

@@ -21,7 +21,7 @@ export default function ComandaDetalle() {
   const theme = useTheme();
   const cart = useCart();
   const { mesaId, numero } = useLocalSearchParams<{ mesaId: string; numero?: string }>();
-  const { comandas, loading, refreshing, error, refresh } = useComandas(mesaId);
+  const { comandas, loading, refreshing, error, refresh, despacharDetalle } = useComandas(mesaId);
 
   const [filtro, setFiltro] = useState<FiltroComanda>("TODAS");
 
@@ -93,7 +93,7 @@ export default function ComandaDetalle() {
               <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.brand} />
             }
           >
-            <ComandaDetalleRecibo comanda={comanda} detallesVisibles={detallesVisibles} onAdd={handleAdd} />
+            <ComandaDetalleRecibo comanda={comanda} detallesVisibles={detallesVisibles} onAdd={handleAdd} onDespachar={despacharDetalle} />
           </ScrollView>
         )}
 
