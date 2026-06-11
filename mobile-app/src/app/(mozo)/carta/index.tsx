@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,6 +12,8 @@ import { useCart } from "@/context/CartContext";
 import { useCartas } from "@/hooks/useCartas";
 import { useTheme } from "@/hooks/use-theme";
 import type { Carta } from "@/types/carta";
+
+const logo = require("../../../../assets/images/logo.png");
 
 export default function CartasScreen() {
   const router = useRouter();
@@ -54,6 +57,11 @@ export default function CartasScreen() {
             keyExtractor={(carta) => carta.id}
             contentContainerStyle={styles.list}
             renderItem={({ item }) => <CartaListItem carta={item} onPress={abrirCarta} />}
+            ListHeaderComponent={
+              <View style={styles.hero}>
+                <Image source={logo} style={styles.logo} contentFit="contain" accessibilityLabel="Logo" />
+              </View>
+            }
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.brand} />
             }
@@ -88,4 +96,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.two + 2,
     borderRadius: Radius.md,
   },
+  hero: { alignItems: "center", paddingVertical: Spacing.four },
+  logo: { width: 132, height: 140 },
 });

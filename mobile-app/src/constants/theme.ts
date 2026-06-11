@@ -104,9 +104,9 @@ export const Spacing = {
 } as const;
 
 export const Radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
+  sm: 6,
+  md: 9,
+  lg: 12,
   full: 9999,
 } as const;
 

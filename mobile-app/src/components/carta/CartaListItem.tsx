@@ -23,7 +23,7 @@ export function CartaListItem({ carta, onPress }: Props) {
         { backgroundColor: theme.surface, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
       ]}
     >
-      <ThemedText type="smallBold">{carta.nombre ?? "Carta"}</ThemedText>
+      <ThemedText style={{ fontSize: 20, fontWeight: "500" }}>{carta.nombre ?? "Carta"}</ThemedText>
       <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
     </Pressable>
   );
