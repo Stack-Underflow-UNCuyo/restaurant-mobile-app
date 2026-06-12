@@ -358,12 +358,8 @@ public class RestaurantDataInitializer implements CommandLineRunner {
             detalleMenu.setCantidad(seed.cantidad());
             detalleMenu.setMenu(menu);
 
-            DetalleMenuArticulo detalleMenuArticulo = new DetalleMenuArticulo();
-            detalleMenuArticulo.setCantidad(seed.cantidad());
-            detalleMenuArticulo.setDetalleMenu(detalleMenu);
-            detalleMenuArticulo.setArticulo(articulos.get(seed.articulo()));
-
-            detalleMenu.setArticulos(new ArrayList<>(List.of(detalleMenuArticulo)));
+            detalleMenu.setArticulo(articulos.get(seed.articulo()));
+            detalleMenu.setArticuloCantidad(seed.cantidad());
             detallesMenu.add(detalleMenu);
         }
         menu.setDetallesMenu(detallesMenu);
