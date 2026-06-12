@@ -1,8 +1,5 @@
 package com.cm.restaurant_server.business.logic.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cm.restaurant_server.business.domain.dto.detallemenu.DetalleMenuCreateDto;
 import com.cm.restaurant_server.business.domain.entity.Articulo;
 import com.cm.restaurant_server.business.domain.entity.DetalleMenu;
-import com.cm.restaurant_server.business.domain.entity.DetalleMenuArticulo;
 import com.cm.restaurant_server.business.repository.ArticuloRepository;
 import com.cm.restaurant_server.business.repository.DetalleMenuRepository;
 
@@ -33,7 +29,7 @@ public class DetalleMenuService extends BaseService<DetalleMenu> {
         if (entity.getCantidad() <= 0) {
             throw new Exception("La cantidad debe ser mayor a cero");
         }
-        if (entity.getArticulos() == null || entity.getArticulos().isEmpty()) {
+        if (entity.getArticulo() == null) {
             throw new Exception("Debe tener un articulo relacionado");
         }
     }
@@ -44,17 +40,12 @@ public class DetalleMenuService extends BaseService<DetalleMenu> {
         detalle.setNombre(dto.getNombre());
         detalle.setCantidad(dto.getCantidad());
 
-        List<DetalleMenuArticulo> articulosList = new ArrayList<>();
         if (dto.getArticuloId() != null) {
             Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(dto.getArticuloId())
                     .orElseThrow(() -> new RuntimeException("Artículo no encontrado: " + dto.getArticuloId()));
-            DetalleMenuArticulo dma = new DetalleMenuArticulo();
-            dma.setDetalleMenu(detalle);
-            dma.setArticulo(articulo);
-            dma.setCantidad(dto.getArticuloCantidad() > 0 ? dto.getArticuloCantidad() : dto.getCantidad());
-            articulosList.add(dma);
+            detalle.setArticulo(articulo);
+            detalle.setArticuloCantidad(dto.getArticuloCantidad() > 0 ? dto.getArticuloCantidad() : dto.getCantidad());
         }
-        detalle.setArticulos(articulosList);
         return save(detalle);
     }
 
@@ -64,15 +55,11 @@ public class DetalleMenuService extends BaseService<DetalleMenu> {
         detalle.setNombre(dto.getNombre());
         detalle.setCantidad(dto.getCantidad());
 
-        detalle.getArticulos().clear();
         if (dto.getArticuloId() != null) {
             Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(dto.getArticuloId())
                     .orElseThrow(() -> new RuntimeException("Artículo no encontrado: " + dto.getArticuloId()));
-            DetalleMenuArticulo dma = new DetalleMenuArticulo();
-            dma.setDetalleMenu(detalle);
-            dma.setArticulo(articulo);
-            dma.setCantidad(dto.getArticuloCantidad() > 0 ? dto.getArticuloCantidad() : dto.getCantidad());
-            detalle.getArticulos().add(dma);
+            detalle.setArticulo(articulo);
+            detalle.setArticuloCantidad(dto.getArticuloCantidad() > 0 ? dto.getArticuloCantidad() : dto.getCantidad());
         }
         return update(id, detalle);
     }

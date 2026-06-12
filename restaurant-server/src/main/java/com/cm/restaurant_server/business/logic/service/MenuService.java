@@ -10,7 +10,6 @@ import com.cm.restaurant_server.business.domain.dto.detallemenu.DetalleMenuCreat
 import com.cm.restaurant_server.business.domain.dto.menu.MenuCreateDto;
 import com.cm.restaurant_server.business.domain.entity.Articulo;
 import com.cm.restaurant_server.business.domain.entity.DetalleMenu;
-import com.cm.restaurant_server.business.domain.entity.DetalleMenuArticulo;
 import com.cm.restaurant_server.business.domain.entity.Menu;
 import com.cm.restaurant_server.business.repository.ArticuloRepository;
 import com.cm.restaurant_server.business.repository.DetalleMenuRepository;
@@ -69,18 +68,13 @@ public class MenuService extends BaseService<Menu> {
                 detalle.setCantidad(detalleDto.getCantidad());
                 detalle.setMenu(menuGuardado);
 
-                List<DetalleMenuArticulo> articulosList = new ArrayList<>();
                 if (detalleDto.getArticuloId() != null) {
                     Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(detalleDto.getArticuloId())
                             .orElseThrow(() -> new RuntimeException(
                                     "Artículo no encontrado: " + detalleDto.getArticuloId()));
-                    DetalleMenuArticulo dma = new DetalleMenuArticulo();
-                    dma.setDetalleMenu(detalle);
-                    dma.setArticulo(articulo);
-                    dma.setCantidad(detalleDto.getArticuloCantidad() > 0 ? detalleDto.getArticuloCantidad() : detalleDto.getCantidad());
-                    articulosList.add(dma);
+                    detalle.setArticulo(articulo);
+                    detalle.setArticuloCantidad(detalleDto.getArticuloCantidad() > 0 ? detalleDto.getArticuloCantidad() : detalleDto.getCantidad());
                 }
-                detalle.setArticulos(articulosList);
                 detalleMenuRepository.save(detalle);
             }
         }
@@ -114,18 +108,13 @@ public class MenuService extends BaseService<Menu> {
                 detalle.setCantidad(detalleDto.getCantidad());
                 detalle.setMenu(menu);
 
-                List<DetalleMenuArticulo> articulosList = new ArrayList<>();
                 if (detalleDto.getArticuloId() != null) {
                     Articulo articulo = articuloRepository.findByIdAndEliminadoFalse(detalleDto.getArticuloId())
                             .orElseThrow(() -> new RuntimeException(
                                     "Artículo no encontrado: " + detalleDto.getArticuloId()));
-                    DetalleMenuArticulo dma = new DetalleMenuArticulo();
-                    dma.setDetalleMenu(detalle);
-                    dma.setArticulo(articulo);
-                    dma.setCantidad(detalleDto.getArticuloCantidad() > 0 ? detalleDto.getArticuloCantidad() : detalleDto.getCantidad());
-                    articulosList.add(dma);
+                    detalle.setArticulo(articulo);
+                    detalle.setArticuloCantidad(detalleDto.getArticuloCantidad() > 0 ? detalleDto.getArticuloCantidad() : detalleDto.getCantidad());
                 }
-                detalle.setArticulos(articulosList);
                 menu.getDetallesMenu().add(detalle);
             }
         }

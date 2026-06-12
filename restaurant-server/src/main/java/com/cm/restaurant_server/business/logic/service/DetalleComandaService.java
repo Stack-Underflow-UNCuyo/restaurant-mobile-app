@@ -46,8 +46,8 @@ public class DetalleComandaService extends BaseService<DetalleComanda> {
             descontarArticulo(ai.getArticulo(), dc.getCantidad());
         } else if (dsc instanceof DetalleSeccionCartaMenu dm) {
             for (DetalleMenu detalleMenu : dm.getMenu().getDetallesMenu()) {
-                for (DetalleMenuArticulo dma : detalleMenu.getArticulos()) {
-                    descontarArticulo(dma.getArticulo(), dma.getCantidad() * dc.getCantidad());
+                if (detalleMenu.getArticulo() != null) {
+                    descontarArticulo(detalleMenu.getArticulo(), detalleMenu.getArticuloCantidad() * dc.getCantidad());
                 }
             }
         }

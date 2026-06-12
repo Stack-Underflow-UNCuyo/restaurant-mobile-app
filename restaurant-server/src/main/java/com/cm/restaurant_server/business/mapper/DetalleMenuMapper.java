@@ -15,13 +15,13 @@ public interface DetalleMenuMapper
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "menu", ignore = true)
-    @Mapping(target = "articulos", ignore = true)
+    @Mapping(target = "articulo", ignore = true)
     DetalleMenu toEntityCreate(DetalleMenuCreateDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "menu", ignore = true)
-    @Mapping(target = "articulos", ignore = true)
+    @Mapping(target = "articulo", ignore = true)
     DetalleMenu toUpdate(@MappingTarget DetalleMenu entity, DetalleMenuCreateDto dto);
 }
