@@ -12,58 +12,43 @@ import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { useModal } from "@/hooks/useModal";
-import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
+import { PencilIcon, PlusIcon, TrashBinIcon, ListIcon } from "@/icons/index";
 import DeletionConfirmationPopUp from "@/components/ui/DeletionConfirmationPopUp";
 import Spinner from "@/components/ui/Spinner";
-import type { DetalleMenu, Menu } from "@/types/entities";
+import DetalleMenuPanel from "./DetalleMenuPanel";
+import type { Menu } from "@/types/entities";
 import { menuService } from "@/services/menuService";
 import toast from "react-hot-toast";
-import Select from "../form/Select";
-import { detalleMenuService } from "@/services/detalleMenuService";
-
-type DetalleFormItem = {
-  detalleMenuId: string;
-  cantidad: number;
-};
 
 type FormData = {
   nombre: string;
   precio: number;
-  detallesMenu: DetalleFormItem[];
 };
 
 const emptyForm: FormData = {
   nombre: "",
   precio: 0,
-  detallesMenu: [],
 };
 
-const emptyDetalle: DetalleFormItem = { detalleMenuId: "", cantidad: 1 };
-
-const noErrors = { nombre: false, precio: false, detalles: false };
+const noErrors = { nombre: false, precio: false };
 
 export default function MenuTable() {
   const [items, setItems] = useState<Menu[]>([]);
-  const [detallesMenu, setDetallesMenu] = useState<DetalleMenu[]>([]);
-  const [detalleMenuOptions, setDetalleMenuOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(emptyForm);
-  const [pendingDetalle, setPendingDetalle] = useState<DetalleFormItem>(emptyDetalle);
   const [errors, setErrors] = useState({ ...noErrors });
+  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
   const { isOpen, openModal, closeModal } = useModal();
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
+  const { isOpen: isDetalleOpen, openModal: openDetalle, closeModal: closeDetalle } = useModal();
 
   useEffect(() => {
-    Promise.all([menuService.getAll(), detalleMenuService.getAll()])
-      .then(([menus, arts]) => {
-        setItems(menus);
-        setDetallesMenu(arts);
-        setDetalleMenuOptions(arts.map((a) => ({ value: String(a.id), label: a.nombre })));
-      })
+    menuService.getAll()
+      .then(setItems)
       .catch(() => toast.error("Error al cargar los datos"))
       .finally(() => setLoading(false));
   }, []);
@@ -71,7 +56,6 @@ export default function MenuTable() {
   const openAdd = () => {
     setEditingId(null);
     setFormData(emptyForm);
-    setPendingDetalle(emptyDetalle);
     setErrors({ ...noErrors });
     openModal();
   };
@@ -81,31 +65,14 @@ export default function MenuTable() {
     setFormData({
       nombre: item.nombre ?? "",
       precio: item.precio,
-      detallesMenu: (item.detallesMenu ?? []).map((d) => ({
-        detalleMenuId: String(d.articulo?.id ?? ""),
-        cantidad: d.cantidad,
-      })),
     });
-    setPendingDetalle(emptyDetalle);
     setErrors({ ...noErrors });
     openModal();
   };
 
-  const addDetalle = () => {
-    if (!pendingDetalle.detalleMenuId || pendingDetalle.cantidad <= 0) return;
-    setFormData((prev) => ({
-      ...prev,
-      detallesMenu: [...prev.detallesMenu, pendingDetalle],
-    }));
-    setPendingDetalle(emptyDetalle);
-    setErrors((prev) => ({ ...prev, detalles: false }));
-  };
-
-  const removeDetalle = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      detallesMenu: prev.detallesMenu.filter((_, i) => i !== index),
-    }));
+  const openDetalles = (id: string) => {
+    setSelectedMenuId(id);
+    openDetalle();
   };
 
   const requestDelete = (id: string) => {
@@ -132,7 +99,6 @@ export default function MenuTable() {
     const newErrors = {
       nombre: !formData.nombre.trim(),
       precio: !formData.precio || formData.precio <= 0,
-      detalles: editingId !== null && formData.detallesMenu.length === 0,
     };
 
     if (Object.values(newErrors).some(Boolean)) {
@@ -143,14 +109,6 @@ export default function MenuTable() {
     const payload = {
       nombre: formData.nombre.trim(),
       precio: formData.precio,
-      detallesMenu: formData.detallesMenu.map((d) => {
-        const detalle = detallesMenu.find((a) => String(a.id) === d.detalleMenuId);
-        return {
-          nombre: detalle?.nombre ?? "",
-          cantidad: d.cantidad,
-          articuloId: detalle?.articulo ? String(detalle.articulo.id) : "",
-        };
-      }),
     };
 
     setSaving(true);
@@ -186,7 +144,7 @@ export default function MenuTable() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                {["Id", "Nombre", "Precio", "Detalles", "Acciones"].map((header) => (
+                {["Id", "Nombre", "Precio", "Acciones"].map((header) => (
                   <TableCell
                     key={header}
                     isHeader
@@ -218,15 +176,15 @@ export default function MenuTable() {
                     <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">
                       ${item.precio}
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">
-                      {(item.detallesMenu ?? []).length > 0
-                        ? (item.detallesMenu ?? [])
-                            .map((d) => `${d.articulo?.nombre ?? "?"} ×${d.cantidad}`)
-                            .join(", ")
-                        : "-"}
-                    </TableCell>
                     <TableCell className="px-5 py-4">
                       <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => openDetalles(item.id)}
+                          className="text-gray-400 hover:text-brand-500 transition-colors"
+                          title="Ver detalles"
+                        >
+                          <ListIcon />
+                        </button>
                         <button
                           onClick={() => openEdit(item)}
                           className="text-gray-400 hover:text-brand-500 transition-colors"
@@ -257,12 +215,11 @@ export default function MenuTable() {
         description="¿Estás seguro de que deseas eliminar este menú? Esta acción no se puede deshacer."
       />
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-lg p-6">
+      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-md p-6">
         <h4 className="mb-6 text-lg font-semibold text-gray-800 dark:text-white/90">
           {editingId !== null ? "Editar Menú" : "Agregar Menú"}
         </h4>
         <div className="space-y-5">
-          {/* Nombre */}
           <div>
             <Label htmlFor="menu-nombre">Nombre</Label>
             <Input
@@ -277,7 +234,6 @@ export default function MenuTable() {
             />
           </div>
 
-          {/* Precio */}
           <div>
             <Label htmlFor="menu-precio">Precio</Label>
             <Input
@@ -292,66 +248,6 @@ export default function MenuTable() {
             />
           </div>
 
-          {/* Detalles del menú */}
-          <div>
-            <Label>Detalles del menú</Label>
-
-            {formData.detallesMenu.length > 0 && (
-              <ul className="mb-3 divide-y divide-gray-100 rounded-lg border border-gray-200 dark:border-white/[0.08] dark:divide-white/[0.05]">
-                {formData.detallesMenu.map((d, i) => {
-                  const label = detalleMenuOptions.find((o) => o.value === d.detalleMenuId)?.label ?? d.detalleMenuId;
-                  return (
-                    <li key={i} className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-white/80">
-                      <span>{label} <span className="text-gray-400">×{d.cantidad}</span></span>
-                      <button
-                        type="button"
-                        onClick={() => removeDetalle(i)}
-                        className="text-gray-400 hover:text-error-500 transition-colors"
-                      >
-                        <TrashBinIcon />
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <Select
-                  options={detalleMenuOptions}
-                  placeholder="Seleccionar Detalles del Menu"
-                  defaultValue={pendingDetalle.detalleMenuId}
-                  onChange={(value) => setPendingDetalle((prev) => ({ ...prev, detalleMenuId: value }))}
-                />
-              </div>
-              <div className="w-24">
-                <Input
-                  placeholder="Cant."
-                  defaultValue={pendingDetalle.cantidad}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setPendingDetalle((prev) => ({ ...prev, cantidad: Number(e.target.value) }))
-                  }
-                />
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={addDetalle}
-                disabled={!pendingDetalle.detalleMenuId || pendingDetalle.cantidad <= 0}
-              >
-                Agregar
-              </Button>
-            </div>
-
-            {errors.detalles && (
-              <p className="mt-1.5 text-xs text-error-500">
-                El menú debe tener al menos un detalle
-              </p>
-            )}
-          </div>
-
-          {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-white/[0.05]">
             <Button variant="outline" size="sm" onClick={closeModal} disabled={saving}>
               Cancelar
@@ -361,6 +257,13 @@ export default function MenuTable() {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      <Modal key={`detalles-${selectedMenuId}`} isOpen={isDetalleOpen} onClose={closeDetalle} className="max-w-3xl p-6">
+        <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
+          Detalles del menú #{selectedMenuId?.slice(0, 8) ?? ""}
+        </h4>
+        {selectedMenuId && <DetalleMenuPanel menuId={selectedMenuId} />}
       </Modal>
     </>
   );

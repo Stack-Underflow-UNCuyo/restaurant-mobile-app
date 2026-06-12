@@ -12,7 +12,7 @@ import Button from "@/components/ui/button/Button";
 import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
 import { useModal } from "@/hooks/useModal";
-import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
+import { PencilIcon, PlusIcon, TrashBinIcon, ListIcon } from "@/icons/index";
 import DeletionConfirmationPopUp from "@/components/ui/DeletionConfirmationPopUp";
 import Spinner from "@/components/ui/Spinner";
 import DetalleComandaPanel from "@/components/comanda/DetalleComandaPanel";
@@ -71,14 +71,6 @@ function isEstadoTerminal(estado: EstadoComanda): boolean {
   return estado === EstadoComanda.FINALIZADA
     || estado === EstadoComanda.ANULADA
     || estado === EstadoComanda.ENTREGA_FALLIDA;
-}
-
-function DetallesIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5h6M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
 }
 
 export default function ComandaRestaurantTable() {
@@ -249,7 +241,7 @@ export default function ComandaRestaurantTable() {
                         className="text-gray-400 hover:text-brand-500 transition-colors"
                         title="Ver detalles"
                       >
-                        <DetallesIcon />
+                        <ListIcon />
                       </button>
                       <button
                         onClick={() => openReseniasHandler(item.id)}

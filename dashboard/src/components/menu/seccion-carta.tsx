@@ -6,40 +6,44 @@ import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { useModal } from "@/hooks/useModal";
-import { PencilIcon, PlusIcon, TrashBinIcon } from "@/icons/index";
+import { PencilIcon, PlusIcon, TrashBinIcon, ListIcon } from "@/icons/index";
 import DeletionConfirmationPopUp from "@/components/ui/DeletionConfirmationPopUp";
 import Spinner from "@/components/ui/Spinner";
 import Select from "@/components/form/Select";
-import type { Categoria, SeccionCarta } from "@/types/entities";
+import DetalleSeccionCartaPanel from "./DetalleSeccionCartaPanel";
+import type { Categoria, SeccionCarta, DetalleSeccionCarta, DetalleSeccionCartaMenu, DetalleSeccionCartaArticuloIndividual } from "@/types/entities";
+
+type AnyDetalleSeccionCarta = DetalleSeccionCarta | DetalleSeccionCartaMenu | DetalleSeccionCartaArticuloIndividual;
 import { seccionCartaService } from "@/services/seccionCartaService";
 import { categoriaService } from "@/services/categoriaService";
 import toast from "react-hot-toast";
 
-type FormData = { nombre: string; categoriaNombre: string; seccionesCartaId: string[] };
-const emptyForm: FormData = { nombre: "", categoriaNombre: "", seccionesCartaId: [] };
-const noErrors = { nombre: false, categoriaNombre: false, seccionesCartaId: false };
+type FormData = { nombre: string; categoriaNombre: string };
+const emptyForm: FormData = { nombre: "", categoriaNombre: "" };
+const noErrors = { nombre: false, categoriaNombre: false };
 
 export default function SeccionCartaTable() {
   const [items, setItems] = useState<SeccionCarta[]>([]);
   const [categoriaOptions, setCategoriaOptions] = useState<{ value: string; label: string }[]>([]);
-  const [seccionesOptions, setSeccionesOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [pendingSeccionId, setPendingSeccionId] = useState("");
   const [formData, setFormData] = useState<FormData>(emptyForm);
   const [errors, setErrors] = useState({ ...noErrors });
+
   const { isOpen, openModal, closeModal } = useModal();
   const { isOpen: isConfirmOpen, openModal: openConfirm, closeModal: closeConfirm } = useModal();
+  const { isOpen: isDetalleOpen, openModal: openDetalleModal, closeModal: closeDetalleModal } = useModal();
+
+  const [selectedSeccion, setSelectedSeccion] = useState<SeccionCarta | null>(null);
 
   useEffect(() => {
-    Promise.all([seccionCartaService.getAll(), categoriaService.getAll(), seccionCartaService.getAll()])
-      .then(([secciones, categorias, seccionesCarta]) => {
+    Promise.all([seccionCartaService.getAll(), categoriaService.getAll()])
+      .then(([secciones, categorias]) => {
         setItems(secciones);
         setCategoriaOptions(categorias.map((c: Categoria) => ({ value: c.nombre, label: c.nombre })));
-        setSeccionesOptions(seccionesCarta.map((s: SeccionCarta) => ({ value: String(s.id), label: s.nombre })));
       })
       .catch(() => toast.error("Error al cargar las secciones de carta"))
       .finally(() => setLoading(false));
@@ -52,21 +56,14 @@ export default function SeccionCartaTable() {
     setFormData({
       nombre: item.nombre ?? "",
       categoriaNombre: item.categoria?.nombre ?? "",
-      seccionesCartaId: (item.detallesSeccionCarta ?? []).map((a) => String(a.id)),
     });
     setErrors({ ...noErrors });
     openModal();
   };
 
-  const addSeccion = () => {
-    if (!pendingSeccionId || formData.seccionesCartaId.includes(pendingSeccionId)) return;
-    setFormData((prev) => ({ ...prev, articuloIds: [...prev.seccionesCartaId, pendingSeccionId] }));
-    setPendingSeccionId("");
-    setErrors((prev) => ({ ...prev, articulos: false }));
-  };
-
-  const removeSeccion = (id: string) => {
-    setFormData((prev) => ({ ...prev, articuloIds: prev.seccionesCartaId.filter((a) => a !== id) }));
+  const openDetalle = (item: SeccionCarta) => {
+    setSelectedSeccion(item);
+    openDetalleModal();
   };
 
   const requestDelete = (id: string) => { setPendingDeleteId(id); openConfirm(); };
@@ -86,8 +83,18 @@ export default function SeccionCartaTable() {
     }
   };
 
+  const handleDetalleChange = (detalles: AnyDetalleSeccionCarta[]) => {
+    if (!selectedSeccion) return;
+    setItems((prev) =>
+      prev.map((s) =>
+        s.id === selectedSeccion.id ? { ...s, detallesSeccionCarta: detalles } : s
+      )
+    );
+    setSelectedSeccion((prev) => (prev ? { ...prev, detallesSeccionCarta: detalles } : prev));
+  };
+
   const handleSubmit = async () => {
-    const newErrors = { nombre: !formData.nombre.trim(), categoriaNombre: false, seccionesCartaId: !formData.seccionesCartaId };
+    const newErrors = { nombre: !formData.nombre.trim(), categoriaNombre: false };
     if (Object.values(newErrors).some(Boolean)) { setErrors(newErrors); return; }
     setSaving(true);
     try {
@@ -134,6 +141,7 @@ export default function SeccionCartaTable() {
                   <TableCell className="px-5 py-4 text-gray-800 text-theme-sm dark:text-white/90">{item.categoria?.nombre ?? "-"}</TableCell>
                   <TableCell className="px-5 py-4">
                     <div className="flex items-center gap-3">
+                      <button onClick={() => openDetalle(item)} className="text-gray-400 hover:text-brand-500 transition-colors" title="Gestionar detalles"><ListIcon /></button>
                       <button onClick={() => openEdit(item)} className="text-gray-400 hover:text-brand-500 transition-colors"><PencilIcon /></button>
                       <button onClick={() => requestDelete(item.id)} className="text-gray-400 hover:text-error-500 transition-colors"><TrashBinIcon /></button>
                     </div>
@@ -167,37 +175,26 @@ export default function SeccionCartaTable() {
             <Select options={[{ value: "", label: "Sin categoría" }, ...categoriaOptions]} placeholder="Seleccionar categoría" defaultValue={formData.categoriaNombre}
               onChange={(value) => { setFormData((prev) => ({ ...prev, categoriaNombre: value })); }} />
           </div>
-
-          <div>
-            <Label>Secciones Carta</Label>
-            {formData.seccionesCartaId.length > 0 && (
-              <ul className="mb-3 divide-y divide-gray-100 rounded-lg border border-gray-200 dark:border-white/[0.08] dark:divide-white/[0.05]">
-                {formData.seccionesCartaId.map((id) => {
-                  const label = seccionesOptions.find((o) => o.value === id)?.label ?? id;
-                  return (
-                    <li key={id} className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-white/80">
-                      <span>{label}</span>
-                      <button type="button" onClick={() => removeSeccion(id)} className="text-gray-400 hover:text-error-500 transition-colors"><TrashBinIcon /></button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <Select options={seccionesOptions.filter((o) => !formData.seccionesCartaId.includes(o.value))}
-                  placeholder="Seleccionar Seccion" defaultValue={pendingSeccionId}
-                  onChange={setPendingSeccionId} />
-              </div>
-              <Button size="sm" variant="outline" onClick={addSeccion} disabled={!pendingSeccionId}>Agregar</Button>
-            </div>
-            {errors.seccionesCartaId && <p className="mt-1.5 text-xs text-error-500">Debe agregar al menos una seccion</p>}
-          </div>
-
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-white/[0.05]">
             <Button variant="outline" size="sm" onClick={closeModal} disabled={saving}>Cancelar</Button>
             <Button size="sm" onClick={handleSubmit} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
           </div>
+        </div>
+      </Modal>
+
+      <Modal isOpen={isDetalleOpen} onClose={closeDetalleModal} className="max-w-2xl p-6">
+        <h4 className="mb-6 text-lg font-semibold text-gray-800 dark:text-white/90">
+          Detalles de {selectedSeccion?.nombre ?? "Sección"}
+        </h4>
+        {selectedSeccion && (
+          <DetalleSeccionCartaPanel
+            seccionCartaId={selectedSeccion.id}
+            items={selectedSeccion.detallesSeccionCarta ?? []}
+            onItemsChange={handleDetalleChange}
+          />
+        )}
+        <div className="flex justify-end mt-6 pt-4 border-t border-gray-100 dark:border-white/[0.05]">
+          <Button variant="outline" size="sm" onClick={closeDetalleModal}>Cerrar</Button>
         </div>
       </Modal>
     </>

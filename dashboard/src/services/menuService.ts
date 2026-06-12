@@ -13,7 +13,7 @@ export type MenuPayload = {
   nombre: string;
   descripcion?: string;
   precio: number;
-  detallesMenu: DetalleMenuPayload[];
+  detallesMenu?: DetalleMenuPayload[];
   imagen?: { nombre: string; mime: string; contenido: string; tipoImagen: string };
 };
 

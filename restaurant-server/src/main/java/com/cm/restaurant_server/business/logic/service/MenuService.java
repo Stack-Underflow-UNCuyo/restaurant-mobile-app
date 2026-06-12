@@ -14,6 +14,9 @@ import com.cm.restaurant_server.business.domain.entity.Menu;
 import com.cm.restaurant_server.business.repository.ArticuloRepository;
 import com.cm.restaurant_server.business.repository.DetalleMenuRepository;
 import com.cm.restaurant_server.business.repository.MenuRepository;
+import com.cm.restaurant_server.business.repository.ArticuloRepository;
+import com.cm.restaurant_server.business.repository.DetalleMenuRepository;
+import com.cm.restaurant_server.business.repository.MenuRepository;
 
 @Service
 public class MenuService extends BaseService<Menu> {
@@ -22,16 +25,19 @@ public class MenuService extends BaseService<Menu> {
     private final DetalleMenuRepository detalleMenuRepository;
     private final ArticuloRepository articuloRepository;
     private final ImagenService imagenService;
+    private final DetalleMenuService detalleMenuService;
 
     public MenuService(MenuRepository menuRepository,
             DetalleMenuRepository detalleMenuRepository,
             ArticuloRepository articuloRepository,
-            ImagenService imagenService) {
+            ImagenService imagenService,
+            DetalleMenuService detalleMenuService) {
         super(menuRepository);
         this.menuRepository = menuRepository;
         this.detalleMenuRepository = detalleMenuRepository;
         this.articuloRepository = articuloRepository;
         this.imagenService = imagenService;
+        this.detalleMenuService = detalleMenuService;
     }
 
     @Override
@@ -39,9 +45,11 @@ public class MenuService extends BaseService<Menu> {
         if (entity.getPrecio() <= 0) {
             throw new Exception("El precio del menú debe ser mayor a cero");
         }
-        if (caso == CasoValidar.UPDATE && (entity.getDetallesMenu() == null || entity.getDetallesMenu().isEmpty())) {
-            throw new Exception("El menú debe tener al menos un detalle");
-        }
+    }
+
+    public List<DetalleMenu> listarDetalleMenu(String menuId) throws Exception {
+        Menu menu = findById(menuId);
+        return menu.getDetallesMenu();
     }
 
     @Transactional
@@ -99,9 +107,8 @@ public class MenuService extends BaseService<Menu> {
             throw new RuntimeException("Error al guardar la imagen", e);
         }
 
-        menu.getDetallesMenu().clear();
-
         if (dto.getDetallesMenu() != null) {
+            menu.getDetallesMenu().clear();
             for (DetalleMenuCreateDto detalleDto : dto.getDetallesMenu()) {
                 DetalleMenu detalle = new DetalleMenu();
                 detalle.setNombre(detalleDto.getNombre());
