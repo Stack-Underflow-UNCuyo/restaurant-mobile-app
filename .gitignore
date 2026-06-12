@@ -1,6 +1,6 @@
 .env
-# .agents/
-# .claude/
-# AGENTS.md
-# CLAUDE.md
-# skills-locs.json
+.agents/
+.claude/
+AGENTS.md
+CLAUDE.md
+skills-locs.json
