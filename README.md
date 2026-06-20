@@ -25,116 +25,15 @@ Additionally, the system includes a Next.js dashboard for administration and a S
   <img width="1918" height="884" alt="Captura de pantalla 2026-06-16 153707" src="https://github.com/user-attachments/assets/fd80f468-7795-41ab-83bc-060705617735" />
 </p>
 
-
-
 ---
 
-## Prerequisites
+## Sub-projects
 
-| Tool       | Version |
-| ---------- | ------- |
-| Java       | 21      |
-| Maven      | 3.8+    |
-| Node.js    | 18+     |
-| PostgreSQL | 15+     |
+This is a monorepo with four sub-projects. See each folder's README for setup, tech stack, requirements and environment variables:
 
----
-
-## Backend (Spring Boot)
-
-### 1. Create the database
-
-```sql
-CREATE DATABASE restaurant;
-```
-
-### 2. Set environment variables
-
-Set the following variables in your shell before running the server.
-
-**PowerShell:**
-
-```powershell
-$env:DB_URL      = "jdbc:postgresql://localhost:5432/restaurant"
-$env:DB_USER     = "postgres"
-$env:DB_PASSWORD = "yourpassword"
-$env:SECRET_KEY  = "any-long-random-string-at-least-32-chars"
-```
-
-**Bash / zsh:**
-
-```bash
-export DB_URL="jdbc:postgresql://localhost:5432/restaurant"
-export DB_USER="postgres"
-export DB_PASSWORD="yourpassword"
-export SECRET_KEY="any-long-random-string-at-least-32-chars"
-```
-
-### 3. Run
-
-```bash
-cd restaurant-server
-mvn spring-boot:run
-```
-
-The server starts on **http://localhost:8081**.  
-On first boot a default admin account is created automatically:
-
-| Field    | Value                |
-| -------- | -------------------- |
-| Email    | admin@restaurant.com |
-| Password | 1234                 |
-
-## Frontend (Next.js)
-
-### 1. Install dependencies
-
-```bash
-cd dashboard
-npm install
-```
-
-### 2. Configure environment
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local` if the backend runs on a different host or port:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8081
-```
-
-### 3. Run
-
-```bash
-npm run dev
-```
-
-The dashboard starts on **http://localhost:3000** and redirects to `/signin` until you log in.
-
----
-
-## Running tests
-
-### Backend
-
-```bash
-cd restaurant-server
-mvn test
-```
-
-Tests run against an in-memory H2 database — no environment variables or running PostgreSQL required.
-
----
-
-## Project structure
-
-```
-restaurant-mobile-app/
-├── restaurant-server/   # Spring Boot API
-└── dashboard/           # Next.js admin dashboard
-```
-
-See [CLAUDE.md](./CLAUDE.md) for architecture decisions, folder conventions, and patterns to follow when adding new features.
+| Folder | Description | Stack |
+| ------ | ----------- | ----- |
+| [restaurant-server/](./restaurant-server) | REST API that powers the platform | Spring Boot · PostgreSQL · JWT |
+| [mobile-app/](./mobile-app) | Waiter & kitchen mobile app | React Native · Expo |
+| [dashboard/](./dashboard) | Admin dashboard | Next.js · Tailwind CSS |
+| [carta-web/](./carta-web) | Public web menu (QR) | Next.js · Tailwind CSS |

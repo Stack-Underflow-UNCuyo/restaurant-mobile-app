@@ -1,86 +1,121 @@
-# Restaurant — App Móvil (Mozos y Cocineros)
+# Restaurant — Mobile App (Waiters & Kitchen)
 
-App móvil del restaurante, hecha con **React Native + Expo (SDK 56)** y **expo-router**.
-Consume el backend Spring que vive en `../restaurant-server`.
+Mobile app for restaurant staff, built with **React Native + Expo (SDK 56)** and **expo-router**.
+It consumes the Spring Boot backend in [`../restaurant-server`](../restaurant-server).
 
-Por ahora implementa el **login** para los dos roles de empleado: **Mozo** y **Cocinero**.
+The app serves two employee roles:
+
+- **Mozo (waiter)** — manage tables (mesas), browse the menu (carta), build an order (comanda),
+  and process payment (Mercado Pago).
+- **Cocinero (kitchen)** — track and update orders on a Kanban board with state transitions and
+  periodic polling.
 
 ---
 
-## Cómo correrla
+## Tech stack
+
+| Area | Technology |
+| ---- | ---------- |
+| Framework | Expo SDK 56, React Native 0.85.3, React 19 |
+| Routing | expo-router (file-based, typed routes) |
+| Data fetching | TanStack React Query (+ AsyncStorage persistence) |
+| HTTP | native `fetch` via `src/lib/apiClient.ts` |
+| Auth storage | expo-secure-store (encrypted JWT) |
+| UI / native | react-native-reanimated, react-native-gesture-handler, react-native-svg, react-native-qrcode-svg |
+| Language | TypeScript (strict) |
+
+---
+
+## Requirements
+
+- **Node.js 18+**
+- **Expo Go** app on a physical device, or an Android/iOS emulator
+- The [backend](../restaurant-server) running on port **8081**
+
+---
+
+## Environment variables
+
+Configured in `.env` (copy from `.env.example`). A single variable is needed:
+
+```env
+EXPO_PUBLIC_API_URL=http://localhost:8081
+```
+
+`localhost` from a phone/emulator does **not** point to your PC, so set the URL according to your
+environment:
+
+| Environment | URL |
+| ----------- | --- |
+| Android emulator | `http://10.0.2.2:8081` |
+| Physical device (Expo Go) | `http://<your-PC-LAN-IP>:8081` (e.g. `http://192.168.0.10:8081`) |
+| iOS simulator / Web | `http://localhost:8081` |
+
+---
+
+## Run
 
 ```bash
 cd mobile-app
-cp .env.example .env     # ajustá EXPO_PUBLIC_API_URL según tu entorno (ver abajo)
-npm install              # solo la primera vez
-npm start                # abre el dev server de Expo
-# luego: 'a' para Android, 'w' para web, o escaneá el QR con Expo Go
+cp .env.example .env     # adjust EXPO_PUBLIC_API_URL for your environment (see above)
+npm install              # first time only
+npm start                # starts the Expo dev server (port 19000)
 ```
 
-### URL del backend (`EXPO_PUBLIC_API_URL` en `.env`)
+Then:
 
-El backend corre en `http://localhost:8081`, pero "localhost" desde el teléfono/emulador
-no apunta a tu PC. Usá según el caso:
+| Command | Target |
+| ------- | ------ |
+| `npm run android` | Android emulator / device |
+| `npm run ios` | iOS simulator |
+| `npm run web` | Browser (React Native Web) |
+| `npm start` | Dev server — scan the QR with Expo Go |
 
-| Entorno                         | URL                              |
-| ------------------------------- | -------------------------------- |
-| Emulador Android                | `http://10.0.2.2:8081`           |
-| Dispositivo físico (Expo Go)    | `http://<IP-LAN-de-tu-PC>:8081`  |
-| iOS simulator / Web             | `http://localhost:8081`          |
+> Make sure the backend is running (`cd restaurant-server && ./mvnw spring-boot:run`).
 
-> Asegurate de tener el backend corriendo (`cd restaurant-server && mvn spring-boot:run`).
+Linting:
+
+```bash
+npm run lint
+```
 
 ---
 
-## Cómo funciona el login
+## How login resolves the role
 
-El JWT del backend solo trae el rol genérico (`ROLE_ADMIN` / `ROLE_PERSONAL`), **no** el tipo
-de empleado. Por eso, tras autenticar, la app resuelve si es Mozo o Cocinero:
+The backend JWT only carries the generic role (`ROLE_ADMIN` / `ROLE_PERSONAL`), **not** the employee
+type. After authenticating, the app resolves whether the user is a waiter or kitchen staff:
 
-1. `POST /auth/login` con `{ email, clave }` → `{ accessToken }`
-2. Se decodifica el JWT → `sub` (id usuario), `e` (email), `a` (roles)
+1. `POST /auth/login` with `{ email, clave }` → `{ accessToken }`
+2. Decode the JWT → `sub` (user id), `e` (email), `a` (roles)
 3. `GET /api/v1/usuarios/{id}` → `personaId`
 4. `GET /api/v1/empleados/{personaId}` → `tipoEmpleado` (`MOZO` / `COCINERO`)
 
-Si el empleado no es Mozo ni Cocinero (ej. administrativo), se rechaza el acceso.
-El token se guarda cifrado con `expo-secure-store` y la sesión se restaura al reabrir la app.
+If the employee is neither a waiter nor kitchen staff (e.g. administrative), access is rejected.
+The token is stored encrypted with `expo-secure-store`, and the session is restored on app relaunch.
 
 ---
 
-## Estructura
+## Project structure
 
 ```
 src/
-  app/                  # Rutas (expo-router, file-based)
-    _layout.tsx         #   layout raíz: AuthProvider + AuthGate (redirección por rol)
-    index.tsx           #   entrada (spinner mientras se decide el destino)
-    login.tsx           #   pantalla de login
-    (mozo)/             #   grupo de rutas del mozo
-      _layout.tsx
-      index.tsx         #     home del mozo (placeholder)
-    (cocinero)/         #   grupo de rutas del cocinero
-      _layout.tsx
-      index.tsx         #     home del cocinero (placeholder)
-  components/           # UI reutilizable (themed-text, themed-view, role-home)
-  constants/            # config (API_URL), theme
-  context/              # AuthContext (estado de sesión global)
-  hooks/                # useTheme, useColorScheme
-  lib/                  # apiClient (fetch + JWT), tokenStorage (SecureStore)
-  services/             # authService (login + resolución de rol)
-  types/                # tipos del dominio (auth)
+  app/              # Routes (expo-router, file-based)
+    _layout.tsx     #   root layout: AuthProvider + AuthGate (role-based redirect)
+    login.tsx       #   login screen
+    (mozo)/         #   waiter route group
+    (cocinero)/     #   kitchen route group
+  views/            # UI layer — components/ (by feature) and constants/ (config, theme)
+  controllers/      # context/ (AuthContext, CartContext) and hooks/ (e.g. useKanban)
+  models/           # services/ (API integration) and types/ (domain types)
+  lib/              # apiClient (fetch + JWT), queryClient (React Query), tokenStorage (SecureStore)
 ```
 
-### Convenciones
+### Conventions
 
-- **Nada de `fetch` suelto en pantallas** — todo pasa por `src/lib/apiClient.ts` y los servicios de `src/services/`.
-- El estado de sesión se accede con `useAuth()` (`{ user, token, login, logout }`).
-- Las pantallas nuevas de cada rol se agregan dentro de su grupo: `(mozo)/` o `(cocinero)/`.
-- La redirección por rol la maneja el `AuthGate` en `src/app/_layout.tsx`; no hace falta repetir guards en cada pantalla.
-
----
-
-## Próximos pasos
-
-- Pantallas funcionales del mozo (mesas, comandas).
-- Pantallas funcionales del cocinero (comandas pendientes).
-- Manejo de refresco/expiración de token.
+- **No loose `fetch` in screens** — every request goes through `src/lib/apiClient.ts` and the
+  services in `src/models/services/`.
+- Session state is accessed with `useAuth()` (`{ user, token, login, logout }`).
+- New screens for each role go inside their group: `(mozo)/` or `(cocinero)/`.
+- Role-based redirection is handled by the `AuthGate` in `src/app/_layout.tsx`; no need to repeat
+  guards in every screen.
